@@ -1,0 +1,135 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+[RequireComponent(typeof(CharacterController))]
+public class FPSController : MonoBehaviour
+{
+    public Transform playerCamera;
+
+    [Header("移動設定")]
+    public float walkSpeed = 5f;
+    public float runSpeed = 10f;
+    public float gravity = -9.81f;
+
+    [Header("視点")]
+    public float mouseSensitivity = 0.1f;
+    public float minLookAngle = -75f;
+    public float maxLookAngle = 75f;
+
+    [Header("音・検知の当たり判定設定")]
+    public float voiceDetectionRadius = 5f;
+    public float actionSoundRadius = 8f;
+
+    private SphereCollider voiceCollider;
+    private SphereCollider actionCollider;
+
+    private CharacterController controller;
+    private float yVelocity;
+    private float xRotation = 0f;
+
+    private Vector2 moveInput;
+    private Vector2 lookInput;
+    private bool isRunning;
+
+    void Awake()
+    {
+        controller = GetComponent<CharacterController>();
+        SetupDetectionColliders();
+    }
+
+    void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    void Update()
+    {
+        Look();
+        Move();
+
+        // 走っている間はアクション音の範囲を広げる
+        if (actionCollider != null)
+        {
+            float targetRadius = isRunning ? actionSoundRadius * 1.5f : actionSoundRadius;
+            actionCollider.radius = Mathf.Lerp(actionCollider.radius, targetRadius, Time.deltaTime * 5f);
+        }
+    }
+
+    void SetupDetectionColliders()
+    {
+        // 1. 声の検知用
+        GameObject voiceObj = new GameObject("VoiceDetectionArea");
+        voiceObj.transform.SetParent(this.transform);
+        voiceObj.transform.localPosition = Vector3.up * 1.5f;
+        voiceCollider = voiceObj.AddComponent<SphereCollider>();
+        voiceCollider.isTrigger = true;
+        voiceCollider.radius = voiceDetectionRadius;
+
+        // 当たり判定を検知するための簡易コンポーネントを追加
+        var voiceDetector = voiceObj.AddComponent<DetectionTrigger>();
+        voiceDetector.areaName = "声の届く範囲";
+
+        // 2. アクション音用
+        GameObject actionObj = new GameObject("ActionSoundArea");
+        actionObj.transform.SetParent(this.transform);
+        actionObj.transform.localPosition = Vector3.zero;
+        actionCollider = actionObj.AddComponent<SphereCollider>();
+        actionCollider.isTrigger = true;
+        actionCollider.radius = actionSoundRadius;
+
+        var actionDetector = actionObj.AddComponent<DetectionTrigger>();
+        actionDetector.areaName = "アクション音の範囲";
+    }
+
+    public void OnMove(InputAction.CallbackContext context) => moveInput = context.ReadValue<Vector2>();
+    public void OnLook(InputAction.CallbackContext context) => lookInput = context.ReadValue<Vector2>();
+
+    public void OnRun(InputAction.CallbackContext context)
+    {
+        if (context.performed) isRunning = true;
+        if (context.canceled) isRunning = false;
+    }
+
+    void Move()
+    {
+        float currentSpeed = isRunning ? runSpeed : walkSpeed;
+        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+
+        if (controller.isGrounded && yVelocity < 0)
+            yVelocity = -2f;
+
+        yVelocity += gravity * Time.deltaTime;
+
+        Vector3 velocity = move * currentSpeed;
+        velocity.y = yVelocity;
+
+        controller.Move(velocity * Time.deltaTime);
+    }
+
+    void Look()
+    {
+        float mouseX = lookInput.x * mouseSensitivity;
+        float mouseY = lookInput.y * mouseSensitivity;
+
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, minLookAngle, maxLookAngle);
+        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+        transform.Rotate(Vector3.up * mouseX);
+    }
+}
+
+// 判定を検知するための小さなクラス（同じファイル内でOK）
+public class DetectionTrigger : MonoBehaviour
+{
+    public string areaName;
+    private void OnTriggerEnter(Collider other)
+    {
+        // 自分自身（Player）以外が触れたらログを出す
+        if (!other.CompareTag("Player"))
+        {
+            Debug.Log($"{areaName} に {other.name} が入りました！");
+        }
+    }
+}
