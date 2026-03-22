@@ -9,6 +9,7 @@ public class Mike : MonoBehaviour
     private AudioClip micClip;
     private string micDevice;
     private float[] sampleBuffer;
+    private SoundEmitter _soundEmitter;
 
     public bool IsMicActive { get; private set; }
     public float CurrentVolume { get; private set; }
@@ -24,6 +25,8 @@ public class Mike : MonoBehaviour
 
         // デフォルトマイクを使う
         micDevice = Microphone.devices[0];
+
+        _soundEmitter = GetComponent<SoundEmitter>();
 
         // 1秒のループ録音を開始
         micClip = Microphone.Start(micDevice, true, 1, 44100);
@@ -61,6 +64,10 @@ public class Mike : MonoBehaviour
         if (newState != IsMicActive)
         {
             IsMicActive = newState;
+
+            if (IsMicActive && _soundEmitter != null)
+                _soundEmitter.StunEnemies();
+
             Debug.Log(IsMicActive
                 ? $"マイク入力あり: {CurrentVolume:F4}"
                 : "マイク入力なし");

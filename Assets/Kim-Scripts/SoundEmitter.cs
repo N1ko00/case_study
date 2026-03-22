@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 /// <summary>
 /// 特定の位置で音を発生させ、半径内のInvisibleMonsterに知らせます。
@@ -49,8 +50,10 @@ public class SoundEmitter : MonoBehaviour
     /// <param name="radius">音が伝わる半径</param>
     public void EmitSound(Vector3 soundPosition, float radius)
     {
-        // 半径内のすべてのColliderを探索（enemyLayer適用）
+        Collider[] hits=GetEnemyColliders(soundPosition,radius);
+        /*// 半径内のすべてのColliderを探索（enemyLayer適用）
         Collider[] hits = Physics.OverlapSphere(soundPosition, radius, Enemy);
+        */
 
         int notifiedCount = 0;
 
@@ -89,9 +92,43 @@ public class SoundEmitter : MonoBehaviour
     /// </summary>
     public void EmitSound(float customRadius) => EmitSound(transform.position, customRadius);
 
-    // ───────────────────────────────────────────
-    // Gizmos / Debug 視覚化
-    // ───────────────────────────────────────────
+	/// <summary>
+	/// Inspector の soundRadius を使って、このオブジェクト位置から敵をスタンさせます。
+	/// </summary>
+	public void StunEnemies() => StunEnemies(transform.position, soundRadius);
+
+	/// <summary>
+	/// 指定した位置と半径内の InvisibleMonster を重複なくスタンさせます。
+	/// Enemy LayerMask が未設定ならレイヤー指定なしで探索します。
+	/// </summary>
+	public void StunEnemies(Vector3 center, float radius)
+	{
+		Collider[] hits = GetEnemyColliders(center, radius);
+		HashSet<InvisibleMonster> stunnedMonsters = new HashSet<InvisibleMonster>();
+
+		foreach (Collider hit in hits)
+		{
+			InvisibleMonster monster = hit.GetComponentInParent<InvisibleMonster>();
+
+			if (monster != null)
+				stunnedMonsters.Add(monster);
+		}
+
+		foreach (InvisibleMonster monster in stunnedMonsters)
+			monster.OnStunned();
+
+		Debug.Log($"[SoundEmitter] スタン発生 → 半径 {radius}m 中の敵 {stunnedMonsters.Count}体をスタン");
+	}
+
+	private Collider[] GetEnemyColliders(Vector3 center, float radius)
+	{
+		return Enemy.value == 0
+			? Physics.OverlapSphere(center, radius)
+			: Physics.OverlapSphere(center, radius, Enemy);
+	}
+	// ───────────────────────────────────────────
+	// Gizmos / Debug 視覚化
+	// ───────────────────────────────────────────
 #if UNITY_EDITOR
     // 音が発生したときに一瞬表示されるデバッグ用の変数
     private Vector3 _debugPosition;
