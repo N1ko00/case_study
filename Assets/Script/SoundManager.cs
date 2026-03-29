@@ -1,20 +1,105 @@
+ï»¿using System;
 using UnityEngine;
+
 
 public class SoundManager : MonoBehaviour
 {
+    public enum NoiseSourceType
+    {
+        Player,
+        Enemy
+    }
+
+
     public static SoundManager Instance;
+
+    [Header("Layerè¨­å®š")]
+    [SerializeField] private LayerMask wallLayer; // å£ãƒ¬ã‚¤ãƒ¤ãƒ¼
+    [SerializeField] private AudioSource seSource;
+    [SerializeField] private AudioClip footstepSE;
 
     private void Awake()
     {
         Instance = this;
     }
 
-    //‰¹”­¶ŠÖ”(‰¹”­¶À•WA‰¹‚Ì•·‚±‚¦‚é”¼ŒaA‰¹‚ð–Â‚ç‚µ‚½object)
+    //éŸ³ç™ºç”Ÿé–¢æ•°
     public void EmitNoise(Vector3 soundPos, float radius, NoiseSourceType sourceType)
     {
-        //‚±‚±‚É–{ŽÀ‘•
+        Debug.Log($"EmitNoise: pos={soundPos}, radius={radius}, source={sourceType}");
 
-        //‚±‚ÌƒfƒoƒbƒNƒƒO‚ÍPlayer,Enemy‘¤‚ÌŠm”F—p‚È‚Ì‚Å–{ŽÀ‘•‚ÌÛ‚ÍÁ‚µ‚Ä‘åä•v‚Å‚·
-        Debug.Log($"EmitNoise: pos={soundPos},radius={radius},source={sourceType}");
+        if (sourceType == NoiseSourceType.Player)
+        {
+            // ðŸ”¹ Player â†’ Enemy ã«é€šçŸ¥
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            foreach (var enemy in enemies)
+            {
+                float distance = Vector3.Distance(soundPos, enemy.transform.position);
+
+                Debug.Log($"[Player->Enemy] distance to {enemy.name} = {distance}");
+
+                if (distance <= radius)
+                {
+                    // å£ãƒã‚§ãƒƒã‚¯
+                    Vector3 dir = (enemy.transform.position - soundPos).normalized;
+
+                    if (Physics.Raycast(soundPos, dir, out RaycastHit hit, distance, wallLayer))
+                    {
+                        Debug.Log($"[WallCheck] Enemyã¨ã®é–“ã«å£ã‚ã‚Š: {hit.collider.name}");
+                        continue;
+                    }
+                    else
+                    {
+                        Debug.Log("[WallCheck] å£ãªã— â†’ Enemyã«é€šçŸ¥");
+
+                        // TODO: ã“ã“ã§Enemyã«é€šçŸ¥ã™ã‚‹
+
+                        Debug.Log("â€»ã“ã“ã«Enemyé€šçŸ¥å‡¦ç†ã‚’å…¥ã‚Œã‚‹");
+                        PlaySEAtPosition(soundPos);
+                    }
+                }
+            }
+        }
+        else if (sourceType == NoiseSourceType.Enemy)
+        {
+            // ðŸ”¹ Enemy â†’ Player ã«SEå†ç”Ÿ
+            GameObject player = GameObject.FindGameObjectWithTag("Player");
+
+            if (player == null) return;
+
+            float distance = Vector3.Distance(soundPos, player.transform.position);
+
+            Debug.Log($"[Enemy->Player] distance = {distance}");
+
+            if (distance <= radius)
+            {
+                // å£ãƒã‚§ãƒƒã‚¯
+                Vector3 dir = (player.transform.position - soundPos).normalized;
+
+                if (Physics.Raycast(soundPos, dir, out RaycastHit hit, distance, wallLayer))
+                {
+                    Debug.Log($"[WallCheck] Playerã¨ã®é–“ã«å£ã‚ã‚Š: {hit.collider.name}");
+                    return;
+                }
+                else
+                {
+                    Debug.Log("[WallCheck] å£ãªã— â†’ SEå†ç”Ÿ");
+
+                    //SEå†ç”Ÿ
+                    PlaySEAtPosition(soundPos);
+                }
+            }
+        }
+    }
+
+    private void PlaySEAtPosition(Vector3 pos)
+    {
+        Debug.Log($"SEå†ç”Ÿ at {pos}");
+
+        AudioSource temp = Instantiate(seSource, pos, Quaternion.identity);
+        temp.PlayOneShot(footstepSE);
+        Destroy(temp.gameObject, footstepSE.length);
+
     }
 }
