@@ -52,6 +52,20 @@ public class InvisibleMonster : MonoBehaviour
     [SerializeField][Range(0f, 360f)] private float viewAngle = 90f;
     [SerializeField] private LayerMask obstacleMask;
 
+    [Header("足音設定")]
+    // 足音を発生させる間隔
+    [SerializeField] private float footstepInterval = 0.7f;
+    // ChasePlayer 時の足音間隔
+    [SerializeField] private float footstepIntervalChase = 0.35f;
+    // 足音のノイズ半径 (SoundManager.EmitNoise に渡す)
+    [SerializeField] private float footstepNoiseRadius = 5f;
+    // EnemyFootstepAudio から参照するためのプロパティ
+    public float FootstepNoiseRadius => footstepNoiseRadius;
+    // 足音 3D 再生用コンポーネント
+    private EnemyFootstepAudio _footstepAudio;
+    // 足音タイマー
+    private float _footstepTimer = 0f;
+
     // ───────────────────────────────────────────
     // 内部変数
     // ───────────────────────────────────────────
@@ -77,12 +91,23 @@ public class InvisibleMonster : MonoBehaviour
     // Stunned
     private float _stunTimer = 0f;              // 残りスタン時間
 
+    // Renderer (SetVisible用)
+    private Renderer[] _renderers;
+
     // ───────────────────────────────────────────
     // Unity ライフサイクル
     // ───────────────────────────────────────────
     private void Start()
     {
         _agent = GetComponent<NavMeshAgent>();
+
+        // Renderer を全て取得しておく (SetVisible で使用)
+        _renderers = GetComponentsInChildren<Renderer>();
+
+        // 足音コンポーネントを取得（なければ自動追加）
+        _footstepAudio = GetComponent<EnemyFootstepAudio>();
+        if (_footstepAudio == null)
+            _footstepAudio = gameObject.AddComponent<EnemyFootstepAudio>();
 
         if (playerTransform == null)
         {
@@ -106,6 +131,7 @@ public class InvisibleMonster : MonoBehaviour
         }
 
         CheckFieldOfView();
+        UpdateFootstep();   // 足音タイマーを毎フレーム更新
 
         switch (_currentState)
         {
@@ -114,6 +140,44 @@ public class InvisibleMonster : MonoBehaviour
             case State.ChasePlayer: UpdateChasePlayer(); break;
             case State.Searching: UpdateSearching(); break;
         }
+    }
+
+    // ───────────────────────────────────────────
+    // 足音システム
+    // ───────────────────────────────────────────
+
+    /// <summary>
+    /// 移動中のみ一定間隔で足音ノイズを発生させます。
+    /// タイマー方式なので毎フレーム重くなりません。
+    /// </summary>
+    private void UpdateFootstep()
+    {
+        // 停止中・待機中は足音なし
+        if (_agent.isStopped || _agent.velocity.sqrMagnitude < 0.01f)
+        {
+            // 移動が止まったら再生中のクリップも即座に停止
+            if (_footstepAudio != null) _footstepAudio.StopFootstep();
+            return;
+        }
+
+        _footstepTimer -= Time.deltaTime;
+        if (_footstepTimer > 0f) return;
+
+        // 状態によって間隔を切り替え
+        // ChasePlayer → 速い間隔 / それ以外 → 通常間隔
+        _footstepTimer = (_currentState == State.ChasePlayer)
+            ? footstepIntervalChase
+            : footstepInterval;
+
+        // SoundManager にノイズを通知
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.EmitNoise(transform.position, footstepNoiseRadius, NoiseSourceType.Enemy);
+
+        // 3D 足音を AudioSource で再生
+        if (_footstepAudio != null)
+            _footstepAudio.PlayFootstep();
+
+        Debug.Log($"[InvisibleMonster] 足音発生 ({_currentState}) interval={_footstepTimer:F2}s");
     }
 
     // ───────────────────────────────────────────
@@ -180,6 +244,8 @@ public class InvisibleMonster : MonoBehaviour
                 // 移動を再開してウェイポイントへ向かう
                 _agent.isStopped = false;
                 _agent.speed = patrolSpeed;
+                // 追跡モード解除 → 通常の足音間隔に戻す
+                if (_footstepAudio != null) _footstepAudio.SetChaseMode(false);
                 MoveToCurrentWaypoint();
                 Debug.Log("[InvisibleMonster] 状態: Patrol");
                 break;
@@ -194,6 +260,8 @@ public class InvisibleMonster : MonoBehaviour
             case State.ChasePlayer:
                 _agent.isStopped = false;
                 _agent.speed = chasePlayerSpeed;
+                // 追跡モード開始 → 即座に足音を速い間隔に切り替え
+                if (_footstepAudio != null) _footstepAudio.SetChaseMode(true);
                 Debug.Log("[InvisibleMonster] 状態: ChasePlayer → プレイヤー発見");
                 break;
 
@@ -367,9 +435,20 @@ public class InvisibleMonster : MonoBehaviour
         EnterState(State.ChaseSound);
     }
 
+
+    /// <summary>
+    /// 外部から Renderer の表示/非表示を切り替えます。
+    /// </summary>
+    public void SetVisible(bool visible)
+    {
+        foreach (Renderer r in _renderers)
+            r.enabled = visible;
+
+        Debug.Log($"[InvisibleMonster] SetVisible({visible})");
+    }
+
     /// <summary>
     /// 外部から呼び出すことで、どの状態からでも気絶状態に遷移します。
-    /// 例: プレイヤーのアイテム使用、トラップ発動など
     /// </summary>
     public void OnStunned()
     {
@@ -441,6 +520,10 @@ public class InvisibleMonster : MonoBehaviour
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
             Gizmos.DrawWireSphere(transform.position, 1f);
         }
+
+        // 足音ノイズ半径
+        Gizmos.color = new Color(0f, 1f, 1f, 0.15f);
+        Gizmos.DrawWireSphere(transform.position, footstepNoiseRadius);
     }
 #endif
 }
