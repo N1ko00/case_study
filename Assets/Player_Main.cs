@@ -20,6 +20,12 @@ public class FPSController : MonoBehaviour
     public float voiceDetectionRadius = 5f;
     public float actionSoundRadius = 8f;
 
+    [Header("‘«‰¹Ý’è")]
+    [SerializeField] private float footstepInterval = 0.5f;
+    [SerializeField] private float footstepRadius = 8f;
+
+    private float footstepTimer;
+
     private SphereCollider voiceCollider;
     private SphereCollider actionCollider;
 
@@ -96,6 +102,8 @@ public class FPSController : MonoBehaviour
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
         Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
 
+        bool isMoving = move.magnitude > 0.1f && controller.isGrounded;
+
         if (controller.isGrounded && yVelocity < 0)
             yVelocity = -2f;
 
@@ -105,6 +113,9 @@ public class FPSController : MonoBehaviour
         velocity.y = yVelocity;
 
         controller.Move(velocity * Time.deltaTime);
+
+        //‘«‰¹ˆ—
+        HandleFootstep(isMoving);
     }
 
     void Look()
@@ -117,6 +128,30 @@ public class FPSController : MonoBehaviour
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    void HandleFootstep(bool isMoving)
+    {
+        if (!isMoving)
+        {
+            footstepTimer = 0f;
+            return;
+        }
+
+        footstepTimer -= Time.deltaTime;
+
+        if (footstepTimer <= 0f)
+        {
+            footstepTimer = isRunning ? footstepInterval * 0.6f : footstepInterval;
+
+            Debug.Log("‘«‰¹”­¶I");
+
+            SoundManager.Instance.EmitNoise(
+                this.transform.position,
+                footstepRadius,
+                (SoundManager.NoiseSourceType)NoiseSourceType.Player
+            );
+        }
     }
 }
 
