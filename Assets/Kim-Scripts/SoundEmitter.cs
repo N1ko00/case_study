@@ -19,9 +19,7 @@ public class SoundEmitter : MonoBehaviour
     [SerializeField] private bool emitOnStart = false;      // スタート時に自動で音が鳴る
     [SerializeField] private Key testKey = Key.F;           // このキーを押すと音が鳴ります（テスト用）
 
-    // ───────────────────────────────────────────
-    // Unity 생명주기
-    // ───────────────────────────────────────────
+
     private void Start()
     {
         if (emitOnStart)
