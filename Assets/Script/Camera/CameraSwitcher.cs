@@ -40,6 +40,7 @@ public class CameraSwitcher : MonoBehaviour
 
     /// <summary>
     /// 状態を指定してカメラを切り替える関数です。
+    /// 他のスクリプトから「switchScript.SetCameraState(CameraSwitcher.CameraState.Sub);」のように呼べます
     /// </summary>
     public void SetCameraState(CameraState newState)
     {
@@ -63,6 +64,7 @@ public class CameraSwitcher : MonoBehaviour
 
     /// <summary>
     /// 現在の状態を判定して、もう一方のカメラに切り替える関数です。
+    /// 他のスクリプトから「switchScript.SetCameraState(CameraSwitcher.CameraState.Sub);」のように呼べます
     /// </summary>
     public void ToggleCamera()
     {
