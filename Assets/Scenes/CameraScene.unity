@@ -785,9 +785,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1502603600}
     m_Modifications:
+    - target: {fileID: 2062482071310971188, guid: b2377db749e858e488e50aa79b474efa, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3017404316675957568, guid: b2377db749e858e488e50aa79b474efa, type: 3}
       propertyPath: m_Name
       value: subCamera
+      objectReference: {fileID: 0}
+    - target: {fileID: 3017404316675957568, guid: b2377db749e858e488e50aa79b474efa, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6875124462449030899, guid: b2377db749e858e488e50aa79b474efa, type: 3}
       propertyPath: m_LocalPosition.x
