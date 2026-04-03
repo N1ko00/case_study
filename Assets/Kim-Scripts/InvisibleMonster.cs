@@ -97,13 +97,19 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
     // Unity ライフサイクル
     // ───────────────────────────────────────────
-    private void Start()
+    private void Awake()
     {
-        _agent = GetComponent<NavMeshAgent>();
+		//他からの参照用に初期化が早いAwakeで行う
+		// NavMeshAgent コンポーネントを取得
+		_agent = GetComponent<NavMeshAgent>();
 
-        // Renderer を全て取得しておく (SetVisible で使用)
-        _renderers = GetComponentsInChildren<Renderer>();
+		// Renderer を全て取得しておく (SetVisible で使用)
+		_renderers = GetComponentsInChildren<Renderer>();
 
+	}
+
+	private void Start()
+    {
         // 足音コンポーネントを取得（なければ自動追加）
         _footstepAudio = GetComponent<EnemyFootstepAudio>();
         if (_footstepAudio == null)

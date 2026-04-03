@@ -4,11 +4,6 @@ using UnityEngine;
 
 public class SoundManager : MonoBehaviour
 {
-    public enum NoiseSourceType
-    {
-        Player,
-        Enemy
-    }
 
 
     public static SoundManager Instance;
@@ -87,7 +82,8 @@ public class SoundManager : MonoBehaviour
                     Debug.Log("[WallCheck] 壁なし → SE再生");
 
                     //SE再生
-                    PlaySEAtPosition(soundPos);
+                    //諸事情でいったんoff
+                    //PlaySEAtPosition(soundPos);
                 }
             }
         }

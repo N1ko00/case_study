@@ -149,7 +149,7 @@ public class FPSController : MonoBehaviour
             SoundManager.Instance.EmitNoise(
                 this.transform.position,
                 footstepRadius,
-                (SoundManager.NoiseSourceType)NoiseSourceType.Player
+                NoiseSourceType.Player
             );
         }
     }

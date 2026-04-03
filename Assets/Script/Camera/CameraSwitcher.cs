@@ -14,8 +14,10 @@ public class CameraSwitcher : MonoBehaviour
     public Camera MainCamera;
     public Camera SubCamera;
 
-    // 現在の状態を保持します
-    public CameraState CurrentState { get; private set; }
+    [Header("Monster")]
+    [SerializeField] private InvisibleMonster monster; // モンスターのGameObjectをインスペクターで割り当てる
+												 // 現在の状態を保持します
+	public CameraState CurrentState { get; private set; }
 
     void Start()
     {
@@ -53,12 +55,20 @@ public class CameraSwitcher : MonoBehaviour
                 // GameObject自体のアクティブ状態を切り替え
                 MainCamera.gameObject.SetActive(true);
                 SubCamera.gameObject.SetActive(false);
-                break;
+                if(monster != null)
+				{
+					monster.SetVisible(false); // メインカメラのときはモンスターを見えないようにする
+				}
+				break;
 
             case CameraState.Sub:
                 MainCamera.gameObject.SetActive(false);
                 SubCamera.gameObject.SetActive(true);
-                break;
+				if (monster != null)
+				{
+					monster.SetVisible(true); // サブカメラのときはモンスターを見えるようにする
+				}
+				break;
         }
     }
 
