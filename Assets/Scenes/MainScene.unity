@@ -2104,7 +2104,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -3242,6 +3242,10 @@ PrefabInstance:
     - target: {fileID: 9099568421924370528, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
       propertyPath: m_Enabled
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 9099568421924370528, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
