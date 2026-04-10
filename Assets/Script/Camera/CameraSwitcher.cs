@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,8 +16,12 @@ public class CameraSwitcher : MonoBehaviour
     public Camera SubCamera;
 
     [Header("Monster")]
-    [SerializeField] private InvisibleMonster monster; // モンスターのGameObjectをインスペクターで割り当てる
-												 // 現在の状態を保持します
+    [SerializeField] private InvisibleMonster monster; // モンスターのGameObjectをインスペクターで割り当
+
+    [Header("UI")]
+    [SerializeField] private GameObject cameraCanvas;
+
+    // 現在の状態を保持します
 	public CameraState CurrentState { get; private set; }
 
     void Start()
@@ -55,6 +60,12 @@ public class CameraSwitcher : MonoBehaviour
                 // GameObject自体のアクティブ状態を切り替え
                 MainCamera.gameObject.SetActive(true);
                 SubCamera.gameObject.SetActive(false);
+
+                if (SubCamera != null)
+                {
+                    cameraCanvas.SetActive(false);
+                }
+
                 if(monster != null)
 				{
 					monster.SetVisible(false); // メインカメラのときはモンスターを見えないようにする
@@ -64,6 +75,11 @@ public class CameraSwitcher : MonoBehaviour
             case CameraState.Sub:
                 MainCamera.gameObject.SetActive(false);
                 SubCamera.gameObject.SetActive(true);
+                if (cameraCanvas != null)
+                {
+                    cameraCanvas.SetActive(true);
+                }
+
 				if (monster != null)
 				{
 					monster.SetVisible(true); // サブカメラのときはモンスターを見えるようにする

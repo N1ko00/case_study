@@ -219,6 +219,7 @@ public class InvisibleMonster : MonoBehaviour
         // Raycast 障害物チェック
         if (Physics.Raycast(transform.position, toPlayer.normalized, out RaycastHit hit, viewDistance, obstacleMask))
         {
+            Debug.Log("enemy fovチェック  障害物");
             Debug.DrawRay(transform.position, toPlayer.normalized * hit.distance, Color.red);
             _isPlayerInSight = false;
             return;

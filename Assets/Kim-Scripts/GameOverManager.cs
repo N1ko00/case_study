@@ -19,6 +19,10 @@ public class GameOverManager : MonoBehaviour
     // retryButton
     [SerializeField] private Button retryButton;
 
+    //カメラのcanvas削除用
+    [Header("追加UI参照")]
+    [SerializeField] private GameObject cameraCanvas;
+
     [Header("設定")]
     // ゲームオーバー テキスト
     [SerializeField] private string gameOverMessage = "GAME OVER";
@@ -64,6 +68,12 @@ public class GameOverManager : MonoBehaviour
     {
         if (_isGameOver) return;
         _isGameOver = true;
+
+        //先にカメラのUIを消す
+        if (cameraCanvas != null)
+        {
+            cameraCanvas.SetActive(false);
+        }
 
         if (gameOverText != null)
             gameOverText.text = gameOverMessage;
