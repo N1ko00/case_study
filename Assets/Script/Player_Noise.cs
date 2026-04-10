@@ -29,7 +29,7 @@ public class Player_Noise : MonoBehaviour
         if (SoundManager.Instance != null)
         {
             // 指定された音通知処理を呼ぶ
-            SoundManager.Instance.EmitNoise(transform.position, noiseRadius, noiseSourceType);
+            //SoundManager.Instance.EmitNoise(transform.position, noiseRadius, noiseSourceType);
 
             // 呼び出し確認ログ
             Debug.Log("[Player_Noise]SoundManager.Instance.EmitNoise を呼び出しました");

@@ -1117,11 +1117,15 @@ PrefabInstance:
     - target: {fileID: 108075413175187606, guid: 98a1adbae9b1e1440baae846a91a9f3a, type: 3}
       propertyPath: seSource
       value: 
-      objectReference: {fileID: 714976276}
+      objectReference: {fileID: 0}
+    - target: {fileID: 108075413175187606, guid: 98a1adbae9b1e1440baae846a91a9f3a, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 108075413175187606, guid: 98a1adbae9b1e1440baae846a91a9f3a, type: 3}
       propertyPath: footstepSE
       value: 
-      objectReference: {fileID: 8300000, guid: bb3107f3ca9b5d241a694766b55a9c24, type: 3}
+      objectReference: {fileID: 0}
     - target: {fileID: 108075413175187606, guid: 98a1adbae9b1e1440baae846a91a9f3a, type: 3}
       propertyPath: wallLayer.m_Bits
       value: 8
@@ -1649,11 +1653,11 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: bb3107f3ca9b5d241a694766b55a9c24, type: 3}
-  m_PlayOnAwake: 1
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
-  Loop: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -2059,14 +2063,14 @@ MonoBehaviour:
   searchSpeed: 2
   stunDuration: 3
   playerTransform: {fileID: 0}
-  viewDistance: 8.55
+  viewDistance: 18
   viewAngle: 55
   obstacleMask:
     serializedVersion: 2
     m_Bits: 8
   footstepInterval: 0.7
   footstepIntervalChase: 0.35
-  footstepNoiseRadius: 5
+  footstepNoiseRadius: 40
 --- !u!195 &973029338
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -2197,10 +2201,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EnemyFootstepAudio
   footstepClips:
-  - {fileID: 8300000, guid: eb1af12af7f4e6c40aca4d404b580de8, type: 3}
-  maxVolume: 1
+  - {fileID: 8300000, guid: 969663915dc72a44c88e8eaa03fc9d13, type: 3}
+  maxVolume: 5
   normalPitch: 1
-  chasePitch: 1.4
+  chasePitch: 3
 --- !u!82 &973029344
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4007,7 +4011,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2019746514}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 4732cb928e843224393976287536556d, type: 3}
   m_Name: 

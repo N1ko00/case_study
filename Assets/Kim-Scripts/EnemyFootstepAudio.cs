@@ -12,7 +12,7 @@ public class EnemyFootstepAudio : MonoBehaviour
     [SerializeField] private AudioClip[] footstepClips;
 
     [Header("ボリューム設定")]
-    [SerializeField] private float maxVolume = 1f;  // 最大音量
+    [SerializeField] private float maxVolume = 1.0f;  // 最大音量
 
 
     [Header("ピッチ設定")]
@@ -32,7 +32,7 @@ public class EnemyFootstepAudio : MonoBehaviour
 
     // footstepNoiseRadius の範囲をそのまま使う
     // 範囲の端 → 無音、中心に近いほど最大音量
-    private float NoiseRadius => _monster != null ? _monster.FootstepNoiseRadius : 10f;
+    private float NoiseRadius => _monster != null ? _monster.FootstepNoiseRadius : 100f;
 
     // 現在追跡モードかどうか
     private bool _isChasing = false;
