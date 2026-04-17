@@ -14,6 +14,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/EnemyScene.unity
     guid: 0bd6ced10e434914a8feeb2fc7f382cc
+  - enabled: 1
+    path: Assets/Scenes/TitileScene.unity
+    guid: c01173d276eb6364799bd7a269246d26
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_UseUCBPForAssetBundles: 0

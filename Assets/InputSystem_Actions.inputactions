@@ -1011,6 +1011,34 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Scene",
+            "id": "5284042f-462d-4d6b-b714-8fb9d6c061a3",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Button",
+                    "id": "8bc5d3d8-6903-4300-9868-78d5530f33e0",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "6cf7227a-78ba-4a84-8fa3-508e44096027",
+                    "path": "<Keyboard>/enter",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
         }
     ],
     "controlSchemes": [
