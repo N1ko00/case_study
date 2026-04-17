@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 [RequireComponent(typeof(CharacterController))]
 public class FPSController : MonoBehaviour
 {
@@ -10,7 +9,8 @@ public class FPSController : MonoBehaviour
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public float gravity = -9.81f;
-
+    [Header("アイテム取得")]
+    public float itemPickupDistance = 3f;
     [Header("視点")]
     public float mouseSensitivity = 0.1f;
     public float minLookAngle = -75f;
@@ -51,15 +51,21 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
+        if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
+        {
+            return;
+        }
+
+        // インベントリが閉じていて、かつマウスがロックされていない場合、ロックし直す（念のため）
+        if (Cursor.lockState != CursorLockMode.Locked)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
         Look();
         Move();
-
-        // 走っている間はアクション音の範囲を広げる
-        if (actionCollider != null)
-        {
-            float targetRadius = isRunning ? actionSoundRadius * 1.5f : actionSoundRadius;
-            actionCollider.radius = Mathf.Lerp(actionCollider.radius, targetRadius, Time.deltaTime * 5f);
-        }
+        HandleItemPickup();
     }
 
     void SetupDetectionColliders()
@@ -153,6 +159,31 @@ public class FPSController : MonoBehaviour
             );
         }
     }
+    void HandleItemPickup()
+    {
+        // 左クリック（Input System）
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+
+            if (Physics.Raycast(ray, out RaycastHit hit, itemPickupDistance))
+            {
+                if (hit.collider.CompareTag("Item"))
+                {
+                    WorldItem item = hit.collider.GetComponent<WorldItem>();
+
+                    if (item != null)
+                    {
+                        Debug.Log("拾った：" + item.itemData.itemName);
+
+                        InventoryManager.Instance.AddItem(item.itemData);
+
+                        Destroy(item.gameObject);
+                    }
+                }
+            }
+        }
+    }
 }
 
 // 判定を検知するための小さなクラス（同じファイル内でOK）
@@ -168,3 +199,4 @@ public class DetectionTrigger : MonoBehaviour
         }
     }
 }
+
