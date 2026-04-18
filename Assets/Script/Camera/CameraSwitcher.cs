@@ -28,15 +28,22 @@ public class CameraSwitcher : MonoBehaviour
 
     void Start()
     {
+        if (MainCamera != null && SubCamera != null && SubCamera2 != null)
+        {
             // 初期状態をMainカメラに設定
             SetCameraState(CameraState.Main);
+    }
+        else
+        {
+            Debug.LogError("カメラが設定されていません");
+        }
     }
 
     void Update()
     {
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            ToggleCamera();
+           ToggleCamera();
         }
     }
 
@@ -54,52 +61,17 @@ public class CameraSwitcher : MonoBehaviour
         CurrentState = newState;
         Debug.Log($"現在のカメラの状態: {CurrentState}");
 
-        switch (CurrentState)
-        {
-            case CameraState.Main:
-                //GameObject自体のアクティブ状態を切り替え
-                if (MainCamera != null) MainCamera.gameObject.SetActive(true);
-                if (SubCamera != null) SubCamera.gameObject.SetActive(false);
-                if (SubCamera2 != null) SubCamera2.gameObject.SetActive(false);
+        // 各カメラの表示状態を、現在の状態と一致するかどうかで一元化
+        if (MainCamera != null) MainCamera.gameObject.SetActive(CurrentState == CameraState.Main);
+        if (SubCamera != null) SubCamera.gameObject.SetActive(CurrentState == CameraState.Sub1);
+        if (SubCamera2 != null) SubCamera2.gameObject.SetActive(CurrentState == CameraState.Sub2);
 
-                //MainCameraの時は、OverlayのCanvasを非表示にして隠す
-                if (cameraCanvas != null) cameraCanvas.SetActive(false);
+        //サブカメラ（Main以外のカメラ）が選ばれているかどうかの判定
+        bool isSubCamera = (CurrentState != CameraState.Main);
 
-                if (monster != null)
-				{
-					monster.SetVisible(false); // メインカメラのときはモンスターを見えないようにする
-				}
-				break;
-
-            case CameraState.Sub1:
-                //GameObject自体のアクティブ状態を切り替え
-                if (MainCamera != null) MainCamera.gameObject.SetActive(false);
-                if (SubCamera != null) SubCamera.gameObject.SetActive(true);
-                if (SubCamera2 != null) SubCamera2.gameObject.SetActive(false);
-
-                //Subの時はCanvasを表示
-                if (cameraCanvas != null) cameraCanvas.SetActive(true);
-                if (monster != null)
-				{
-					monster.SetVisible(true); // サブカメラのときはモンスターを見えるようにする
-				}
-				break;
-
-            case CameraState.Sub2:
-                //GameObject自体のアクティブ状態を切り替え
-                if (MainCamera != null) MainCamera.gameObject.SetActive(false);
-                if (SubCamera != null) SubCamera.gameObject.SetActive(false);
-                if (SubCamera2 != null) SubCamera2.gameObject.SetActive(true);
-
-                //Subの時はCanvasを表示
-                if (cameraCanvas != null) cameraCanvas.SetActive(true);
-
-                if (monster != null)
-                {
-                    monster.SetVisible(true); // サブカメラのときはモンスターを見えるようにする
-                }
-                break;
-        }
+        //UIとモンスターの表示を、isSubCameraの判定を使って切り替え
+        if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+        if (monster != null) monster.SetVisible(isSubCamera);
     }
 
     /// <summary>
