@@ -8,12 +8,14 @@ public class CameraSwitcher : MonoBehaviour
     public enum CameraState
     {
         Main,
-        Sub
+        Sub1,
+        Sub2
     }
 
     [Header("Cameras")]
     public Camera MainCamera;
     public Camera SubCamera;
+    public Camera SubCamera2;
 
     [Header("Monster")]
     [SerializeField] private InvisibleMonster monster; // モンスターのGameObjectをインスペクターで割り当
@@ -22,18 +24,18 @@ public class CameraSwitcher : MonoBehaviour
     [SerializeField] private GameObject cameraCanvas;
 
     // 現在の状態を保持します
-	public CameraState CurrentState { get; private set; }
+    public CameraState CurrentState { get; private set; }
 
     void Start()
     {
-        if (MainCamera != null && SubCamera != null)
+        if (MainCamera != null && SubCamera != null && SubCamera2 != null)
         {
             // 初期状態をMainカメラに設定
             SetCameraState(CameraState.Main);
-        }
+    }
         else
         {
-            Debug.LogError("カメラが割り当てられていません!インスペクターを確認してください。");
+            Debug.LogError("カメラが設定されていません");
         }
     }
 
@@ -41,9 +43,14 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            ToggleCamera();
+           ToggleCamera();
         }
     }
+
+    //ボタン用の関数
+    public void SwitchToMain() => SetCameraState(CameraState.Main);
+    public void SwitchToSub1() => SetCameraState(CameraState.Sub1);
+    public void SwitchToSub2() => SetCameraState(CameraState.Sub2);
 
     /// <summary>
     /// 状態を指定してカメラを切り替える関数です。
@@ -54,38 +61,17 @@ public class CameraSwitcher : MonoBehaviour
         CurrentState = newState;
         Debug.Log($"現在のカメラの状態: {CurrentState}");
 
-        switch (CurrentState)
-        {
-            case CameraState.Main:
-                // GameObject自体のアクティブ状態を切り替え
-                MainCamera.gameObject.SetActive(true);
-                SubCamera.gameObject.SetActive(false);
+        // 各カメラの表示状態を、現在の状態と一致するかどうかで一元化
+        if (MainCamera != null) MainCamera.gameObject.SetActive(CurrentState == CameraState.Main);
+        if (SubCamera != null) SubCamera.gameObject.SetActive(CurrentState == CameraState.Sub1);
+        if (SubCamera2 != null) SubCamera2.gameObject.SetActive(CurrentState == CameraState.Sub2);
 
-                if (SubCamera != null)
-                {
-                    cameraCanvas.SetActive(false);
-                }
+        //サブカメラ（Main以外のカメラ）が選ばれているかどうかの判定
+        bool isSubCamera = (CurrentState != CameraState.Main);
 
-                if(monster != null)
-				{
-					monster.SetVisible(false); // メインカメラのときはモンスターを見えないようにする
-				}
-				break;
-
-            case CameraState.Sub:
-                MainCamera.gameObject.SetActive(false);
-                SubCamera.gameObject.SetActive(true);
-                if (cameraCanvas != null)
-                {
-                    cameraCanvas.SetActive(true);
-                }
-
-				if (monster != null)
-				{
-					monster.SetVisible(true); // サブカメラのときはモンスターを見えるようにする
-				}
-				break;
-        }
+        //UIとモンスターの表示を、isSubCameraの判定を使って切り替え
+        if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+        if (monster != null) monster.SetVisible(isSubCamera);
     }
 
     /// <summary>
@@ -96,7 +82,7 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (CurrentState == CameraState.Main)
         {
-            SetCameraState(CameraState.Sub);
+            SetCameraState(CameraState.Sub1);
         }
         else
         {
