@@ -13,7 +13,7 @@ public class SceneLoader : MonoBehaviour
         MainScene,
         GameOverScene,
         GameClearScene,
-        ResultScene
+        ResultScene 
     }
 
     void Awake()
