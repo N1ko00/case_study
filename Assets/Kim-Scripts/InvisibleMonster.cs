@@ -83,16 +83,23 @@ public class InvisibleMonster : MonoBehaviour
 
     // Searching
     private float _searchTimer = 0f;
+    // Searching 経路安全化待機
+    private bool _searchWaitingForPath = false;
 
     // ChasePlayer
     private bool _isPlayerInSight = false;      // 現在のフレームが視界内にあるかどうか
     private Vector3 _lastSeenPosition;          // 最後に視界から見た位置
+    private bool _hasLastSeenPosition = false;  // _lastSeenPosition が有効かどうか
+    private bool _chaseLostDestSet = false;      // 視界外で目的地を1回だけ設定するフラグ
 
     // Stunned
     private float _stunTimer = 0f;              // 残りスタン時間
 
     // Renderer (SetVisible用)
     private Renderer[] _renderers;
+
+    // 元のマテリアルカラーを保持
+    private Color[] _originalColors;
 
     // ───────────────────────────────────────────
     // Unity ライフサイクル
@@ -106,9 +113,19 @@ public class InvisibleMonster : MonoBehaviour
 		// Renderer を全て取得しておく (SetVisible で使用)
 		_renderers = GetComponentsInChildren<Renderer>();
 
-	}
+        // 元のマテリアルカラーを保存
+        _originalColors = new Color[_renderers.Length];
+        for(int i = 0; i < _renderers.Length; i++)
+        {
+            if (_renderers[i].material.HasProperty("_Color"))
+            {
+                _originalColors[i] = _renderers[i].material.color;
+            }
+        }
 
-	private void Start()
+    }
+
+    private void Start()
     {
         // 足音コンポーネントを取得（なければ自動追加）
         _footstepAudio = GetComponent<EnemyFootstepAudio>();
@@ -183,7 +200,7 @@ public class InvisibleMonster : MonoBehaviour
         if (_footstepAudio != null)
             _footstepAudio.PlayFootstep();
 
-        Debug.Log($"[InvisibleMonster] 足音発生 ({_currentState}) interval={_footstepTimer:F2}s");
+        // Debug.Log($"[InvisibleMonster] 足音発生 ({_currentState}) interval={_footstepTimer:F2}s");
     }
 
     // ───────────────────────────────────────────
@@ -229,6 +246,7 @@ public class InvisibleMonster : MonoBehaviour
         Debug.DrawRay(transform.position, toPlayer.normalized * viewDistance, Color.green);
         _isPlayerInSight = true;
         _lastSeenPosition = playerTransform.position; // 見るたびに最後の位置を更新
+        _hasLastSeenPosition = true;
 
         // 他の状態で発見した場合、ChasePlayerに切り替える
         if (_currentState != State.ChasePlayer)
@@ -267,6 +285,7 @@ public class InvisibleMonster : MonoBehaviour
             case State.ChasePlayer:
                 _agent.isStopped = false;
                 _agent.speed = chasePlayerSpeed;
+                _chaseLostDestSet = false; //  視界外リセット
                 // 追跡モード開始 → 即座に足音を速い間隔に切り替え
                 if (_footstepAudio != null) _footstepAudio.SetChaseMode(true);
                 Debug.Log("[InvisibleMonster] 状態: ChasePlayer → プレイヤー発見");
@@ -276,8 +295,11 @@ public class InvisibleMonster : MonoBehaviour
                 _agent.isStopped = false;
                 _agent.speed = searchSpeed;
                 _searchTimer = searchDuration;
-                // 最後に見た位置にまず移動
-                _agent.SetDestination(_lastSeenPosition);
+                _searchWaitingForPath = true; // Searching開始時は最初の目的地設定を待機状態にする
+                // _lastSeenPosition が有効なら最後に見た位置に、なければ現在位置を基準に探索
+                Vector3 searchOrigin = _hasLastSeenPosition ? _lastSeenPosition : transform.position;
+                _agent.SetDestination(searchOrigin);
+                if (_footstepAudio != null) _footstepAudio.SetChaseMode(false);
                 Debug.Log("[InvisibleMonster] 状態: Searching → 最後の位置に移動");
                 break;
 
@@ -285,6 +307,8 @@ public class InvisibleMonster : MonoBehaviour
                 // 移動を完全停止
                 _agent.isStopped = true;
                 _agent.velocity = Vector3.zero;  // 残留速度もリセット
+                if (_footstepAudio != null) _footstepAudio.StopFootstep(); 
+                SetStunnedColor(true); 
                 _stunTimer = stunDuration;
                 Debug.Log($"[InvisibleMonster] 状態: Stunned → {stunDuration}秒間気絶");
                 break;
@@ -345,16 +369,45 @@ public class InvisibleMonster : MonoBehaviour
 
         if (_isPlayerInSight)
         {
-            // 視界内 → プレイヤーのリアルタイム追跡
-            _agent.SetDestination(playerTransform.position);
+            // 視界内 → プレイヤーが一定距離以上動いた時だけ目的地を更新
+            _chaseLostDestSet = false;
+            float distFromDest = Vector3.Distance(_agent.destination, playerTransform.position);
+            if (distFromDest > 0.5f)
+            {
+                _agent.SetDestination(playerTransform.position);
+            }
         }
         else
         {
-            // 視界外 → 最後に見た位置まで移動
-            _agent.SetDestination(_lastSeenPosition);
+            // 視界外 → 最後に見た位置を1回だけ設定
+            if (!_chaseLostDestSet)
+            {
+                Vector3 destination = _lastSeenPosition;
+
+                // 最後に見た位置が近すぎる場合 → プレイヤーの逃走方向に予測地点を設定
+                float distToLastSeen = Vector3.Distance(transform.position, _lastSeenPosition);
+                if (distToLastSeen <= chaseStopDistance * 2f)
+                {
+                    // 敵→プレイヤー方向にsearchRadius分だけ先の地点を予測
+                    Vector3 escapeDir = (playerTransform.position - transform.position).normalized;
+                    Vector3 predicted = transform.position + escapeDir * searchRadius;
+
+                    if (NavMesh.SamplePosition(predicted, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
+                    {
+                        destination = hit.position;
+                        _lastSeenPosition = destination; // Searching でもこの位置を基準にする
+                        Debug.Log($"[InvisibleMonster] 近距離逃走検知 → 予測地点 {destination}");
+                    }
+                }
+
+                _agent.SetDestination(destination);
+                _chaseLostDestSet = true;
+            }
 
             // 最後の位置に到達したらSearchingに切り替え
-            if (!_agent.pathPending && _agent.remainingDistance <= chaseStopDistance)
+            bool arrived = !_agent.pathPending && _agent.remainingDistance <= chaseStopDistance;
+
+            if (arrived)
             {
                 Debug.Log("[InvisibleMonster] 最後の位置に到達 → Searching");
                 EnterState(State.Searching);
@@ -383,10 +436,25 @@ public class InvisibleMonster : MonoBehaviour
             return;
         }
 
-        // 最後の位置に到達した後、周囲をランダムに探索する
-        if (!_agent.pathPending && _agent.remainingDistance <= waypointStopDistance)
+        // 経路計算中は待機
+        if (_agent.pathPending)
+        {
+            _searchWaitingForPath = true;
+            return;
+        }
+
+        // 経路計算直後の1フレームは remainingDistance が不安定なのでスキップ
+        if (_searchWaitingForPath)
+        {
+            _searchWaitingForPath = false;
+            return;
+        }
+
+        // 到着判定 → 次のランダム地点に移動
+        if (_agent.remainingDistance <= waypointStopDistance)
         {
             SetRandomSearchDestination();
+            _searchWaitingForPath = true; // 新しい経路も安定化待機
         }
     }
 
@@ -401,9 +469,22 @@ public class InvisibleMonster : MonoBehaviour
         if (_stunTimer <= 0f)
         {
             Debug.Log("[InvisibleMonster] スタン解除 → Patrol に復帰");
+            SetStunnedColor(false);
             // 移動を再開してPatrolへ
             _agent.isStopped = false;
             EnterState(State.Patrol);
+        }
+    }
+
+    /// <summary>
+    /// スタン時に赤く、解除時に元の色に戻す
+    /// </summary>
+    private void SetStunnedColor(bool stunned)
+    {
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            if (_renderers[i].material.HasProperty("_Color"))
+                _renderers[i].material.color = stunned ? Color.red : _originalColors[i];
         }
     }
 
@@ -418,10 +499,19 @@ public class InvisibleMonster : MonoBehaviour
 
     private void SetRandomSearchDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * searchRadius + transform.position;
+        Vector3 randomDirection = Random.insideUnitSphere * searchRadius + _lastSeenPosition;
+        randomDirection.y = transform.position.y; // 高さを現在の位置に合わせる
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
+        {
             _agent.SetDestination(hit.position);
+        }
+        else
+        {
+            // サンプリング失敗時は最後に見た位置に戻る
+            _agent.SetDestination(_lastSeenPosition);
+            Debug.Log("[InvisibleMonster] NavMesh サンプリング失敗 → 最後の位置へ");
+        }
     }
 
     // ───────────────────────────────────────────

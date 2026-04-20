@@ -31,6 +31,7 @@ public class GameOverManager : MonoBehaviour
 
     private bool _isGameOver = false;
 
+
     // ───────────────────────────────────────────
     // Unity ライフサイクル
     // ───────────────────────────────────────────
