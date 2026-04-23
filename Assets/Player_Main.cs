@@ -57,11 +57,11 @@ public class FPSController : MonoBehaviour
         }
 
         // インベントリが閉じていて、かつマウスがロックされていない場合、ロックし直す（念のため）
-        if (Cursor.lockState != CursorLockMode.Locked)
-        {
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-        }
+        //if (Cursor.lockState != CursorLockMode.Locked)
+        //{
+        //    Cursor.lockState = CursorLockMode.Locked;
+        //    Cursor.visible = false;
+        //}
 
         Look();
         Move();

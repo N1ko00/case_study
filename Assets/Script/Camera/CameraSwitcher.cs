@@ -23,6 +23,10 @@ public class CameraSwitcher : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject cameraCanvas;
 
+
+    //1回切り変数
+    bool unique = true;
+
     // 現在の状態を保持します
     public CameraState CurrentState { get; private set; }
 
@@ -41,6 +45,12 @@ public class CameraSwitcher : MonoBehaviour
 
     void Update()
     {
+        if (unique)
+        {
+            monster.SetVisible(false);
+            unique = false; 
+        }
+
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
            ToggleCamera();
@@ -70,7 +80,21 @@ public class CameraSwitcher : MonoBehaviour
         bool isSubCamera = (CurrentState != CameraState.Main);
 
         //UIとモンスターの表示を、isSubCameraの判定を使って切り替え
-        if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+        if (isSubCamera)
+        {
+            if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+            Cursor.visible = true;
+            Cursor.lockState = CursorLockMode.None;
+        }
+        else
+        {
+            if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+        }
+
+
+
         if (monster != null) monster.SetVisible(isSubCamera);
     }
 
