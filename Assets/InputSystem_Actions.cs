@@ -1145,6 +1145,118 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Password"",
+            ""id"": ""32352d5c-7d79-4f08-b255-cf624bf20a9f"",
+            ""actions"": [
+                {
+                    ""name"": ""ShowPass"",
+                    ""type"": ""Button"",
+                    ""id"": ""7bf33d2a-d269-4a08-863a-f71be18d6853"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""84ad95cf-d563-437f-8870-f6765fc3df7e"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""7bb2cc97-cb54-42d9-a3c7-964894e2b258"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a2b78654-e6b1-447a-9397-67115e4d71bb"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""ShowPass"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""9d318a8a-3aa4-43cb-ad71-2a5a27218baa"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""22bc1469-8638-476d-8059-d79d6fe8bb40"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""7b70145f-9566-4d81-8335-5f0722cdd7b5"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""2c776d09-9c88-4d4e-ae2e-b9aa1504af8a"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""7511cc15-b956-4094-8578-d1b629eec3f1"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""596b7f8c-89e8-4004-a735-15c8671bd822"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -1238,6 +1350,11 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         // Scene
         m_Scene = asset.FindActionMap("Scene", throwIfNotFound: true);
         m_Scene_Move = m_Scene.FindAction("Move", throwIfNotFound: true);
+        // Password
+        m_Password = asset.FindActionMap("Password", throwIfNotFound: true);
+        m_Password_ShowPass = m_Password.FindAction("ShowPass", throwIfNotFound: true);
+        m_Password_Move = m_Password.FindAction("Move", throwIfNotFound: true);
+        m_Password_Submit = m_Password.FindAction("Submit", throwIfNotFound: true);
     }
 
     ~@InputSystem_Actions()
@@ -1245,6 +1362,7 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, InputSystem_Actions.UI.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Scene.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Scene.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Password.enabled, "This will cause a leak and performance issues, InputSystem_Actions.Password.Disable() has not been called.");
     }
 
     /// <summary>
@@ -1813,6 +1931,124 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="SceneActions" /> instance referencing this action map.
     /// </summary>
     public SceneActions @Scene => new SceneActions(this);
+
+    // Password
+    private readonly InputActionMap m_Password;
+    private List<IPasswordActions> m_PasswordActionsCallbackInterfaces = new List<IPasswordActions>();
+    private readonly InputAction m_Password_ShowPass;
+    private readonly InputAction m_Password_Move;
+    private readonly InputAction m_Password_Submit;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Password".
+    /// </summary>
+    public struct PasswordActions
+    {
+        private @InputSystem_Actions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public PasswordActions(@InputSystem_Actions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Password/ShowPass".
+        /// </summary>
+        public InputAction @ShowPass => m_Wrapper.m_Password_ShowPass;
+        /// <summary>
+        /// Provides access to the underlying input action "Password/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_Password_Move;
+        /// <summary>
+        /// Provides access to the underlying input action "Password/Submit".
+        /// </summary>
+        public InputAction @Submit => m_Wrapper.m_Password_Submit;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Password; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="PasswordActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(PasswordActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="PasswordActions" />
+        public void AddCallbacks(IPasswordActions instance)
+        {
+            if (instance == null || m_Wrapper.m_PasswordActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_PasswordActionsCallbackInterfaces.Add(instance);
+            @ShowPass.started += instance.OnShowPass;
+            @ShowPass.performed += instance.OnShowPass;
+            @ShowPass.canceled += instance.OnShowPass;
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="PasswordActions" />
+        private void UnregisterCallbacks(IPasswordActions instance)
+        {
+            @ShowPass.started -= instance.OnShowPass;
+            @ShowPass.performed -= instance.OnShowPass;
+            @ShowPass.canceled -= instance.OnShowPass;
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="PasswordActions.UnregisterCallbacks(IPasswordActions)" />.
+        /// </summary>
+        /// <seealso cref="PasswordActions.UnregisterCallbacks(IPasswordActions)" />
+        public void RemoveCallbacks(IPasswordActions instance)
+        {
+            if (m_Wrapper.m_PasswordActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="PasswordActions.AddCallbacks(IPasswordActions)" />
+        /// <seealso cref="PasswordActions.RemoveCallbacks(IPasswordActions)" />
+        /// <seealso cref="PasswordActions.UnregisterCallbacks(IPasswordActions)" />
+        public void SetCallbacks(IPasswordActions instance)
+        {
+            foreach (var item in m_Wrapper.m_PasswordActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_PasswordActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="PasswordActions" /> instance referencing this action map.
+    /// </summary>
+    public PasswordActions @Password => new PasswordActions(this);
     private int m_KeyboardMouseSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -2055,5 +2291,34 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnMove(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Password" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="PasswordActions.AddCallbacks(IPasswordActions)" />
+    /// <seealso cref="PasswordActions.RemoveCallbacks(IPasswordActions)" />
+    public interface IPasswordActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "ShowPass" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnShowPass(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Submit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSubmit(InputAction.CallbackContext context);
     }
 }

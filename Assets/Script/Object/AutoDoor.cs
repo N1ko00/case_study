@@ -16,17 +16,18 @@ public class AutoDoor : MonoBehaviour
 
     Coroutine moveCoroutine;
 
+    [SerializeField]  private bool isOpen = false;
+
     void Start()
     {
         closedPosL = doorL.localPosition;
         closedPosR = doorR.localPosition;
-        Debug.Log("îΩâûÇµÇƒÇ¢ÇÈÅH");
     }
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("ui-nnn");
-        if (other.CompareTag("Player"))
+
+        if (other.CompareTag("Player")&&isOpen)
         {
             OpenDoor();
         }
@@ -70,5 +71,13 @@ public class AutoDoor : MonoBehaviour
 
         doorL.localPosition = targetL;
         doorR.localPosition = targetR;
+    }
+    public void SetOpenDoor(bool isopen)
+    {
+        isOpen = isopen;
+    }
+    public bool GetOpenDoor()
+    {
+        return isOpen;
     }
 }
