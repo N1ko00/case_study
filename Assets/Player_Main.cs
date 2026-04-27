@@ -61,6 +61,7 @@ public class FPSController : MonoBehaviour
         //{
         //    Cursor.lockState = CursorLockMode.Locked;
         //    Cursor.visible = false;
+        //    Cursor.visible = false;
         //}
 
         Look();

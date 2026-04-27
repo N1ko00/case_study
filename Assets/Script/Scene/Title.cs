@@ -13,7 +13,6 @@ public class Title : MonoBehaviour
     void FixedUpdate()
     {
         inputAction.Scene.Move.performed += ctx => sceneLoader.LoadScene(SceneLoader.SceneName.MainScene);
-
     }
 
     void Awake()
