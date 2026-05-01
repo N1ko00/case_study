@@ -51,7 +51,7 @@ public class SoundManager : MonoBehaviour
                         // TODO: ここでEnemyに通知する
 
                         Debug.Log("※ここにEnemy通知処理を入れる");
-                        PlaySEAtPosition(soundPos);
+                        //PlaySEAtPosition(soundPos);
                     }
                 }
             }
