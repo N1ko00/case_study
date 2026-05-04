@@ -88,6 +88,7 @@ public class InvisibleMonster : MonoBehaviour
     // Searching
     private float _searchTimer = 0f;
     private bool _searchWaitingForPath = false;   // 経路計算直後の安定化待機
+    private Vector3 _searchOrigin;   // 探索の中心点
 
     // ChasePlayer
     private bool _isPlayerInSight = false;
@@ -306,9 +307,9 @@ public class InvisibleMonster : MonoBehaviour
                 _agent.speed = searchSpeed;
                 _searchTimer = searchDuration;
                 _searchWaitingForPath = true;
-                // 最後に見た位置があればそこから探索開始
-                Vector3 searchOrigin = _hasLastSeenPosition ? _lastSeenPosition : transform.position;
-                _agent.SetDestination(searchOrigin);
+                // プレイヤーを見たことあればその位置、なければ今いる場所を基準にする
+                _searchOrigin = _hasLastSeenPosition ? _lastSeenPosition : transform.position;
+                _agent.SetDestination(_searchOrigin);
                 if (_footstepAudio != null) _footstepAudio.SetChaseMode(false);
                 Debug.Log("[InvisibleMonster] 状態: Searching");
                 break;
@@ -506,7 +507,7 @@ public class InvisibleMonster : MonoBehaviour
 
     private void SetRandomSearchDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * searchRadius + _lastSeenPosition;
+        Vector3 randomDirection = Random.insideUnitSphere * searchRadius + _searchOrigin;
         randomDirection.y = transform.position.y;
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
@@ -515,8 +516,7 @@ public class InvisibleMonster : MonoBehaviour
         }
         else
         {
-            // サンプリング失敗時は最後の位置へ
-            _agent.SetDestination(_lastSeenPosition);
+            _agent.SetDestination(_searchOrigin);
             Debug.Log("[InvisibleMonster] NavMesh サンプリング失敗");
         }
     }

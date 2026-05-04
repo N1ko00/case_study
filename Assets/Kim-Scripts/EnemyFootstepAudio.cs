@@ -112,7 +112,7 @@ public class EnemyFootstepAudio : MonoBehaviour
             Debug.LogWarning("[EnemyFootstepAudio] 足音クリップが設定されていません");
             return;
         }
-
+        // isPlaying 中は新しいクリップを再生しない (重複再生なし)
         if (_audioSource.isPlaying) return;
 
         PlayClip();
