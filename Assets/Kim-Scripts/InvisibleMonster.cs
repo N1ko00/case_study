@@ -18,7 +18,7 @@ public class InvisibleMonster : MonoBehaviour
         ChaseSound,
         ChasePlayer,
         Searching,
-        Stunned     // ← 追加: 気絶状態
+        Stunned
     }
 
     // ───────────────────────────────────────────
@@ -26,44 +26,49 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
     [Header("Patrol 設定")]
     [SerializeField] private Transform[] waypoints;
-    [SerializeField] private float patrolSpeed = 2f;              // 巡回速度
-    [SerializeField] private float waypointStopDistance = 0.5f;   // ウェイポイントに到達とみなす距離
+    [SerializeField] private float patrolSpeed = 2f;
+    [SerializeField] private float waypointStopDistance = 0.5f;   // 到達とみなす距離
     [SerializeField] private float waypointWaitTime = 1.0f;       // ウェイポイントでの待機時間
 
     [Header("ChaseSound 設定")]
-    [SerializeField] private float chaseSpeed = 4f;             // 音を追跡する速度
-    [SerializeField] private float chaseStopDistance = 0.5f;    // 音の位置に到達とみなす距離
+    [SerializeField] private float chaseSpeed = 4f;
+    [SerializeField] private float chaseStopDistance = 0.5f;
 
     [Header("ChasePlayer 設定")]
-    [SerializeField] private float chasePlayerSpeed = 5f;       // プレイヤー追跡速度
-    [SerializeField] private float losePlayerDistance = 20f;    // viewDistanceより大きく設定（重要）
+    [SerializeField] private float chasePlayerSpeed = 5f;
+    [SerializeField] private float losePlayerDistance = 20f;       // viewDistance より大きく設定
+    [Tooltip("視野を失っても追跡を続ける猶予時間 (秒)")]
+    [SerializeField] private float loseSightGrace = 1.0f;
+    [Tooltip("追跡中の視野角倍率")]
+    [SerializeField] private float chaseViewAngleMultiplier = 1.5f;
 
     [Header("Searching 設定")]
-    [SerializeField] private float searchDuration = 5f;         // 探す時間
-    [SerializeField] private float searchRadius = 4f;           // 最後に見た位置を中心にランダムに移動する半径
-    [SerializeField] private float searchSpeed = 2f;            // 探索中の移動速度
+    [SerializeField] private float searchDuration = 5f;            // 探す時間
+    [SerializeField] private float searchRadius = 4f;              // ランダム移動の半径
+    [SerializeField] private float searchSpeed = 2f;
 
     [Header("Stunned 設定")]
-    [SerializeField] private float stunDuration = 3f;           // 気絶の持続時間（秒）
+    [SerializeField] private float stunDuration = 3f;              // 気絶時間 (秒)
 
     [Header("FOV 視野設定")]
     [SerializeField] private Transform playerTransform;
     [SerializeField] private float viewDistance = 10f;
     [SerializeField][Range(0f, 360f)] private float viewAngle = 90f;
     [SerializeField] private LayerMask obstacleMask;
+    [Tooltip("Raycast を発射する目の高さ")]
+    [SerializeField] private float eyeHeight = 1.5f;
+    [Tooltip("この距離以内なら角度・遮蔽を無視して必ず発見")]
+    [SerializeField] private float closeDetectRadius = 3f;
 
     [Header("足音設定")]
-    // 足音を発生させる間隔
-    [SerializeField] private float footstepInterval = 0.7f;
-    // ChasePlayer 時の足音間隔
-    [SerializeField] private float footstepIntervalChase = 0.35f;
-    // 足音のノイズ半径 (SoundManager.EmitNoise に渡す)
-    [SerializeField] private float footstepNoiseRadius = 5f;
+    [SerializeField] private float footstepInterval = 0.7f;        // 通常時の足音間隔
+    [SerializeField] private float footstepIntervalChase = 0.35f;  // 追跡時の足音間隔
+    [SerializeField] private float footstepNoiseRadius = 5f;       // SoundManager に渡すノイズ半径
+
     // EnemyFootstepAudio から参照するためのプロパティ
     public float FootstepNoiseRadius => footstepNoiseRadius;
-    // 足音 3D 再生用コンポーネント
+
     private EnemyFootstepAudio _footstepAudio;
-    // 足音タイマー
     private float _footstepTimer = 0f;
 
     // ───────────────────────────────────────────
@@ -74,7 +79,6 @@ public class InvisibleMonster : MonoBehaviour
 
     // Patrol
     private int _waypointIndex = 0;
-    // Patrol 待機タイマー
     private float _waypointWaitTimer = 0f;
     private bool _isWaitingAtWaypoint = false;
 
@@ -83,22 +87,21 @@ public class InvisibleMonster : MonoBehaviour
 
     // Searching
     private float _searchTimer = 0f;
-    // Searching 経路安全化待機
-    private bool _searchWaitingForPath = false;
+    private bool _searchWaitingForPath = false;   // 経路計算直後の安定化待機
+    private Vector3 _searchOrigin;   // 探索の中心点
 
     // ChasePlayer
-    private bool _isPlayerInSight = false;      // 現在のフレームが視界内にあるかどうか
-    private Vector3 _lastSeenPosition;          // 最後に視界から見た位置
-    private bool _hasLastSeenPosition = false;  // _lastSeenPosition が有効かどうか
-    private bool _chaseLostDestSet = false;      // 視界外で目的地を1回だけ設定するフラグ
+    private bool _isPlayerInSight = false;
+    private Vector3 _lastSeenPosition;            // 最後に視界から見た位置
+    private bool _hasLastSeenPosition = false;
+    private bool _chaseLostDestSet = false;       // 視界外で目的地を1回だけ設定するフラグ
+    private float _loseSightTimer = 0f;           // 視野喪失からの経過時間 (grace 用)
 
     // Stunned
-    private float _stunTimer = 0f;              // 残りスタン時間
+    private float _stunTimer = 0f;
 
-    // Renderer (SetVisible用)
+    // SetVisible / SetStunnedColor 用
     private Renderer[] _renderers;
-
-    // 元のマテリアルカラーを保持
     private Color[] _originalColors;
 
     // ───────────────────────────────────────────
@@ -106,28 +109,22 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
     private void Awake()
     {
-		//他からの参照用に初期化が早いAwakeで行う
-		// NavMeshAgent コンポーネントを取得
-		_agent = GetComponent<NavMeshAgent>();
+        // 他からの参照用に Awake で初期化
+        _agent = GetComponent<NavMeshAgent>();
+        _renderers = GetComponentsInChildren<Renderer>();
 
-		// Renderer を全て取得しておく (SetVisible で使用)
-		_renderers = GetComponentsInChildren<Renderer>();
-
-        // 元のマテリアルカラーを保存
+        // 元のマテリアルカラーを保存 (スタン解除時に戻すため)
         _originalColors = new Color[_renderers.Length];
-        for(int i = 0; i < _renderers.Length; i++)
+        for (int i = 0; i < _renderers.Length; i++)
         {
             if (_renderers[i].material.HasProperty("_Color"))
-            {
                 _originalColors[i] = _renderers[i].material.color;
-            }
         }
-
     }
 
     private void Start()
     {
-        // 足音コンポーネントを取得（なければ自動追加）
+        // 足音コンポーネントを取得 (なければ自動追加)
         _footstepAudio = GetComponent<EnemyFootstepAudio>();
         if (_footstepAudio == null)
             _footstepAudio = gameObject.AddComponent<EnemyFootstepAudio>();
@@ -138,7 +135,7 @@ public class InvisibleMonster : MonoBehaviour
             if (player != null)
                 playerTransform = player.transform;
             else
-                Debug.LogWarning("[InvisibleMonster] Playerタグを持つオブジェクトが見つかりませんでした");
+                Debug.LogWarning("[InvisibleMonster] Player タグのオブジェクトが見つかりません");
         }
 
         EnterState(State.Patrol);
@@ -146,7 +143,7 @@ public class InvisibleMonster : MonoBehaviour
 
     private void Update()
     {
-        // スタン中はFOVチェックと状態更新を完全にスキップ
+        // スタン中は FOV も状態更新もスキップ
         if (_currentState == State.Stunned)
         {
             UpdateStunned();
@@ -154,7 +151,7 @@ public class InvisibleMonster : MonoBehaviour
         }
 
         CheckFieldOfView();
-        UpdateFootstep();   // 足音タイマーを毎フレーム更新
+        UpdateFootstep();
 
         switch (_currentState)
         {
@@ -170,15 +167,13 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
 
     /// <summary>
-    /// 移動中のみ一定間隔で足音ノイズを発生させます。
-    /// タイマー方式なので毎フレーム重くなりません。
+    /// 移動中のみ一定間隔で足音ノイズを発生させる。
     /// </summary>
     private void UpdateFootstep()
     {
         // 停止中・待機中は足音なし
         if (_agent.isStopped || _agent.velocity.sqrMagnitude < 0.01f)
         {
-            // 移動が止まったら再生中のクリップも即座に停止
             if (_footstepAudio != null) _footstepAudio.StopFootstep();
             return;
         }
@@ -186,21 +181,16 @@ public class InvisibleMonster : MonoBehaviour
         _footstepTimer -= Time.deltaTime;
         if (_footstepTimer > 0f) return;
 
-        // 状態によって間隔を切り替え
-        // ChasePlayer → 速い間隔 / それ以外 → 通常間隔
+        // ChasePlayer は速い間隔
         _footstepTimer = (_currentState == State.ChasePlayer)
             ? footstepIntervalChase
             : footstepInterval;
 
-        // SoundManager にノイズを通知
         if (SoundManager.Instance != null)
             SoundManager.Instance.EmitNoise(transform.position, footstepNoiseRadius, NoiseSourceType.Enemy);
 
-        // 3D 足音を AudioSource で再生
         if (_footstepAudio != null)
             _footstepAudio.PlayFootstep();
-
-        // Debug.Log($"[InvisibleMonster] 足音発生 ({_currentState}) interval={_footstepTimer:F2}s");
     }
 
     // ───────────────────────────────────────────
@@ -208,47 +198,71 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
 
     /// <summary>
-    /// 毎フレーム、視界内にいるかどうかを判断します。
-    /// - _isPlayerInSight : 今回のフレームが視界内にあるかどうか
-    /// - _lastSeenPosition: 視界内にいる間は常に更新
+    /// 毎フレーム視界内かどうかを判定する。
+    /// - closeDetectRadius 内なら角度・遮蔽を無視して発見
+    /// - 追跡中は視野角を chaseViewAngleMultiplier 倍に拡大
+    /// - Raycast は eyeHeight オフセットから発射
     /// </summary>
     private void CheckFieldOfView()
     {
         if (playerTransform == null) return;
 
         Vector3 toPlayer = playerTransform.position - transform.position;
+        float distance = toPlayer.magnitude;
+
+        // 近距離自動検知
+        if (distance <= closeDetectRadius)
+        {
+            OnPlayerSpotted();
+            return;
+        }
 
         // 距離チェック
-        if (toPlayer.magnitude > viewDistance)
+        if (distance > viewDistance)
         {
             _isPlayerInSight = false;
             return;
         }
 
-        // 角度チェック
+        // 角度チェック (追跡中は視野拡大)
+        float effectiveAngle = (_currentState == State.ChasePlayer)
+            ? viewAngle * chaseViewAngleMultiplier
+            : viewAngle;
+
         float angle = Vector3.Angle(transform.forward, toPlayer);
-        if (angle > viewAngle * 0.5f)
+        if (angle > effectiveAngle * 0.5f)
         {
             _isPlayerInSight = false;
             return;
         }
 
-        // Raycast 障害物チェック
-        if (Physics.Raycast(transform.position, toPlayer.normalized, out RaycastHit hit, viewDistance, obstacleMask))
+        // 目の高さからプレイヤーの胴体へ Raycast
+        Vector3 eyePos = transform.position + Vector3.up * eyeHeight;
+        Vector3 targetPos = playerTransform.position + Vector3.up * 0.5f;
+        Vector3 dir = (targetPos - eyePos).normalized;
+        float dist = Vector3.Distance(eyePos, targetPos);
+
+        if (Physics.Raycast(eyePos, dir, out RaycastHit hit, dist, obstacleMask))
         {
-            Debug.Log("enemy fovチェック  障害物");
-            Debug.DrawRay(transform.position, toPlayer.normalized * hit.distance, Color.red);
+            Debug.DrawRay(eyePos, dir * hit.distance, Color.red);
             _isPlayerInSight = false;
             return;
         }
 
-        // すべての条件をクリア → 視界内にいる
-        Debug.DrawRay(transform.position, toPlayer.normalized * viewDistance, Color.green);
+        Debug.DrawRay(eyePos, dir * dist, Color.green);
+        OnPlayerSpotted();
+    }
+
+    /// <summary>
+    /// プレイヤー発見時の共通処理。必要なら ChasePlayer に遷移。
+    /// </summary>
+    private void OnPlayerSpotted()
+    {
         _isPlayerInSight = true;
-        _lastSeenPosition = playerTransform.position; // 見るたびに最後の位置を更新
+        _lastSeenPosition = playerTransform.position;
         _hasLastSeenPosition = true;
+        _loseSightTimer = 0f;
 
-        // 他の状態で発見した場合、ChasePlayerに切り替える
         if (_currentState != State.ChasePlayer)
             EnterState(State.ChasePlayer);
     }
@@ -258,18 +272,15 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
     private void EnterState(State newState)
     {
-        // 別の状態に切り替えると待機状態がリセットされる
+        // 状態切替時はウェイポイント待機をリセット
         _isWaitingAtWaypoint = false;
-
         _currentState = newState;
 
         switch (newState)
         {
             case State.Patrol:
-                // 移動を再開してウェイポイントへ向かう
                 _agent.isStopped = false;
                 _agent.speed = patrolSpeed;
-                // 追跡モード解除 → 通常の足音間隔に戻す
                 if (_footstepAudio != null) _footstepAudio.SetChaseMode(false);
                 MoveToCurrentWaypoint();
                 Debug.Log("[InvisibleMonster] 状態: Patrol");
@@ -285,32 +296,31 @@ public class InvisibleMonster : MonoBehaviour
             case State.ChasePlayer:
                 _agent.isStopped = false;
                 _agent.speed = chasePlayerSpeed;
-                _chaseLostDestSet = false; //  視界外リセット
-                // 追跡モード開始 → 即座に足音を速い間隔に切り替え
+                _chaseLostDestSet = false;
+                _loseSightTimer = 0f;
                 if (_footstepAudio != null) _footstepAudio.SetChaseMode(true);
-                Debug.Log("[InvisibleMonster] 状態: ChasePlayer → プレイヤー発見");
+                Debug.Log("[InvisibleMonster] 状態: ChasePlayer");
                 break;
 
             case State.Searching:
                 _agent.isStopped = false;
                 _agent.speed = searchSpeed;
                 _searchTimer = searchDuration;
-                _searchWaitingForPath = true; // Searching開始時は最初の目的地設定を待機状態にする
-                // _lastSeenPosition が有効なら最後に見た位置に、なければ現在位置を基準に探索
-                Vector3 searchOrigin = _hasLastSeenPosition ? _lastSeenPosition : transform.position;
-                _agent.SetDestination(searchOrigin);
+                _searchWaitingForPath = true;
+                // プレイヤーを見たことあればその位置、なければ今いる場所を基準にする
+                _searchOrigin = _hasLastSeenPosition ? _lastSeenPosition : transform.position;
+                _agent.SetDestination(_searchOrigin);
                 if (_footstepAudio != null) _footstepAudio.SetChaseMode(false);
-                Debug.Log("[InvisibleMonster] 状態: Searching → 最後の位置に移動");
+                Debug.Log("[InvisibleMonster] 状態: Searching");
                 break;
 
             case State.Stunned:
-                // 移動を完全停止
                 _agent.isStopped = true;
-                _agent.velocity = Vector3.zero;  // 残留速度もリセット
-                if (_footstepAudio != null) _footstepAudio.StopFootstep(); 
-                SetStunnedColor(true); 
+                _agent.velocity = Vector3.zero;     // 残留速度もリセット
+                if (_footstepAudio != null) _footstepAudio.StopFootstep();
+                SetStunnedColor(true);
                 _stunTimer = stunDuration;
-                Debug.Log($"[InvisibleMonster] 状態: Stunned → {stunDuration}秒間気絶");
+                Debug.Log($"[InvisibleMonster] 状態: Stunned ({stunDuration}s)");
                 break;
         }
     }
@@ -322,25 +332,23 @@ public class InvisibleMonster : MonoBehaviour
     {
         if (waypoints == null || waypoints.Length == 0) return;
 
-        // 待機中はタイマーでカウント
+        // 待機中はタイマーカウント
         if (_isWaitingAtWaypoint)
         {
             _waypointWaitTimer -= Time.deltaTime;
             if (_waypointWaitTimer <= 0f)
             {
-                // 待機終了 → 次のウェイポイントへ移動
                 _isWaitingAtWaypoint = false;
-                _agent.isStopped = false;          //  移動再開を先に行う
+                _agent.isStopped = false;
                 _waypointIndex = (_waypointIndex + 1) % waypoints.Length;
                 MoveToCurrentWaypoint();
             }
-            return;                                //  待機中は到着判定をスキップ
+            return;
         }
 
-        // ウェイポイント到着判定 (isStopped=falseのときのみ実行)
+        // 到着判定 → 待機開始
         if (!_agent.isStopped && !_agent.pathPending && _agent.remainingDistance <= waypointStopDistance)
         {
-            // 待機開始
             _isWaitingAtWaypoint = true;
             _waypointWaitTimer = waypointWaitTime;
             _agent.isStopped = true;
@@ -350,14 +358,12 @@ public class InvisibleMonster : MonoBehaviour
     private void UpdateChaseSound()
     {
         if (!_agent.pathPending && _agent.remainingDistance <= chaseStopDistance)
-        {
             EnterState(State.Searching);
-        }
     }
 
     /// <summary>
-    /// 視野内：プレイヤーのリアルタイム追跡
-    /// 視界外：最後に見た位置(_lastSeenPosition)に移動してからSearchingに切り替え
+    /// 視野内: プレイヤーをリアルタイム追跡。
+    /// 視野外: loseSightGrace 秒だけ追跡継続、過ぎたら最後の位置 → Searching。
     /// </summary>
     private void UpdateChasePlayer()
     {
@@ -369,33 +375,42 @@ public class InvisibleMonster : MonoBehaviour
 
         if (_isPlayerInSight)
         {
-            // 視界内 → プレイヤーが一定距離以上動いた時だけ目的地を更新
             _chaseLostDestSet = false;
+            _loseSightTimer = 0f;
+
+            // プレイヤーが一定距離以上動いた時だけ目的地更新
             float distFromDest = Vector3.Distance(_agent.destination, playerTransform.position);
             if (distFromDest > 0.5f)
-            {
                 _agent.SetDestination(playerTransform.position);
-            }
         }
         else
         {
-            // 視界外 → 最後に見た位置を1回だけ設定
+            // 視野喪失の猶予時間中はプレイヤーを追い続ける (一瞬の遮蔽に対応)
+            _loseSightTimer += Time.deltaTime;
+
+            if (_loseSightTimer < loseSightGrace)
+            {
+                _lastSeenPosition = playerTransform.position;
+                _agent.SetDestination(playerTransform.position);
+                return;
+            }
+
+            // 猶予終了 → 最後に見た位置を1回だけ設定
             if (!_chaseLostDestSet)
             {
                 Vector3 destination = _lastSeenPosition;
 
-                // 最後に見た位置が近すぎる場合 → プレイヤーの逃走方向に予測地点を設定
+                // 近すぎる場合は逃走方向に予測地点
                 float distToLastSeen = Vector3.Distance(transform.position, _lastSeenPosition);
                 if (distToLastSeen <= chaseStopDistance * 2f)
                 {
-                    // 敵→プレイヤー方向にsearchRadius分だけ先の地点を予測
                     Vector3 escapeDir = (playerTransform.position - transform.position).normalized;
                     Vector3 predicted = transform.position + escapeDir * searchRadius;
 
                     if (NavMesh.SamplePosition(predicted, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
                     {
                         destination = hit.position;
-                        _lastSeenPosition = destination; // Searching でもこの位置を基準にする
+                        _lastSeenPosition = destination;
                         Debug.Log($"[InvisibleMonster] 近距離逃走検知 → 予測地点 {destination}");
                     }
                 }
@@ -404,27 +419,24 @@ public class InvisibleMonster : MonoBehaviour
                 _chaseLostDestSet = true;
             }
 
-            // 最後の位置に到達したらSearchingに切り替え
-            bool arrived = !_agent.pathPending && _agent.remainingDistance <= chaseStopDistance;
-
-            if (arrived)
+            // 最後の位置に到達したら Searching へ
+            if (!_agent.pathPending && _agent.remainingDistance <= chaseStopDistance)
             {
                 Debug.Log("[InvisibleMonster] 最後の位置に到達 → Searching");
                 EnterState(State.Searching);
             }
         }
 
-        // あまりにも遠くなると諦める
+        // 距離が離れすぎたら諦める
         if (Vector3.Distance(transform.position, playerTransform.position) > losePlayerDistance)
         {
-            Debug.Log("[InvisibleMonster] 追跡放棄 距離超過 → Searching");
+            Debug.Log("[InvisibleMonster] 追跡放棄 → Searching");
             EnterState(State.Searching);
         }
     }
 
     /// <summary>
-    /// 最後に見た位置に到達した後、周囲をランダムに探索。
-    /// searchDuration が終了したら Patrol に戻る。
+    /// 最後に見た位置を中心にランダム探索。searchDuration 経過で Patrol に戻る。
     /// </summary>
     private void UpdateSearching()
     {
@@ -436,7 +448,6 @@ public class InvisibleMonster : MonoBehaviour
             return;
         }
 
-        // 経路計算中は待機
         if (_agent.pathPending)
         {
             _searchWaitingForPath = true;
@@ -450,17 +461,15 @@ public class InvisibleMonster : MonoBehaviour
             return;
         }
 
-        // 到着判定 → 次のランダム地点に移動
         if (_agent.remainingDistance <= waypointStopDistance)
         {
             SetRandomSearchDestination();
-            _searchWaitingForPath = true; // 新しい経路も安定化待機
+            _searchWaitingForPath = true;
         }
     }
 
     /// <summary>
-    /// スタンタイマーをカウントダウンし、時間が切れたらPatrolに復帰します。
-    /// スタン中はFOVチェックも状態遷移も行いません。
+    /// スタンタイマーをカウントダウンし、時間切れで Patrol に復帰。
     /// </summary>
     private void UpdateStunned()
     {
@@ -468,16 +477,15 @@ public class InvisibleMonster : MonoBehaviour
 
         if (_stunTimer <= 0f)
         {
-            Debug.Log("[InvisibleMonster] スタン解除 → Patrol に復帰");
+            Debug.Log("[InvisibleMonster] スタン解除 → Patrol");
             SetStunnedColor(false);
-            // 移動を再開してPatrolへ
             _agent.isStopped = false;
             EnterState(State.Patrol);
         }
     }
 
     /// <summary>
-    /// スタン時に赤く、解除時に元の色に戻す
+    /// スタン時に赤く、解除時に元の色に戻す。
     /// </summary>
     private void SetStunnedColor(bool stunned)
     {
@@ -499,8 +507,8 @@ public class InvisibleMonster : MonoBehaviour
 
     private void SetRandomSearchDestination()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * searchRadius + _lastSeenPosition;
-        randomDirection.y = transform.position.y; // 高さを現在の位置に合わせる
+        Vector3 randomDirection = Random.insideUnitSphere * searchRadius + _searchOrigin;
+        randomDirection.y = transform.position.y;
 
         if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, searchRadius, NavMesh.AllAreas))
         {
@@ -508,9 +516,8 @@ public class InvisibleMonster : MonoBehaviour
         }
         else
         {
-            // サンプリング失敗時は最後に見た位置に戻る
-            _agent.SetDestination(_lastSeenPosition);
-            Debug.Log("[InvisibleMonster] NavMesh サンプリング失敗 → 最後の位置へ");
+            _agent.SetDestination(_searchOrigin);
+            Debug.Log("[InvisibleMonster] NavMesh サンプリング失敗");
         }
     }
 
@@ -519,12 +526,11 @@ public class InvisibleMonster : MonoBehaviour
     // ───────────────────────────────────────────
 
     /// <summary>
-    /// 音が発生した位置を受け取り、ChaseSound状態に切り替えます。
-    /// スタン中・プレイヤー追跡中は無視します。
+    /// 音の発生位置を受け取り ChaseSound に遷移。
+    /// スタン中・プレイヤー追跡中は無視。
     /// </summary>
     public void HearSound(Vector3 position)
     {
-        // スタン中・プレイヤー追跡中は音を無視
         if (_currentState == State.ChasePlayer) return;
         if (_currentState == State.Stunned) return;
 
@@ -532,24 +538,20 @@ public class InvisibleMonster : MonoBehaviour
         EnterState(State.ChaseSound);
     }
 
-
     /// <summary>
-    /// 外部から Renderer の表示/非表示を切り替えます。
+    /// Renderer の表示/非表示を切り替える。
     /// </summary>
     public void SetVisible(bool visible)
     {
         foreach (Renderer r in _renderers)
             r.enabled = visible;
-
-        Debug.Log($"[InvisibleMonster] SetVisible({visible})");
     }
 
     /// <summary>
-    /// 外部から呼び出すことで、どの状態からでも気絶状態に遷移します。
+    /// どの状態からでも気絶状態に遷移する。すでにスタン中なら時間延長。
     /// </summary>
     public void OnStunned()
     {
-        // すでにスタン中なら stunTimer をリセットするだけ（スタック可能）
         if (_currentState == State.Stunned)
         {
             _stunTimer = stunDuration;
@@ -566,6 +568,7 @@ public class InvisibleMonster : MonoBehaviour
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
+        // ウェイポイント
         if (waypoints != null)
         {
             Gizmos.color = Color.cyan;
@@ -586,6 +589,11 @@ public class InvisibleMonster : MonoBehaviour
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(transform.position, viewDistance);
 
+        // 近距離自動検知範囲
+        Gizmos.color = new Color(1f, 0f, 0f, 0.5f);
+        Gizmos.DrawWireSphere(transform.position, closeDetectRadius);
+
+        // 視野角の境界
         float halfAngle = viewAngle * 0.5f;
         Vector3 leftBoundary = Quaternion.Euler(0, -halfAngle, 0) * transform.forward * viewDistance;
         Vector3 rightBoundary = Quaternion.Euler(0, halfAngle, 0) * transform.forward * viewDistance;
@@ -594,6 +602,7 @@ public class InvisibleMonster : MonoBehaviour
         Gizmos.DrawRay(transform.position, leftBoundary);
         Gizmos.DrawRay(transform.position, rightBoundary);
 
+        // プレイヤーへのライン
         if (playerTransform != null)
         {
             Vector3 toPlayer = playerTransform.position - transform.position;
@@ -603,7 +612,7 @@ public class InvisibleMonster : MonoBehaviour
             Gizmos.DrawLine(transform.position, playerTransform.position);
         }
 
-        // 最後に見た位置の視覚化（追跡中に視界外のときに表示）
+        // 最後に見た位置 (追跡中で視界外のとき)
         if (_currentState == State.ChasePlayer && !_isPlayerInSight)
         {
             Gizmos.color = Color.magenta;
@@ -611,7 +620,7 @@ public class InvisibleMonster : MonoBehaviour
             Gizmos.DrawLine(transform.position, _lastSeenPosition);
         }
 
-        // スタン中はオレンジ色の円で表示
+        // スタン中
         if (_currentState == State.Stunned)
         {
             Gizmos.color = new Color(1f, 0.5f, 0f, 0.5f);
