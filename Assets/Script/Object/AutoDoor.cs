@@ -26,6 +26,7 @@ public class AutoDoor : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+        Debug.Log("Door Trigger Hit: " + other.name + " / tag: " + other.tag);
 
         if (other.CompareTag("Player")&&isOpen)
         {
@@ -44,6 +45,7 @@ public class AutoDoor : MonoBehaviour
     //îÒìØä˙Ç‚Ç©ÇÁèdÇ≠Ç»Ç¢ÇÊ
     void OpenDoor()
     {
+        Debug.Log("Opening Door");
         if (moveCoroutine != null) StopCoroutine(moveCoroutine);
         moveCoroutine = StartCoroutine(MoveDoor(
             closedPosL + openOffsetL,
