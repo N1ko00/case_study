@@ -10,12 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 785dafbfcc4d4cc4f84e9c69f5a412de, type: 3}
-  m_Name: Memo_data
+  m_Name: Key_data_3
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: memo
-  icon: {fileID: 113573173, guid: 6977b4906a37d1c4c956f228a60aacfd, type: 3}
-  type: 1
+  itemName: Key_3
+  icon: {fileID: 509806681, guid: f293e91a57c121c4884ff5659cc2cbed, type: 3}
+  type: 3
   isUsed: 0
-  slotTypeIndex: 1
+  slotTypeIndex: 3
   isConsumable: 0
   description: 
