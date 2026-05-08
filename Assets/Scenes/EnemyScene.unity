@@ -297,6 +297,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6201871152516234186, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: far clip plane
+      value: 1000
+      objectReference: {fileID: 0}
     - target: {fileID: 7638695607933549957, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
       propertyPath: m_Name
       value: Player
@@ -7036,6 +7040,11 @@ Transform:
   - {fileID: 647775575}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1771402240 stripped
+MeshCollider:
+  m_CorrespondingSourceObject: {fileID: 5842109032457005729, guid: 20ca4517d3eb1c249bbc55bb2cf95ea1, type: 3}
+  m_PrefabInstance: {fileID: 5204751143296498337}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1824107402
 GameObject:
   m_ObjectHideFlags: 0
@@ -8121,6 +8130,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3005681356376422824, guid: 20ca4517d3eb1c249bbc55bb2cf95ea1, type: 3}
+      propertyPath: doorMeshCollider
+      value: 
+      objectReference: {fileID: 1771402240}
     - target: {fileID: 3838728897472084067, guid: 20ca4517d3eb1c249bbc55bb2cf95ea1, type: 3}
       propertyPath: m_LocalPosition.x
       value: 17.472
@@ -8164,6 +8177,14 @@ PrefabInstance:
     - target: {fileID: 5705432903157840146, guid: 20ca4517d3eb1c249bbc55bb2cf95ea1, type: 3}
       propertyPath: m_Name
       value: locker_clean_b
+      objectReference: {fileID: 0}
+    - target: {fileID: 5842109032457005729, guid: 20ca4517d3eb1c249bbc55bb2cf95ea1, type: 3}
+      propertyPath: m_Convex
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5842109032457005729, guid: 20ca4517d3eb1c249bbc55bb2cf95ea1, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

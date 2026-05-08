@@ -29,8 +29,12 @@ public class LockerDoor : MonoBehaviour
     [SerializeField] private AudioClip closeSE;
     [SerializeField] private float noiseRadius = 6f;    // モンスターに聞こえる範囲(一応、作っておく)
 
+    [Header("Door Collider設定")]
+    [SerializeField] private MeshCollider doorMeshCollider;
+
     private AudioSource _audio;
     private bool _isOpen = false;
+    private bool _isMoving = false;           // ドアが回転中か 
     private bool _playerInInteract = false;   // 操作範囲内にいるか
     private bool _playerInHide = false;       // 隠れゾーン内にいるか
     private Quaternion _closedRot;
@@ -65,6 +69,13 @@ public class LockerDoor : MonoBehaviour
         _hiddenLayer = LayerMask.NameToLayer(hiddenLayerName);
         if (_hiddenLayer < 0)
             Debug.LogError($"[LockerDoor] '{hiddenLayerName}' レイヤー作ってない", this);
+
+        // MeshCollider が未設定なら doorPivot 以下から自動取得
+        if (doorMeshCollider == null)
+            doorMeshCollider = doorPivot.GetComponentInChildren<MeshCollider>();
+
+        if (doorMeshCollider == null)
+            Debug.LogWarning("[LockerDoor] doorPivot 以下に MeshCollider が見つからない", this);
 
         // 子トリガーのイベントを拾う
         if (interactZone != null)
@@ -101,18 +112,37 @@ public class LockerDoor : MonoBehaviour
             Toggle();
         }
 
-        // 目標角度に向けて少しずつ回す
         Quaternion target = _isOpen ? _openRot : _closedRot;
-        doorPivot.localRotation = Quaternion.RotateTowards(
-            doorPivot.localRotation,
-            target,
-            openSpeed * Time.deltaTime
-        );
+
+        if (_isMoving)
+        {
+            doorPivot.localRotation = Quaternion.RotateTowards(
+                doorPivot.localRotation,
+                target,
+                openSpeed * Time.deltaTime
+            );
+
+            // 目標角度に到達したらコライダーを戻す
+            if (Quaternion.Angle(doorPivot.localRotation, target) < 0.1f)
+            {
+                doorPivot.localRotation = target;
+                _isMoving = false;
+                SetDoorCollider(true);
+            }
+        }
 
         // 閉まってて中にいる時だけ隠れる
         bool shouldHide = !_isOpen && _playerInHide;
         if (shouldHide && !_isPlayerHidden) SetPlayerHidden(true);
         else if (!shouldHide && _isPlayerHidden) SetPlayerHidden(false);
+    }
+
+    private void SetDoorCollider(bool enabled)
+    {
+        if (doorMeshCollider != null)
+        {
+            doorMeshCollider.enabled = enabled;
+        }
     }
 
     // プレイヤーのレイヤーを Hidden に切り替え (戻す時は元のレイヤーに)
@@ -147,6 +177,9 @@ public class LockerDoor : MonoBehaviour
     public void Toggle()
     {
         _isOpen = !_isOpen;
+        _isMoving = true;
+
+        SetDoorCollider(false);
 
         AudioClip clip = _isOpen ? openSE : closeSE;
         if (clip != null) _audio.PlayOneShot(clip);
