@@ -34,7 +34,7 @@ public class DoorSwitch : MonoBehaviour
         {
             isOn = true;
 
-            targetDoor.SetOpenDoor(true);
+            targetDoor.SetUnlocked(true);
 
             // ÉåÉoÅ[ì|Ç∑
             lever.localEulerAngles = onRotation;
