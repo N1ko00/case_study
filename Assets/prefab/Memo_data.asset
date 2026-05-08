@@ -15,6 +15,7 @@ MonoBehaviour:
   itemName: memo
   icon: {fileID: 113573173, guid: 6977b4906a37d1c4c956f228a60aacfd, type: 3}
   type: 1
+  isUsed: 0
   slotTypeIndex: 1
-  isConsumable: 1
+  isConsumable: 0
   description: 

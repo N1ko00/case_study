@@ -15,5 +15,7 @@ MonoBehaviour:
   itemName: Key
   icon: {fileID: 509806681, guid: f293e91a57c121c4884ff5659cc2cbed, type: 3}
   type: 0
-  isConsumable: 1
+  isUsed: 0
+  slotTypeIndex: 0
+  isConsumable: 0
   description: 

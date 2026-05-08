@@ -62,13 +62,13 @@ public class EnemyFootstepAudio : MonoBehaviour
         // ピッチのみ更新 (ボリュームは Unity 3D オーディオに完全に任せる)
         _audioSource.pitch = _isChasing ? chasePitch : normalPitch;
 
-        // 範囲外に出たら即停止
-        if (_playerTransform != null)
-        {
-            float dist = Vector3.Distance(transform.position, _playerTransform.position);
-            if (dist >= NoiseRadius)
-                _audioSource.Stop();
-        }
+        //// 範囲外に出たら即停止
+        //if (_playerTransform != null)
+        //{
+        //    float dist = Vector3.Distance(transform.position, _playerTransform.position);
+        //    if (dist >= NoiseRadius)
+        //        _audioSource.Stop();
+        //}
     }
 
     // ───────────────────────────────────────────
@@ -88,11 +88,11 @@ public class EnemyFootstepAudio : MonoBehaviour
 
         // 2次関数 のカスタムカーブを設定
         AnimationCurve curve = new AnimationCurve(
-            new Keyframe(0f, 1f, 0f, 0f),    // t=0   → y=1.0   
-            new Keyframe(0.25f, 0.5625f, -1f, -1f), // t=0.25→ y=0.5625
-            new Keyframe(0.5f, 0.25f, -1f, -1f),  // t=0.5 → y=0.25
-            new Keyframe(0.75f, 0.0625f, -0.5f, -0.5f), // t=0.75→ y=0.0625
-            new Keyframe(1f, 0f, -0.5f, 0f)  // t=1   → y=0.0   (無音)
+            new Keyframe(0f, 1.0f),
+            new Keyframe(0.25f, 0.75f),
+            new Keyframe(0.5f, 0.5f),
+            new Keyframe(0.75f, 0.22f),
+            new Keyframe(1f, 0f)
         );
         _audioSource.SetCustomCurve(AudioSourceCurveType.CustomRolloff, curve);
 
@@ -112,7 +112,7 @@ public class EnemyFootstepAudio : MonoBehaviour
             Debug.LogWarning("[EnemyFootstepAudio] 足音クリップが設定されていません");
             return;
         }
-
+        // isPlaying 中は新しいクリップを再生しない (重複再生なし)
         if (_audioSource.isPlaying) return;
 
         PlayClip();
@@ -130,11 +130,10 @@ public class EnemyFootstepAudio : MonoBehaviour
     private void PlayClip()
     {
         AudioClip clip = footstepClips[Random.Range(0, footstepClips.Length)];
-        _audioSource.clip = clip;
-        // 追跡中はボリュームを倍
+        // PlayOneShot を使うと重複再生も可能 & 3D 減衰もそのまま効く
         float volume = _isChasing ? maxVolume * chaseVolumeMultiplier : maxVolume;
-        _audioSource.volume = Mathf.Clamp01(volume);
-        _audioSource.Play();
+        // AudioSource.volume は 1.0 超えも有効なので Clamp01 しない
+        _audioSource.PlayOneShot(clip, Mathf.Max(0f, volume));
     }
 
     /// <summary>
@@ -148,13 +147,8 @@ public class EnemyFootstepAudio : MonoBehaviour
 
         _isChasing = isChasing;
 
-        // 再生中ならピッチ＋ボリュームを即時反映
-        if (_audioSource.isPlaying)
-        {
-            _audioSource.pitch = _isChasing ? chasePitch : normalPitch;
-            float volume = _isChasing ? maxVolume * chaseVolumeMultiplier : maxVolume;
-            _audioSource.volume = Mathf.Clamp01(volume);
-        }
+        // ピッチは即時反映 (PlayOneShot の音は次回再生から新ボリュームが乗る)
+        _audioSource.pitch = _isChasing ? chasePitch : normalPitch;
     }
     // ───────────────────────────────────────────
     // 距離ベースボリューム計算

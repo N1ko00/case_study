@@ -35,8 +35,10 @@ public class AutoDoor : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
+
         if (!other.CompareTag("Player"))
             return;
+
 
         if (isUnlocked)
             OpenDoor();
@@ -53,6 +55,7 @@ public class AutoDoor : MonoBehaviour
 
     public void OpenDoor()
     {
+
         if (isDoorOpen)
             return;
 
@@ -63,6 +66,7 @@ public class AutoDoor : MonoBehaviour
 
         if (moveCoroutine != null)
             StopCoroutine(moveCoroutine);
+
 
         moveCoroutine = StartCoroutine(MoveDoor(
             closedPosL + openOffsetL,
@@ -88,7 +92,7 @@ public class AutoDoor : MonoBehaviour
             closedPosR
         ));
 
-        Debug.Log("ÉhÉAÇï¬ÇﬂÇÈ");
+        Debug.Log("„Éâ„Ç¢„ÇíÈñâ„ÇÅ„Çã");
     }
 
     IEnumerator MoveDoor(Vector3 targetL, Vector3 targetR)
