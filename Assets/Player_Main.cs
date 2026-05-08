@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 [RequireComponent(typeof(CharacterController))]
 public class FPSController : MonoBehaviour
 {
@@ -9,8 +10,10 @@ public class FPSController : MonoBehaviour
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public float gravity = -9.81f;
+
     [Header("アイテム取得")]
     public float itemPickupDistance = 3f;
+
     [Header("視点")]
     public float mouseSensitivity = 0.1f;
     public float minLookAngle = -75f;
@@ -37,6 +40,11 @@ public class FPSController : MonoBehaviour
     private Vector2 lookInput;
     private bool isRunning;
 
+    // ===== 追加 =====
+    [Header("プレイヤー動きカメラ止める用")]
+    [SerializeField] private bool canMove = true;
+    [SerializeField] private bool canLook = true;
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -56,16 +64,18 @@ public class FPSController : MonoBehaviour
             return;
         }
 
-        // インベントリが閉じていて、かつマウスがロックされていない場合、ロックし直す（念のため）
-        //if (Cursor.lockState != CursorLockMode.Locked)
-        //{
-        //    Cursor.lockState = CursorLockMode.Locked;
-        //    Cursor.visible = false;
-        //    Cursor.visible = false;
-        //}
+        // カメラ操作
+        if (canLook)
+        {
+            Look();
+        }
 
-        Look();
-        Move();
+        // 移動処理
+        if (canMove)
+        {
+            Move();
+        }
+
         HandleItemPickup();
     }
 
@@ -75,11 +85,11 @@ public class FPSController : MonoBehaviour
         GameObject voiceObj = new GameObject("VoiceDetectionArea");
         voiceObj.transform.SetParent(this.transform);
         voiceObj.transform.localPosition = Vector3.up * 1.5f;
+
         voiceCollider = voiceObj.AddComponent<SphereCollider>();
         voiceCollider.isTrigger = true;
         voiceCollider.radius = voiceDetectionRadius;
 
-        // 当たり判定を検知するための簡易コンポーネントを追加
         var voiceDetector = voiceObj.AddComponent<DetectionTrigger>();
         voiceDetector.areaName = "声の届く範囲";
 
@@ -87,6 +97,7 @@ public class FPSController : MonoBehaviour
         GameObject actionObj = new GameObject("ActionSoundArea");
         actionObj.transform.SetParent(this.transform);
         actionObj.transform.localPosition = Vector3.zero;
+
         actionCollider = actionObj.AddComponent<SphereCollider>();
         actionCollider.isTrigger = true;
         actionCollider.radius = actionSoundRadius;
@@ -95,8 +106,11 @@ public class FPSController : MonoBehaviour
         actionDetector.areaName = "アクション音の範囲";
     }
 
-    public void OnMove(InputAction.CallbackContext context) => moveInput = context.ReadValue<Vector2>();
-    public void OnLook(InputAction.CallbackContext context) => lookInput = context.ReadValue<Vector2>();
+    public void OnMove(InputAction.CallbackContext context)
+        => moveInput = context.ReadValue<Vector2>();
+
+    public void OnLook(InputAction.CallbackContext context)
+        => lookInput = context.ReadValue<Vector2>();
 
     public void OnRun(InputAction.CallbackContext context)
     {
@@ -107,7 +121,10 @@ public class FPSController : MonoBehaviour
     void Move()
     {
         float currentSpeed = isRunning ? runSpeed : walkSpeed;
-        Vector3 move = transform.right * moveInput.x + transform.forward * moveInput.y;
+
+        Vector3 move =
+            transform.right * moveInput.x +
+            transform.forward * moveInput.y;
 
         bool isMoving = move.magnitude > 0.1f && controller.isGrounded;
 
@@ -121,7 +138,7 @@ public class FPSController : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
-        //足音処理
+        // 足音処理
         HandleFootstep(isMoving);
     }
 
@@ -132,7 +149,9 @@ public class FPSController : MonoBehaviour
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, minLookAngle, maxLookAngle);
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
+        playerCamera.localRotation =
+            Quaternion.Euler(xRotation, 0f, 0f);
 
         transform.Rotate(Vector3.up * mouseX);
     }
@@ -149,7 +168,8 @@ public class FPSController : MonoBehaviour
 
         if (footstepTimer <= 0f)
         {
-            footstepTimer = isRunning ? footstepInterval * 0.6f : footstepInterval;
+            footstepTimer =
+                isRunning ? footstepInterval * 0.6f : footstepInterval;
 
             Debug.Log("足音発生！");
 
@@ -160,9 +180,9 @@ public class FPSController : MonoBehaviour
             );
         }
     }
+
     void HandleItemPickup()
     {
-        // 左クリック（Input System）
         if (Mouse.current.leftButton.wasPressedThisFrame)
         {
             Ray ray = new Ray(playerCamera.position, playerCamera.forward);
@@ -171,7 +191,8 @@ public class FPSController : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Item"))
                 {
-                    WorldItem item = hit.collider.GetComponent<WorldItem>();
+                    WorldItem item =
+                        hit.collider.GetComponent<WorldItem>();
 
                     if (item != null)
                     {
@@ -185,19 +206,54 @@ public class FPSController : MonoBehaviour
             }
         }
     }
+
+    // ==================================================
+    // 外部から呼べる処理
+    // ==================================================
+
+    // 移動ON/OFF
+    public void SetMoveEnabled(bool value)
+    {
+        canMove = value;
+
+        // 停止時に入力をリセット
+        if (!value)
+        {
+            moveInput = Vector2.zero;
+            isRunning = false;
+        }
+    }
+
+    // カメラON/OFF
+    public void SetLookEnabled(bool value)
+    {
+        canLook = value;
+
+        // 停止時に入力をリセット
+        if (!value)
+        {
+            lookInput = Vector2.zero;
+        }
+    }
+
+    // 両方まとめて制御
+    public void SetPlayerControl(bool move, bool look)
+    {
+        SetMoveEnabled(move);
+        SetLookEnabled(look);
+    }
 }
 
-// 判定を検知するための小さなクラス（同じファイル内でOK）
+// 判定を検知するための小さなクラス
 public class DetectionTrigger : MonoBehaviour
 {
     public string areaName;
+
     private void OnTriggerEnter(Collider other)
     {
-        // 自分自身（Player）以外が触れたらログを出す
         if (!other.CompareTag("Player"))
         {
             Debug.Log($"{areaName} に {other.name} が入りました！");
         }
     }
 }
-
