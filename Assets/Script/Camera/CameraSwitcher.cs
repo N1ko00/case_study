@@ -47,13 +47,22 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (unique)
         {
-            monster.SetVisible(false);
-            unique = false; 
+            // monsterが空っぽじゃない時だけ実行するようにしますの
+            if (monster != null)
+            {
+                monster.SetVisible(false);
+            }
+            else
+            {
+                // エラーを出さずに、警告メッセージだけコンソールにお知らせしますわ
+                Debug.LogWarning("お坊ちゃま、インスペクターでの monster の設定を忘れておりますわよ！");
+            }
+            unique = false;
         }
 
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-           ToggleCamera();
+            ToggleCamera();
         }
     }
 
