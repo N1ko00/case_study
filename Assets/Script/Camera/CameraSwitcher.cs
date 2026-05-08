@@ -47,8 +47,15 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (unique)
         {
-            monster.SetVisible(false);
-            unique = false; 
+            if (monster != null)
+            {
+                monster.SetVisible(false);
+            }
+            else
+            {
+                Debug.LogWarning("インスペクターに monster が設定されていません！");
+            }
+            unique = false;
         }
 
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
