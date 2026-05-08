@@ -3,40 +3,54 @@ using UnityEngine.InputSystem;
 
 public class KeyPadTrigger : MonoBehaviour
 {
-    //InputSystem_Actions inputAction;
+    InputSystem_Actions inputAction;
 
     public GameObject keypadUI;
+    public PasswordSystem passwordSystem;
+    public AutoDoor autoDoor;
 
     bool playerInRange = false;
 
     void Awake()
     {
-        InputManager.Instance.inputActions.Password.ShowPass.performed += OnShowPassPerformed;
+        inputAction = new InputSystem_Actions();
+        inputAction.Password.ShowPass.performed += OnShowPassPerformed;
     }
 
-    void OnDestroy()
+    void OnEnable()
     {
-        InputManager.Instance.inputActions.Password.ShowPass.performed -= OnShowPassPerformed;
+        inputAction.Enable();
+    }
+
+    void OnDisable()
+    {
+        inputAction.Disable();
     }
 
     private void OnShowPassPerformed(InputAction.CallbackContext ctx)
     {
-        if (playerInRange)
-        {
-            keypadUI.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-        }
+        if (!playerInRange)
+            return;
+
+        if (passwordSystem.IsUnlocked())
+            return;
+
+        keypadUI.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = false;
     }
 
     void OnTriggerEnter(Collider other)
     {
+        if (!other.CompareTag("Player"))
+            return;
 
-        if (other.CompareTag("Player"))
+        playerInRange = true;
+
+        if (passwordSystem.IsUnlocked())
         {
-            playerInRange = true;
-            Debug.Log("Ç¶ÅHìÆÇ¢ÇƒÇ¢ÇÈÇÒÇ≈Ç∑Ç©ÅH");
-
+            autoDoor.OpenDoor();
         }
     }
 
@@ -44,15 +58,5 @@ public class KeyPadTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
             playerInRange = false;
-    }
-
-    void OnEnable()
-    {
-        InputManager.Instance.inputActions.Password.Enable();
-    }
-
-    void OnDisable()
-    {
-        InputManager.Instance.inputActions.Password.Disable();
     }
 }
