@@ -1,31 +1,31 @@
-//using UnityEngine;
+using UnityEngine;
 
-//public class DoorOpenKey : MonoBehaviour
-//{
-//    [SerializeField] private AutoDoor targetDoor;
+public class DoorOpenKey : MonoBehaviour
+{
+    [SerializeField] private AutoDoor targetDoor;
+    [SerializeField] private ItemUsePoint itemUsePoint;
 
-//    [Header("設定")]
-//    [SerializeField] private bool unlockPermanently = true;
+    [Header("設定")]
+    [SerializeField] private bool unlockPermanently = true;
 
-//    bool used = false;
+    bool opened = false;
 
-//    public void OnUse()
-//    {
-//        if (used && unlockPermanently)
-//            return;
+    void Update()
+    {
+        // ドアが開いている場合は何もしない
+        if (opened)
+            return;
+        // アイテム使用ポイントとドアが設定されていない場合は何もしない
+        if (itemUsePoint == null || targetDoor == null)
+            return;
+        // アイテム使用しない限りドアは開かない
+        if (!itemUsePoint.IsOpened)
+            return;
+        // ドアを開ける
+        if (unlockPermanently)
+            targetDoor.SetUnlocked(true);
+        targetDoor.OpenDoor();
 
-//        if (targetDoor == null)
-//        {
-//            Debug.LogWarning("DoorOpenKey : targetDoor が未設定です");
-//            return;
-//        }
-
-//        if (unlockPermanently)
-//        {
-//            targetDoor.SetUnlocked(true);
-//            used = true;
-//        }
-
-//        targetDoor.OpenDoor();
-//    }
-//}
+        opened = true;
+    }
+}
