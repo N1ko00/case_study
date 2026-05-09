@@ -1022,6 +1022,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5064678915178339313, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: isUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064678915178339313, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: usePassword
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5424300698248155420, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
       propertyPath: m_Name
       value: KeyDoor
