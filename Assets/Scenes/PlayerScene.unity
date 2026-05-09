@@ -974,6 +974,71 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 6835610416286570560, guid: 4ab0eaaecf596d545b7bdee4f6ca1057, type: 3}
   m_PrefabInstance: {fileID: 3844093165831927942}
   m_PrefabAsset: {fileID: 0}
+--- !u!1001 &8986865012961914804
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.81
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 1.02562
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.0519385
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3682117193017040204, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064678915178339313, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: isUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5064678915178339313, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: usePassword
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5424300698248155420, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
+      propertyPath: m_Name
+      value: KeyDoor
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: bee26a97b62e8c0489991d9187e1eafd, type: 3}
 --- !u!114 &9010741521809473678 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1544620790396066, guid: 6ff95657e44ffef4880aa96bdfa5e4b5, type: 3}
@@ -1057,3 +1122,4 @@ SceneRoots:
   - {fileID: 978116789}
   - {fileID: 318985394}
   - {fileID: 709213859295670363}
+  - {fileID: 8986865012961914804}
