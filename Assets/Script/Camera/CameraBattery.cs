@@ -6,17 +6,13 @@ using System.Collections.Generic;
 public class BatteryManager : MonoBehaviour
 {
 
-    // カメラごとのバッテリー情報をまとめるクラス
-    [System.Serializable]
-    public class BatteryData
-    {
-        public CameraSwitcher.CameraState cameraState; // どのカメラか
-        public float maxBattery = 100f;                // 最大バッテリー
-        public float decreaseRate = 5f;                // 減少スピード
-        [HideInInspector] public float currentBattery; // 現在のバッテリー
-    }
+    [Header("バッテリー設定")]
+    public float maxBattery = 100f;                // 最大バッテリー
+    public float decreaseRate = 5f;                // 減少スピード
+    private float currentBattery;                  // 現在のバッテリー
 
     [Header("UIの参照")]
+    public GameObject batteryUIPanel;
     public Image batteryFillImage;   // ゲージ用の画像(BatteryFill)
     public TextMeshProUGUI batteryText; // %表示用
 
@@ -24,74 +20,52 @@ public class BatteryManager : MonoBehaviour
     [Tooltip("CameraSwitcherがアタッチされているオブジェクトを入れてください")]
     public CameraSwitcher cameraSwitcher;
 
-    [Header("各カメラのバッテリー設定")]
-    public List<BatteryData> batterySettings = new List<BatteryData>();
-
     [Header("カラー設定")]
     public Color normalColor;
     public Color warningColor;
 
-    // 現在表示しているカメラのバッテリーデータを保持
-    private BatteryData activeBatteryData;
-
     void Start()
     {
         // ゲーム開始時にバッテリーを最大値
-        foreach (var data in batterySettings)
-        {
-            data.currentBattery = data.maxBattery;
-        }
-
-        if (cameraSwitcher == null)
-        {
-            UpdateActiveBatteryData();
-        }
+        currentBattery = maxBattery;
+        UpdateUI();
     }
 
     void Update()
     {
-        if (cameraSwitcher == null) return;
+        // 0番目（メイン）以外のカメラを表示している時は「監視カメラ使用中」
+        bool isSubCamera = (cameraSwitcher != null && cameraSwitcher.CurrentCameraIndex != 0);
 
-        // カメラが切り替わったかチェック
-        if (activeBatteryData == null || activeBatteryData.cameraState != cameraSwitcher.CurrentState)
+        if (batteryUIPanel != null)
         {
-            UpdateActiveBatteryData();
+            batteryUIPanel.SetActive(isSubCamera);
         }
 
-        // 現在表示しているカメラのデータが設定されていれば処理
-        if (activeBatteryData != null)
+        if (isSubCamera && currentBattery > 0)
         {
-            // そのカメラを見ている間だけ、バッテリーを消費
-            if (activeBatteryData.currentBattery > 0)
-            {
-                activeBatteryData.currentBattery -= activeBatteryData.decreaseRate * Time.deltaTime;
-                activeBatteryData.currentBattery = Mathf.Clamp(activeBatteryData.currentBattery, 0, activeBatteryData.maxBattery);
-            }
-
-            // 毎フレームUIを更新
-            UpdateUI(activeBatteryData);
+            currentBattery -= decreaseRate * Time.deltaTime;
+            currentBattery = Mathf.Clamp(currentBattery, 0, maxBattery);
         }
-    }
 
-    private void UpdateActiveBatteryData()
-    {
-        // 現在のカメラ状態に対応するバッテリーデータを探す
-        activeBatteryData = batterySettings.Find(b => b.cameraState == cameraSwitcher.CurrentState);
-        if (activeBatteryData == null)
+        UpdateUI();
+
+        // バッテリーが切れたら強制的にメインカメラに戻す
+        if (currentBattery <= 0 && isSubCamera)
         {
-            Debug.LogWarning("現在のカメラ状態に対応するバッテリーデータが見つかりません！ カメラ状態: " + cameraSwitcher.CurrentState);
+            cameraSwitcher.SetCameraState(0);
         }
     }
 
-    private void UpdateUI(BatteryData data)
+
+    private void UpdateUI()
     {
         // 1. ゲージの長さを更新
         if (batteryFillImage != null)
         {
-            batteryFillImage.fillAmount = data.currentBattery / data.maxBattery;
+            batteryFillImage.fillAmount = currentBattery / maxBattery;
 
             //バッテリーが20%を切ったら
-            if (data.currentBattery < 20f)
+            if (currentBattery < 20f)
             {
                 batteryFillImage.color = warningColor; // 赤色にする
             }
@@ -104,7 +78,7 @@ public class BatteryManager : MonoBehaviour
         // 2. テキストを更新
         if (batteryText != null)
         {
-            int percentage = Mathf.FloorToInt(data.currentBattery);
+            int percentage = Mathf.FloorToInt(currentBattery);
             batteryText.text = percentage.ToString() + "%";
         }
     }

@@ -1,45 +1,33 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class CameraSwitcher : MonoBehaviour
 {
-    // カメラの状態を管理する列挙型
-    public enum CameraState
-    {
-        Main,
-        Sub1,
-        Sub2
-    }
-
     [Header("Cameras")]
-    public Camera MainCamera;
-    public Camera SubCamera;
-    public Camera SubCamera2;
+    [Tooltip("0番目は必ずメインカメラにしてください")]
+    public List<Camera> cameras = new List<Camera>();
 
     [Header("Monster")]
-    [SerializeField] private InvisibleMonster monster; // モンスターのGameObjectをインスペクターで割り当
+    [SerializeField] private InvisibleMonster monster;
 
     [Header("UI")]
     [SerializeField] private GameObject cameraCanvas;
 
+    // 元のコードにあった変数もしっかり残しておきますわ
+    private bool unique = true;
 
-    //1回切り変数
-    bool unique = true;
+    public int CurrentCameraIndex { get; private set; } = 0;
 
-    // 現在の状態を保持します
-    public CameraState CurrentState { get; private set; }
+    // 直前に見ていた監視カメラの番号を覚える
+    private int lastSubCameraIndex = 1;
 
     void Start()
     {
-        if (MainCamera != null && SubCamera != null && SubCamera2 != null)
+        if (cameras.Count > 0)
         {
-            // 初期状態をMainカメラに設定
-            SetCameraState(CameraState.Main);
-    }
-        else
-        {
-            Debug.LogError("カメラが設定されていません");
+            SetCameraState(0); 
         }
     }
 
@@ -51,56 +39,52 @@ public class CameraSwitcher : MonoBehaviour
             {
                 monster.SetVisible(false);
             }
-            else
-            {
-                Debug.LogWarning("インスペクターに monster が設定されていません！");
-            }
             unique = false;
         }
 
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-           ToggleCamera();
+            ToggleCamera();
         }
     }
 
     //ボタン用の関数
-    public void SwitchToMain() => SetCameraState(CameraState.Main);
-    public void SwitchToSub1() => SetCameraState(CameraState.Sub1);
-    public void SwitchToSub2() => SetCameraState(CameraState.Sub2);
+    //インスペクターの「On Click()」で、この関数を選び、下の枠に 0 や 1 などの数字を入れてください
+    public void SwitchToCamera(int index)
+    {
+        SetCameraState(index);
+    }
 
     /// <summary>
     /// 状態を指定してカメラを切り替える関数です。
     /// 他のスクリプトから「switchScript.SetCameraState(CameraSwitcher.CameraState.Sub);」のように呼べます
     /// </summary>
-    public void SetCameraState(CameraState newState)
+    public void SetCameraState(int index)
     {
-        CurrentState = newState;
-        Debug.Log($"現在のカメラの状態: {CurrentState}");
+        if (index < 0 || index >= cameras.Count) return;
 
-        // 各カメラの表示状態を、現在の状態と一致するかどうかで一元化
-        if (MainCamera != null) MainCamera.gameObject.SetActive(CurrentState == CameraState.Main);
-        if (SubCamera != null) SubCamera.gameObject.SetActive(CurrentState == CameraState.Sub1);
-        if (SubCamera2 != null) SubCamera2.gameObject.SetActive(CurrentState == CameraState.Sub2);
-
-        //サブカメラ（Main以外のカメラ）が選ばれているかどうかの判定
-        bool isSubCamera = (CurrentState != CameraState.Main);
-
-        //UIとモンスターの表示を、isSubCameraの判定を使って切り替え
-        if (isSubCamera)
+        // 監視カメラ（1番以降）を選択したなら、その番号を記憶しますわ
+        if (index != 0)
         {
-            if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            lastSubCameraIndex = index;
         }
 
+        CurrentCameraIndex = index;
 
+        // 全カメラの有効・無効を一括管理いたしますわ
+        for (int i = 0; i < cameras.Count; i++)
+        {
+            if (cameras[i] != null)
+                cameras[i].gameObject.SetActive(i == CurrentCameraIndex);
+        }
+
+        // 0番目以外はすべて「サブカメラ」扱いですわ
+        bool isSubCamera = (CurrentCameraIndex != 0);
+
+        if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+
+        Cursor.visible = isSubCamera;
+        Cursor.lockState = isSubCamera ? CursorLockMode.None : CursorLockMode.Locked;
 
         if (monster != null) monster.SetVisible(isSubCamera);
     }
@@ -111,13 +95,15 @@ public class CameraSwitcher : MonoBehaviour
     /// </summary>
     public void ToggleCamera()
     {
-        if (CurrentState == CameraState.Main)
+        if (CurrentCameraIndex == 0)
         {
-            SetCameraState(CameraState.Sub1);
+            // メインなら、記憶している監視カメラへ
+            SetCameraState(lastSubCameraIndex);
         }
         else
         {
-            SetCameraState(CameraState.Main);
+            // 監視カメラなら、メインへ
+            SetCameraState(0);
         }
     }
 }
