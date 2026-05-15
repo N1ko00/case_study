@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
 using System.Collections.Generic;
 
 public class CameraSwitcher : MonoBehaviour
@@ -8,9 +9,12 @@ public class CameraSwitcher : MonoBehaviour
     [Header("Cameras")]
     [Tooltip("0�Ԗڂ͕K�����C���J�����ɂ��Ă�������")]
     public List<Camera> cameras = new List<Camera>();
-    [SerializeField] private Camera MainCamera;
-    [SerializeField] private Camera SubCamera;
-    [SerializeField] private Camera SubCamera2;
+    [FormerlySerializedAs("MainCamera")]
+    [SerializeField] private Camera mainCamera;
+    [FormerlySerializedAs("SubCamera")]
+    [SerializeField] private Camera subCamera;
+    [FormerlySerializedAs("SubCamera2")]
+    [SerializeField] private Camera subCamera2;
 
     [Header("Monster")]
     [SerializeField] private InvisibleMonster monster;
@@ -40,9 +44,9 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (cameras.Count > 0) return;
 
-        if (MainCamera != null) cameras.Add(MainCamera);
-        if (SubCamera != null) cameras.Add(SubCamera);
-        if (SubCamera2 != null) cameras.Add(SubCamera2);
+        if (mainCamera != null) cameras.Add(mainCamera);
+        if (subCamera != null) cameras.Add(subCamera);
+        if (subCamera2 != null) cameras.Add(subCamera2);
     }
 
     void Update()
