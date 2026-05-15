@@ -47,10 +47,6 @@ public class CameraSwitcher : MonoBehaviour
         AddLegacyCamera(mainCamera);
         AddLegacyCamera(subCamera);
         AddLegacyCamera(subCamera2);
-
-        mainCamera = null;
-        subCamera = null;
-        subCamera2 = null;
     }
 
     private void AddLegacyCamera(Camera legacyCamera)
