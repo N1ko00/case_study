@@ -44,9 +44,19 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (cameras.Count > 0) return;
 
-        if (mainCamera != null) cameras.Add(mainCamera);
-        if (subCamera != null) cameras.Add(subCamera);
-        if (subCamera2 != null) cameras.Add(subCamera2);
+        AddLegacyCamera(mainCamera);
+        AddLegacyCamera(subCamera);
+        AddLegacyCamera(subCamera2);
+
+        mainCamera = null;
+        subCamera = null;
+        subCamera2 = null;
+    }
+
+    private void AddLegacyCamera(Camera legacyCamera)
+    {
+        if (legacyCamera == null || cameras.Contains(legacyCamera)) return;
+        cameras.Add(legacyCamera);
     }
 
     void Update()
