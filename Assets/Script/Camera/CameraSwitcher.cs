@@ -80,8 +80,8 @@ public class CameraSwitcher : MonoBehaviour
     }
 
     /// <summary>
-    /// ��Ԃ��w�肵�ăJ������؂�ւ���֐��ł��B
-    /// ���̃X�N���v�g����uswitchScript.SetCameraState(CameraSwitcher.CameraState.Sub);�v�̂悤�ɌĂׂ܂�
+    /// Switches to the camera at the specified list index.
+    /// Call with an index managed in the `cameras` list (0 = main camera).
     /// </summary>
     public void SetCameraState(int index)
     {
