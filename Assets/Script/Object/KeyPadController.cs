@@ -19,6 +19,18 @@ public class KeyPadController : MonoBehaviour
 
     void Awake()
     {
+        if (InputManager.Instance == null)
+        {
+            Debug.LogError("InputManager.Instance ‚ª null ‚Å‚·");
+            return;
+        }
+
+        if (InputManager.Instance.inputActions == null)
+        {
+            Debug.LogError("inputActions ‚ª null ‚Å‚·");
+            return;
+        }
+
         InputManager.Instance.inputActions.Password.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         InputManager.Instance.inputActions.Password.Move.canceled += ctx => moveInput = Vector2.zero;
         InputManager.Instance.inputActions.Password.Submit.performed += OnSubmit;
