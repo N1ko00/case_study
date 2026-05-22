@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7709048531239680660}
   - component: {fileID: 5291873988879716088}
   m_Layer: 0
-  m_Name: Item_key(kari) 2
+  m_Name: Item_key(kari)_Lv2
   m_TagString: Item
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,4 +125,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a2dc5aa0eea292a419f65b48ab999aee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WorldItem
-  itemData: {fileID: 11400000, guid: 104b75839223be04c9ea4dad8a469bc8, type: 2}
+  itemData: {fileID: 11400000, guid: 160333d8f558bac4ab26b49a9df4a847, type: 2}
