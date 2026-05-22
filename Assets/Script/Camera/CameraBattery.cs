@@ -11,6 +11,10 @@ public class BatteryManager : MonoBehaviour
     public float decreaseRate = 5f;                // 減少スピード
     private float currentBattery;                  // 現在のバッテリー
 
+    [Header("バッテリー回復設定")]
+    [Tooltip("回復量")]
+    public float recoveryAmount = 25f;
+
     [Header("UIの参照")]
     public GameObject batteryUIPanel;
     public Image batteryFillImage;   // ゲージ用の画像(BatteryFill)
@@ -81,5 +85,21 @@ public class BatteryManager : MonoBehaviour
             int percentage = Mathf.FloorToInt(currentBattery);
             batteryText.text = percentage.ToString() + "%";
         }
+    }
+
+    /// <summary>
+    /// アイテム取得時などに外部のスクリプトから呼び出す関数
+    /// Inspectorで設定した「defaultRecoveryAmount」の分だけ回復
+    /// </summary>
+    public void RecoverBattery()
+    {
+        // バッテリーを回復
+        currentBattery += recoveryAmount;
+
+        // 回復後に最大値(maxBattery)を超えないように制限する
+        currentBattery = Mathf.Clamp(currentBattery, 0, maxBattery);
+
+        // 回復した瞬間にUI（ゲージやテキスト）へ即座に反映させる
+        UpdateUI();
     }
 }
