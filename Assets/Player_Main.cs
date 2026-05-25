@@ -40,6 +40,8 @@ public class FPSController : MonoBehaviour
     private Vector2 lookInput;
     private bool isRunning;
 
+    private WorldItem currentlyHighlightingItem;
+
     // ===== 追加 =====
     [Header("プレイヤー動きカメラ止める用")]
     [SerializeField] private bool canMove = true;
@@ -181,29 +183,94 @@ public class FPSController : MonoBehaviour
         }
     }
 
+    //void HandleItemPickup()
+    //{
+    //    if (Mouse.current.leftButton.wasPressedThisFrame)
+    //    {
+    //        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+
+    //        if (Physics.Raycast(ray, out RaycastHit hit, itemPickupDistance))
+    //        {
+    //            if (hit.collider.CompareTag("Item"))
+    //            {
+    //                WorldItem item =
+    //                    hit.collider.GetComponent<WorldItem>();
+
+    //                if (item != null)
+    //                {
+    //                    Debug.Log("拾った：" + item.itemData.itemName);
+
+    //                    InventoryManager.Instance.AddItem(item.itemData);
+
+    //                    Destroy(item.gameObject);
+    //                }
+    //            }
+    //        }
+    //    }
+    //}
     void HandleItemPickup()
     {
-        if (Mouse.current.leftButton.wasPressedThisFrame)
+        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
+        WorldItem itemInView = null;
+
+        // 1. アイテム専用レイヤー（Item）だけを狙い撃ちして、ロッカーの壁を貫通させる
+        int itemLayerMask = LayerMask.GetMask("Item");
+
+        if (Physics.Raycast(ray, out RaycastHit hit, itemPickupDistance, itemLayerMask))
         {
-            Ray ray = new Ray(playerCamera.position, playerCamera.forward);
-
-            if (Physics.Raycast(ray, out RaycastHit hit, itemPickupDistance))
+            if (hit.collider.CompareTag("Item"))
             {
-                if (hit.collider.CompareTag("Item"))
+                WorldItem foundItem = hit.collider.GetComponent<WorldItem>();
+
+                if (foundItem != null)
                 {
-                    WorldItem item =
-                        hit.collider.GetComponent<WorldItem>();
+                    // 2. アイテムの親階層から LockerDoor スクリプトを取得
+                    LockerDoor locker = foundItem.GetComponentInParent<LockerDoor>();
 
-                    if (item != null)
+                    if (locker != null)
                     {
-                        Debug.Log("拾った：" + item.itemData.itemName);
+                        // 3. 【確実な方法】ロッカーのスクリプトにくっついている「回転対象（doorPivot）」を直接調べる
+                        // リフレクション（System.Reflection）を使って、privateなフィールド「doorPivot」の中身を覗き見します
+                        var field = typeof(LockerDoor).GetField("doorPivot", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
-                        InventoryManager.Instance.AddItem(item.itemData);
+                        if (field != null)
+                        {
+                            Transform doorPivotTransform = field.GetValue(locker) as Transform;
 
-                        Destroy(item.gameObject);
+                            if (doorPivotTransform != null)
+                            {
+                                // 扉の初期角度（0,0,0）からのズレ（回転角）を計算
+                                float angleDiff = Quaternion.Angle(doorPivotTransform.localRotation, Quaternion.identity);
+
+                                // 【判定】ズレが 10度未満（＝まだほぼ閉まっている状態）なら、アイテムを検知させない！
+                                if (angleDiff < 10f)
+                                {
+                                    foundItem = null;
+                                }
+                            }
+                        }
                     }
+
+                    // ドアが開いている、または元から外に置いてあるアイテムなら正常にセットされる
+                    itemInView = foundItem;
                 }
             }
+        }
+
+        // --- 以下、ハイライトやクリック処理はそのまま触らなくてOK！ ---
+        if (itemInView != currentlyHighlightingItem)
+        {
+            if (currentlyHighlightingItem != null) currentlyHighlightingItem.SetHighlight(false);
+            if (itemInView != null) itemInView.SetHighlight(true);
+            currentlyHighlightingItem = itemInView;
+        }
+
+        if (Mouse.current.leftButton.wasPressedThisFrame && currentlyHighlightingItem != null)
+        {
+            Debug.Log("拾った：" + currentlyHighlightingItem.itemData.itemName);
+            InventoryManager.Instance.AddItem(currentlyHighlightingItem.itemData);
+            currentlyHighlightingItem = null;
+            Destroy(hit.collider.gameObject);
         }
     }
 

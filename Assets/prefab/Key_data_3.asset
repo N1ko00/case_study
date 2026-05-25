@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Key_data_3
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
   itemName: Key_3
-  icon: {fileID: 509806681, guid: f293e91a57c121c4884ff5659cc2cbed, type: 3}
+  icon: {fileID: 584158484, guid: ba186b809dbb29141b27ca6c5bba7f82, type: 3}
   type: 3
   isUsed: 0
   slotTypeIndex: 3
