@@ -22,6 +22,9 @@ public class CameraSwitcher : MonoBehaviour
     [Header("UI")]
     [SerializeField] private GameObject cameraCanvas;
 
+    //停止対象プレイヤー
+    [SerializeField] private FPSController player_Main;
+
     // ���̃R�[�h�ɂ������ϐ�����������c���Ă����܂���
     private bool unique = true;
 
@@ -123,11 +126,13 @@ public class CameraSwitcher : MonoBehaviour
         {
             // ���C���Ȃ�A�L�����Ă���Ď��J������
             SetCameraState(lastSubCameraIndex);
+            player_Main.SetMoveEnabled(false); // プレイヤーの移動を停止
         }
         else
         {
             // �Ď��J�����Ȃ�A���C����
             SetCameraState(0);
+            player_Main.SetMoveEnabled(true); // プレイヤーの移動を再開
         }
     }
 }
