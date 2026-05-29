@@ -805,6 +805,10 @@ PrefabInstance:
       value: Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 4492237926779657166, guid: 176ebd9708ca7f745b5c2e90021f7bd9, type: 3}
+      propertyPath: decreaseRate
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4492237926779657166, guid: 176ebd9708ca7f745b5c2e90021f7bd9, type: 3}
       propertyPath: batteryUIPanel
       value: 
       objectReference: {fileID: 0}
@@ -13212,6 +13216,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
   fadeImage: {fileID: 0}
   fadeDuration: 0.5
+  noiseGroup: {fileID: 0}
+  noiseImage: {fileID: 0}
+  noiseFadeInDuration: 0.8
+  noiseHoldDuration: 0.4
+  noiseFadeOutDuration: 0.6
+  uvScrollSpeed: {x: 2, y: 1.5}
+  uvJitterStrength: 0.15
+  uvTiling: {x: 2, y: 2}
 --- !u!4 &1931957164
 Transform:
   m_ObjectHideFlags: 0
