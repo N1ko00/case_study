@@ -47,6 +47,9 @@ public class FPSController : MonoBehaviour
     [SerializeField] private bool canMove = true;
     [SerializeField] private bool canLook = true;
 
+    [Header("制限設定（タブレット用）")]
+    [SerializeField] private bool canUseSpaceKey = false; // 初期状態はスペースキー無効
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -64,6 +67,12 @@ public class FPSController : MonoBehaviour
         if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
         {
             return;
+        }
+
+        if (!canUseSpaceKey && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Debug.Log("タブレットを見て左クリックで取得するまで、スペースキーは使えません。");
+            return; // スペースキーの入力をここで遮断
         }
 
         // カメラ操作
@@ -309,6 +318,13 @@ public class FPSController : MonoBehaviour
         SetMoveEnabled(move);
         SetLookEnabled(look);
     }
+
+    //外部（タブレット）から呼び出してスペースキーを解放する関数
+    public void EnableSpaceKey()
+    {
+        canUseSpaceKey = true;
+        Debug.Log("スペースキーが解放されました！");
+    }
 }
 
 // 判定を検知するための小さなクラス
@@ -324,3 +340,5 @@ public class DetectionTrigger : MonoBehaviour
         }
     }
 }
+
+
