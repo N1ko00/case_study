@@ -1,61 +1,76 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Serialization;
+using System.Collections.Generic;
 
 public class CameraSwitcher : MonoBehaviour
 {
-    // ƒJƒƒ‰‚Ìó‘Ô‚ğŠÇ—‚·‚é—ñ‹“Œ^
-    public enum CameraState
-    {
-        Main,
-        Sub1,
-        Sub2
-    }
-
     [Header("Cameras")]
-    public Camera MainCamera;
-    public Camera SubCamera;
-    public Camera SubCamera2;
+    [Tooltip("0ï¿½Ô–Ú‚Í•Kï¿½ï¿½ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½É‚ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    public List<Camera> cameras = new List<Camera>();
+    [FormerlySerializedAs("MainCamera")]
+    [SerializeField] private Camera mainCamera;
+    [FormerlySerializedAs("SubCamera")]
+    [SerializeField] private Camera subCamera;
+    [FormerlySerializedAs("SubCamera2")]
+    [SerializeField] private Camera subCamera2;
 
     [Header("Monster")]
-    [SerializeField] private InvisibleMonster monster; // ƒ‚ƒ“ƒXƒ^[‚ÌGameObject‚ğƒCƒ“ƒXƒyƒNƒ^[‚ÅŠ„‚è“–
+    [SerializeField] private InvisibleMonster monster;
 
     [Header("UI")]
     [SerializeField] private GameObject cameraCanvas;
 
+    //åœæ­¢å¯¾è±¡ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼
+    [SerializeField] private FPSController player_Main;
 
-    //1‰ñØ‚è•Ï”
-    bool unique = true;
+    // ï¿½ï¿½ï¿½ÌƒRï¿½[ï¿½hï¿½É‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½cï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
+    private bool unique = true;
 
-    // Œ»İ‚Ìó‘Ô‚ğ•Û‚µ‚Ü‚·
-    public CameraState CurrentState { get; private set; }
+    public int CurrentCameraIndex { get; private set; } = 0;
+
+    // ï¿½ï¿½ï¿½Oï¿½ÉŒï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Äï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Ì”Ôï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ï¿½
+    private int lastSubCameraIndex = 1;
 
     void Start()
     {
-        if (MainCamera != null && SubCamera != null && SubCamera2 != null)
+        EnsureCamerasInitialized();
+
+        if (cameras.Count > 0)
         {
-            // ‰Šúó‘Ô‚ğMainƒJƒƒ‰‚Éİ’è
-            SetCameraState(CameraState.Main);
-    }
-        else
-        {
-            Debug.LogError("ƒJƒƒ‰‚ªİ’è‚³‚ê‚Ä‚¢‚Ü‚¹‚ñ");
+            SetCameraState(0); 
         }
+    }
+
+    private void EnsureCamerasInitialized()
+    {
+        if (cameras.Count > 0) return;
+
+        AddLegacyCamera(mainCamera);
+        AddLegacyCamera(subCamera);
+        AddLegacyCamera(subCamera2);
+    }
+
+    private void AddLegacyCamera(Camera legacyCamera)
+    {
+        if (legacyCamera == null || cameras.Contains(legacyCamera)) return;
+        cameras.Add(legacyCamera);
     }
 
     void Update()
     {
         if (unique)
         {
-            // monster‚ª‹ó‚Á‚Û‚¶‚á‚È‚¢‚¾‚¯Às‚·‚é‚æ‚¤‚É‚µ‚Ü‚·‚Ì
+            // monsterï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Û‚ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
             if (monster != null)
             {
                 monster.SetVisible(false);
             }
             else
             {
-                // ƒGƒ‰[‚ğo‚³‚¸‚ÉAŒxƒƒbƒZ[ƒW‚¾‚¯ƒRƒ“ƒ\[ƒ‹‚É‚¨’m‚ç‚¹‚µ‚Ü‚·‚í
-                Debug.LogWarning("‚¨–V‚¿‚á‚ÜAƒCƒ“ƒXƒyƒNƒ^[‚Å‚Ì monster ‚Ìİ’è‚ğ–Y‚ê‚Ä‚¨‚è‚Ü‚·‚í‚æI");
+                // ï¿½Gï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½ÉAï¿½xï¿½ï¿½ï¿½ï¿½ï¿½bï¿½Zï¿½[ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½Rï¿½ï¿½ï¿½\ï¿½[ï¿½ï¿½ï¿½É‚ï¿½ï¿½mï¿½ç‚¹ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
+                Debug.LogWarning("ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½ÜAï¿½Cï¿½ï¿½ï¿½Xï¿½yï¿½Nï¿½^ï¿½[ï¿½Å‚ï¿½ monster ï¿½Ìİ’ï¿½ï¿½Yï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½I");
             }
             unique = false;
         }
@@ -66,60 +81,64 @@ public class CameraSwitcher : MonoBehaviour
         }
     }
 
-    //ƒ{ƒ^ƒ“—p‚ÌŠÖ”
-    public void SwitchToMain() => SetCameraState(CameraState.Main);
-    public void SwitchToSub1() => SetCameraState(CameraState.Sub1);
-    public void SwitchToSub2() => SetCameraState(CameraState.Sub2);
+    //ï¿½{ï¿½^ï¿½ï¿½ï¿½pï¿½ÌŠÖï¿½
+    //ï¿½Cï¿½ï¿½ï¿½Xï¿½yï¿½Nï¿½^ï¿½[ï¿½ÌuOn Click()ï¿½vï¿½ÅAï¿½ï¿½ï¿½ÌŠÖï¿½ï¿½ï¿½Iï¿½ÑAï¿½ï¿½ï¿½Ì˜gï¿½ï¿½ 0 ï¿½ï¿½ 1 ï¿½È‚Ç‚Ìï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public void SwitchToCamera(int index)
+    {
+        SetCameraState(index);
+    }
 
     /// <summary>
-    /// ó‘Ô‚ğw’è‚µ‚ÄƒJƒƒ‰‚ğØ‚è‘Ö‚¦‚éŠÖ”‚Å‚·B
-    /// ‘¼‚ÌƒXƒNƒŠƒvƒg‚©‚çuswitchScript.SetCameraState(CameraSwitcher.CameraState.Sub);v‚Ì‚æ‚¤‚ÉŒÄ‚×‚Ü‚·
+    /// Switches to the camera at the specified list index.
+    /// Call with an index managed in the `cameras` list (0 = main camera).
     /// </summary>
-    public void SetCameraState(CameraState newState)
+    public void SetCameraState(int index)
     {
-        CurrentState = newState;
-        Debug.Log($"Œ»İ‚ÌƒJƒƒ‰‚Ìó‘Ô: {CurrentState}");
+        if (index < 0 || index >= cameras.Count) return;
 
-        // ŠeƒJƒƒ‰‚Ì•\¦ó‘Ô‚ğAŒ»İ‚Ìó‘Ô‚Æˆê’v‚·‚é‚©‚Ç‚¤‚©‚ÅˆêŒ³‰»
-        if (MainCamera != null) MainCamera.gameObject.SetActive(CurrentState == CameraState.Main);
-        if (SubCamera != null) SubCamera.gameObject.SetActive(CurrentState == CameraState.Sub1);
-        if (SubCamera2 != null) SubCamera2.gameObject.SetActive(CurrentState == CameraState.Sub2);
-
-        //ƒTƒuƒJƒƒ‰iMainˆÈŠO‚ÌƒJƒƒ‰j‚ª‘I‚Î‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©‚Ì”»’è
-        bool isSubCamera = (CurrentState != CameraState.Main);
-
-        //UI‚Æƒ‚ƒ“ƒXƒ^[‚Ì•\¦‚ğAisSubCamera‚Ì”»’è‚ğg‚Á‚ÄØ‚è‘Ö‚¦
-        if (isSubCamera)
+        // ï¿½Äï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½i1ï¿½ÔˆÈ~ï¿½jï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½Aï¿½ï¿½ï¿½Ì”Ôï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
+        if (index != 0)
         {
-            if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
-            Cursor.visible = true;
-            Cursor.lockState = CursorLockMode.None;
-        }
-        else
-        {
-            if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
-            Cursor.visible = false;
-            Cursor.lockState = CursorLockMode.Locked;
+            lastSubCameraIndex = index;
         }
 
+        CurrentCameraIndex = index;
 
+        // ï¿½Sï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½Ì—Lï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½êŠ‡ï¿½Ç—ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
+        for (int i = 0; i < cameras.Count; i++)
+        {
+            if (cameras[i] != null)
+                cameras[i].gameObject.SetActive(i == CurrentCameraIndex);
+        }
+
+        // 0ï¿½Ô–ÚˆÈŠOï¿½Í‚ï¿½ï¿½×‚Äuï¿½Tï¿½uï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½
+        bool isSubCamera = (CurrentCameraIndex != 0);
+
+        if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
+
+        Cursor.visible = isSubCamera;
+        Cursor.lockState = isSubCamera ? CursorLockMode.None : CursorLockMode.Locked;
 
         if (monster != null) monster.SetVisible(isSubCamera);
     }
 
     /// <summary>
-    /// Œ»İ‚Ìó‘Ô‚ğ”»’è‚µ‚ÄA‚à‚¤ˆê•û‚ÌƒJƒƒ‰‚ÉØ‚è‘Ö‚¦‚éŠÖ”‚Å‚·B
-    /// ‘¼‚ÌƒXƒNƒŠƒvƒg‚©‚çuswitchScript.SetCameraState(CameraSwitcher.CameraState.Sub);v‚Ì‚æ‚¤‚ÉŒÄ‚×‚Ü‚·
+    /// ï¿½ï¿½ï¿½İ‚Ìï¿½Ô‚ğ”»’è‚µï¿½ÄAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÌƒJï¿½ï¿½ï¿½ï¿½ï¿½ÉØ‚ï¿½Ö‚ï¿½ï¿½ï¿½Öï¿½ï¿½Å‚ï¿½ï¿½B
+    /// ï¿½ï¿½ï¿½ÌƒXï¿½Nï¿½ï¿½ï¿½vï¿½gï¿½ï¿½ï¿½ï¿½uswitchScript.SetCameraState(CameraSwitcher.CameraState.Sub);ï¿½vï¿½Ì‚æ‚¤ï¿½ÉŒÄ‚×‚Ü‚ï¿½
     /// </summary>
     public void ToggleCamera()
     {
-        if (CurrentState == CameraState.Main)
+        if (CurrentCameraIndex == 0)
         {
-            SetCameraState(CameraState.Sub1);
+            // ï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½È‚ï¿½Aï¿½Lï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Äï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            SetCameraState(lastSubCameraIndex);
+            player_Main.SetMoveEnabled(false); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•ã‚’åœæ­¢
         }
         else
         {
-            SetCameraState(CameraState.Main);
+            // ï¿½Äï¿½ï¿½Jï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½Aï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½ï¿½
+            SetCameraState(0);
+            player_Main.SetMoveEnabled(true); // ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã®ç§»å‹•ã‚’å†é–‹
         }
     }
 }
