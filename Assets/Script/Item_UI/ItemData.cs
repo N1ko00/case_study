@@ -11,6 +11,9 @@ public class ItemData : ScriptableObject
     // これで ItemUsePoint.cs のエラーが消えます
     public ItemType type;
 
+    [Header("フラグ管理")]
+    public bool isUsed = false; // アイテムがどこかで使われたらtrueにする
+
     [Header("スロットのデザイン番号 (0=通常, 1=メモ用など)")]
     public int slotTypeIndex = 0;
 
@@ -23,4 +26,6 @@ public enum ItemType
 {
     Key,
     Memo,
+    Key_2,
+    Key_3
 }

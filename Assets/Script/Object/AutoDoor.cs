@@ -16,50 +16,83 @@ public class AutoDoor : MonoBehaviour
 
     Coroutine moveCoroutine;
 
-    [SerializeField]  private bool isOpen = false;
+    [SerializeField] private bool isUnlocked = false;
+    [SerializeField] private bool usePassword = false;
+    bool isDoorOpen = false;
+
+    public AudioSource audioSource;
+    public AudioClip openClip;
+    public AudioClip closeClip;
 
     void Start()
     {
         closedPosL = doorL.localPosition;
         closedPosR = doorR.localPosition;
+
+        if (!usePassword)
+            isUnlocked = true;
     }
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Door Trigger Hit: " + other.name + " / tag: " + other.tag);
 
-        if (other.CompareTag("Player")&&isOpen)
-        {
+        if (!other.CompareTag("Player"))
+            return;
+
+
+        if (isUnlocked)
             OpenDoor();
-        }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
-        {
+        if (!other.CompareTag("Player"))
+            return;
+
+        if (isUnlocked)
             CloseDoor();
-        }
     }
 
-    //îÒìØä˙Ç‚Ç©ÇÁèdÇ≠Ç»Ç¢ÇÊ
-    void OpenDoor()
+    public void OpenDoor()
     {
-        Debug.Log("Opening Door");
-        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+
+        if (isDoorOpen)
+            return;
+
+        isDoorOpen = true;
+
+        if (openClip != null)
+            audioSource.PlayOneShot(openClip);
+
+        if (moveCoroutine != null)
+            StopCoroutine(moveCoroutine);
+
+
         moveCoroutine = StartCoroutine(MoveDoor(
             closedPosL + openOffsetL,
             closedPosR + openOffsetR
         ));
     }
 
-    void CloseDoor()
+    public void CloseDoor()
     {
-        if (moveCoroutine != null) StopCoroutine(moveCoroutine);
+        if (!isDoorOpen)
+            return;
+
+        isDoorOpen = false;
+
+        if (closeClip != null)
+            audioSource.PlayOneShot(closeClip);
+
+        if (moveCoroutine != null)
+            StopCoroutine(moveCoroutine);
+
         moveCoroutine = StartCoroutine(MoveDoor(
             closedPosL,
             closedPosR
         ));
+
+        Debug.Log("„Éâ„Ç¢„ÇíÈñâ„ÇÅ„Çã");
     }
 
     IEnumerator MoveDoor(Vector3 targetL, Vector3 targetR)
@@ -74,12 +107,14 @@ public class AutoDoor : MonoBehaviour
         doorL.localPosition = targetL;
         doorR.localPosition = targetR;
     }
-    public void SetOpenDoor(bool isopen)
+
+    public void SetUnlocked(bool unlocked)
     {
-        isOpen = isopen;
+        isUnlocked = unlocked;
     }
-    public bool GetOpenDoor()
+
+    public bool IsUnlocked()
     {
-        return isOpen;
+        return isUnlocked;
     }
 }
