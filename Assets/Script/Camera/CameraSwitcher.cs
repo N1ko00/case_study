@@ -62,9 +62,15 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (unique)
         {
+            // monster������ۂ���Ȃ����������s����悤�ɂ��܂���
             if (monster != null)
             {
                 monster.SetVisible(false);
+            }
+            else
+            {
+                // �G���[���o�����ɁA�x�����b�Z�[�W�����R���\�[���ɂ��m�点���܂���
+                Debug.LogWarning("���V����܁A�C���X�y�N�^�[�ł� monster �̐ݒ��Y��Ă���܂����I");
             }
             unique = false;
         }
