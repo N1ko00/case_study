@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using System.Collections;
+using TMPro;
 
 /// <summary>
 /// ゲームオーバー UI を管理します。
@@ -16,7 +17,7 @@ public class GameOverManager : MonoBehaviour
     // ゲームオーバーパネル
     [SerializeField] private GameObject gameOverPanel;
     // gameOverText
-    [SerializeField] private Text gameOverText;
+    [SerializeField] private TextMeshProUGUI gameOverText;
     // retryButton
     [SerializeField] private Button retryButton;
 
@@ -163,7 +164,7 @@ public class GameOverManager : MonoBehaviour
         //敵のアニメーションを再生
         if (enemyAnimator != null)
         {
-            enemyAnimator.SetTrigger("GameOverTrigger");
+            enemyAnimator.SetTrigger(animationTriggerName);
         }
 
         // 待機時間

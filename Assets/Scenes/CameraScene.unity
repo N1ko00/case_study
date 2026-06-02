@@ -2839,7 +2839,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1832193732}
   - component: {fileID: 1832193731}
-  - component: {fileID: 1832193733}
   m_Layer: 0
   m_Name: GameOverManager
   m_TagString: Untagged
@@ -2888,25 +2887,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1832193733
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1832193730}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3b8e22e61c61d2d4899c13deac3d8c7d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameOverSequence
-  mainCamera: {fileID: 1052819508}
-  cameraTargetPosition: {fileID: 399789216}
-  cameraMoveDuration: 0.5
-  enemyAnimator: {fileID: 607074264}
-  animationTriggerName: GameOverTrigger
-  waitBeforeResult: 3
-  resultSceneName: ResultScene
 --- !u!1 &1901862537
 GameObject:
   m_ObjectHideFlags: 0
