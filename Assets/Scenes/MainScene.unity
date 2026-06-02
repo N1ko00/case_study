@@ -1514,7 +1514,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4046944599813791049, guid: ed673426a65a9ae4da39297ee233e739, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -39.769
+      value: -28.76
       objectReference: {fileID: 0}
     - target: {fileID: 4046944599813791049, guid: ed673426a65a9ae4da39297ee233e739, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1522,7 +1522,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4046944599813791049, guid: ed673426a65a9ae4da39297ee233e739, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -156.084
+      value: -157.93
       objectReference: {fileID: 0}
     - target: {fileID: 4046944599813791049, guid: ed673426a65a9ae4da39297ee233e739, type: 3}
       propertyPath: m_LocalRotation.w
@@ -5265,6 +5265,7 @@ GameObject:
   m_Component:
   - component: {fileID: 863671114}
   - component: {fileID: 863671113}
+  - component: {fileID: 863671115}
   m_Layer: 0
   m_Name: CameraSwitcher
   m_TagString: Untagged
@@ -5298,6 +5299,7 @@ MonoBehaviour:
   subCamera2: {fileID: 972926065}
   monster: {fileID: 1724526796}
   cameraCanvas: {fileID: 1106181953}
+  player_Main: {fileID: 0}
 --- !u!4 &863671114
 Transform:
   m_ObjectHideFlags: 0
@@ -5314,6 +5316,22 @@ Transform:
   - {fileID: 541762530}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &863671115
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863671112}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b3a35bede1ebd2440be129c84601cd2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyCameraSpawner
+  enemyObject: {fileID: 1724526792}
+  positionOffset: {x: -28.76, y: 1.109, z: -157.93}
+  forceChaseModeOnSpawn: 1
+  messageDuration: 3
 --- !u!1001 &873935555
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7208,6 +7226,17 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
+--- !u!114 &1089625136 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 4492237926779657166, guid: 176ebd9708ca7f745b5c2e90021f7bd9, type: 3}
+  m_PrefabInstance: {fileID: 112046877}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eedf73745310b0140a428f07dc1e99b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::BatteryManager
 --- !u!1 &1089721581
 GameObject:
   m_ObjectHideFlags: 0
@@ -11273,6 +11302,7 @@ GameObject:
   - component: {fileID: 1611492494}
   - component: {fileID: 1611492493}
   - component: {fileID: 1611492497}
+  - component: {fileID: 1611492498}
   m_Layer: 0
   m_Name: tablet
   m_TagString: Untagged
@@ -11380,13 +11410,34 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1611492492}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b39930feb4d8c3d41a384d1a922ad499, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TabletTrigger
   interactDistance: 3
   dotThreshold: 0.95
+--- !u!114 &1611492498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1611492492}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1881d8500300c594d9e8651dfc576f79, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CameraUnlockTablet
+  cameraSwitcher: {fileID: 863671113}
+  batteryManager: {fileID: 1089625136}
+  interactDistance: 3
+  dotThreshold: 0.95
+  zoomInFOV: 30
+  zoomDuration: 0.8
+  holdDuration: 0.5
+  tabletHighlightColor: {r: 1, g: 0, b: 0, a: 1}
+  notificationDuration: 4
 --- !u!1001 &1619498673
 PrefabInstance:
   m_ObjectHideFlags: 0
