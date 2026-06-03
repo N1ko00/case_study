@@ -1,0 +1,270 @@
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+public class CameraUnlockTablet : MonoBehaviour
+{
+    [Header("Linked Objects")]
+    [Tooltip("Connect the object with CameraSwitcher attached")]
+    public CameraSwitcher cameraSwitcher;
+
+    [Tooltip("Connect the object with BatteryManager attached")]
+    public BatteryManager batteryManager;
+
+    [Header("Interaction Settings")]
+    [SerializeField] private float interactDistance = 3.0f;
+    [SerializeField] private float dotThreshold = 0.95f;
+
+    [Header("Zoom Effect Settings")]
+    [SerializeField] private float zoomInFOV = 30f;
+    [SerializeField] private float zoomDuration = 0.8f;
+    [SerializeField] private float holdDuration = 2.0f;
+    [SerializeField] private Color tabletHighlightColor = Color.red;
+
+    [Header("Notification Settings")]
+    [SerializeField] private float notificationDuration = 4.0f;
+
+    private Transform playerCameraTransform;
+    private Camera playerCameraComponent;
+    private FPSController playerController;
+    private float defaultFOV = 60f;
+
+    private bool isLookingAtTablet = false;
+    private bool canClickTablet = false;
+    private bool isZoomingNow = false;
+    private GUIStyle guiStyle;
+    private GUIStyle messageStyle;
+
+    private Renderer tabletRenderer;
+    private Color originalColor = Color.white;
+
+    void Start()
+    {
+        tabletRenderer = GetComponent<Renderer>();
+        if (tabletRenderer == null)
+        {
+            tabletRenderer = GetComponentInChildren<Renderer>();
+        }
+
+        if (tabletRenderer != null)
+        {
+            originalColor = tabletRenderer.material.color;
+        }
+
+        if (cameraSwitcher != null)
+        {
+            cameraSwitcher.SetCameraState(0);
+            cameraSwitcher.enabled = false;
+        }
+
+        if (batteryManager != null)
+        {
+            batteryManager.enabled = false;
+        }
+
+        playerController = Object.FindFirstObjectByType<FPSController>();
+        if (playerController != null)
+        {
+            playerCameraTransform = playerController.playerCamera;
+
+            if (playerCameraTransform != null)
+            {
+                playerCameraComponent = playerCameraTransform.GetComponent<Camera>();
+                if (playerCameraComponent != null)
+                {
+                    defaultFOV = playerCameraComponent.fieldOfView;
+                }
+            }
+
+            LookAtTabletImmediately();
+            StartCoroutine(PlayZoomEffect());
+        }
+    }
+
+    void Update()
+    {
+        if (playerCameraTransform == null || playerController == null)
+        {
+            isLookingAtTablet = false;
+            canClickTablet = false;
+            return;
+        }
+
+        float distance = Vector3.Distance(playerCameraTransform.position, transform.position);
+        if (distance > interactDistance)
+        {
+            isLookingAtTablet = false;
+            canClickTablet = false;
+            return;
+        }
+
+        Vector3 directionToTablet = (transform.position - playerCameraTransform.position).normalized;
+        float dot = Vector3.Dot(playerCameraTransform.forward, directionToTablet);
+
+        if (dot >= dotThreshold)
+        {
+            isLookingAtTablet = true;
+            canClickTablet = true;
+
+            if (Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                UnlockTabletFeatures();
+            }
+        }
+        else
+        {
+            isLookingAtTablet = false;
+            canClickTablet = false;
+        }
+    }
+
+    private void LookAtTabletImmediately()
+    {
+        if (playerController == null || playerCameraTransform == null) return;
+
+        Vector3 directionToTablet = (transform.position - playerCameraTransform.position).normalized;
+
+        Vector3 forwardOnXZ = new Vector3(directionToTablet.x, 0f, directionToTablet.z).normalized;
+        if (forwardOnXZ != Vector3.zero)
+        {
+            playerController.transform.rotation = Quaternion.LookRotation(forwardOnXZ);
+        }
+
+        float lookAngleX = Mathf.Asin(directionToTablet.y) * Mathf.Rad2Deg;
+        float targetXRotation = -lookAngleX;
+
+        var xRotField = typeof(FPSController).GetField("xRotation", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+        if (xRotField != null)
+        {
+            xRotField.SetValue(playerController, targetXRotation);
+        }
+
+        playerCameraTransform.localRotation = Quaternion.Euler(targetXRotation, 0f, 0f);
+    }
+
+    private IEnumerator PlayZoomEffect()
+    {
+        if (playerCameraComponent == null || playerController == null) yield break;
+
+        // --- Freeze completely at the start of the effect ---
+        playerController.SetLookEnabled(false);
+        playerController.SetMoveEnabled(false); // Stop player movement
+        isZoomingNow = true;
+
+        if (tabletRenderer != null)
+        {
+            tabletRenderer.material.color = tabletHighlightColor;
+        }
+
+        // --- 1. Zoom In ---
+        float elapsed = 0f;
+        while (elapsed < zoomDuration)
+        {
+            elapsed += Time.deltaTime;
+            playerCameraComponent.fieldOfView = Mathf.Lerp(defaultFOV, zoomInFOV, Mathf.SmoothStep(0f, 1f, elapsed / zoomDuration));
+            yield return null;
+        }
+        playerCameraComponent.fieldOfView = zoomInFOV;
+
+        // --- 2. Hold (Still frozen here) ---
+        yield return new WaitForSeconds(holdDuration);
+
+        // --- 3. Zoom Out ---
+        elapsed = 0f;
+        while (elapsed < zoomDuration)
+        {
+            elapsed += Time.deltaTime;
+            playerCameraComponent.fieldOfView = Mathf.Lerp(zoomInFOV, defaultFOV, Mathf.SmoothStep(0f, 1f, elapsed / zoomDuration));
+            yield return null;
+        }
+        playerCameraComponent.fieldOfView = defaultFOV;
+
+        if (tabletRenderer != null)
+        {
+            tabletRenderer.material.color = originalColor;
+        }
+
+        isZoomingNow = false;
+
+        // --- Release completely after zooming out finishes ---
+        playerController.SetLookEnabled(true);
+        playerController.SetMoveEnabled(true); // Re-enable player movement
+    }
+
+    private void OnGUI()
+    {
+        float posX = Screen.width / 2f;
+        float posY = Screen.height / 2f;
+
+        if (isZoomingNow)
+        {
+            if (messageStyle == null)
+            {
+                messageStyle = new GUIStyle();
+                messageStyle.alignment = TextAnchor.MiddleCenter;
+                messageStyle.fontSize = 22;
+                messageStyle.fontStyle = FontStyle.Italic;
+                messageStyle.normal.textColor = Color.white;
+            }
+            GUI.Label(new Rect(posX - 200, posY + 80, 400, 30), "「……何だあれ？」", messageStyle);
+        }
+
+        if (isZoomingNow || !canClickTablet) return;
+
+        if (guiStyle == null)
+        {
+            guiStyle = new GUIStyle();
+            guiStyle.alignment = TextAnchor.MiddleCenter;
+            guiStyle.fontSize = 24;
+            guiStyle.fontStyle = FontStyle.Bold;
+        }
+
+        guiStyle.normal.textColor = Color.green;
+        GUI.Label(new Rect(posX - 150, posY + 20, 300, 30), "左クリックでTABLETを拾う", guiStyle);
+    }
+
+    private void UnlockTabletFeatures()
+    {
+        if (playerController != null)
+        {
+            playerController.UnlockSpaceKey();
+        }
+
+        if (cameraSwitcher != null) cameraSwitcher.enabled = true;
+        if (batteryManager != null) batteryManager.enabled = true;
+
+        GameObject msgObj = new GameObject("UnlockNotificationUI");
+        var notifier = msgObj.AddComponent<UnlockNotifier>();
+        notifier.duration = notificationDuration;
+
+        Debug.Log("Tablet Unlocked");
+
+        Destroy(gameObject);
+    }
+}
+
+public class UnlockNotifier : MonoBehaviour
+{
+    public float duration = 4.0f;
+    private GUIStyle notificationStyle;
+
+    void Start()
+    {
+        Destroy(gameObject, duration);
+    }
+
+    private void OnGUI()
+    {
+        if (notificationStyle == null)
+        {
+            notificationStyle = new GUIStyle();
+            notificationStyle.alignment = TextAnchor.MiddleCenter;
+            notificationStyle.fontSize = 20;
+            notificationStyle.fontStyle = FontStyle.Bold;
+            notificationStyle.normal.textColor = Color.yellow;
+        }
+
+        float posX = Screen.width / 2f;
+        GUI.Label(new Rect(posX - 300, 60, 600, 40), "スペースキーでカメラが使用可能になった", notificationStyle);
+    }
+}
