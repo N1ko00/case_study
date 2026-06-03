@@ -47,6 +47,10 @@ public class GameOverManager : MonoBehaviour
     [Tooltip("アニメーション再生後、UIを表示するまでの待機時間")]
     [SerializeField] private float waitBeforeUI = 3.0f;
 
+    [Header("モンスター")]
+    [SerializeField] private InvisibleMonster monster;
+
+
     [Header("プレイヤー制御の停止")]
     [Tooltip("ゲームオーバー時に停止させたいスクリプト（視点操作や移動など）をここに登録")]
     [SerializeField] private Behaviour[] scriptsToDisable;
@@ -77,6 +81,8 @@ public class GameOverManager : MonoBehaviour
         // リトライボタン イベント登録
         if (retryButton != null)
             retryButton.onClick.AddListener(OnRetryClicked);
+
+        monster.SetVisible(false);
     }
 
     // ───────────────────────────────────────────
@@ -164,6 +170,8 @@ public class GameOverManager : MonoBehaviour
         //敵のアニメーションを再生
         if (enemyAnimator != null)
         {
+            Debug.Log("[GameOverManager] 敵のアニメーション再生");
+            monster.SetVisible(true);
             enemyAnimator.SetTrigger(animationTriggerName);
         }
 

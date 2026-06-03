@@ -103,6 +103,7 @@ public class InvisibleMonster : MonoBehaviour
     // SetVisible / SetStunnedColor 用
     private Renderer[] _renderers;
     private Color[] _originalColors;
+    private bool unique = true; //最初に見えなくする用
 
     // ───────────────────────────────────────────
     // Unity ライフサイクル
@@ -143,6 +144,13 @@ public class InvisibleMonster : MonoBehaviour
 
     private void Update()
     {
+        if(unique)
+        {
+            SetVisible(false);
+            unique = false;
+            Debug.Log("[InvisibleMonster] 初期化: 見えなく設定");
+        }
+
         // スタン中は FOV も状態更新もスキップ
         if (_currentState == State.Stunned)
         {

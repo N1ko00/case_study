@@ -28,6 +28,7 @@ public class InputManager : MonoBehaviour
 
     void OnDisable()
     {
+        if (Instance == null) return;
         inputActions.Disable();
     }
 }

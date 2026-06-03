@@ -179,7 +179,7 @@ public class FPSController : MonoBehaviour
             footstepTimer =
                 isRunning ? footstepInterval * 0.6f : footstepInterval;
 
-            Debug.Log("足音発生！");
+            //Debug.Log("足音発生！");
 
             SoundManager.Instance.EmitNoise(
                 this.transform.position,
@@ -300,7 +300,7 @@ public class DetectionTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Player"))
         {
-            Debug.Log($"{areaName} に {other.name} が入りました！");
+            //Debug.Log($"{areaName} に {other.name} が入りました！");
         }
     }
 }
