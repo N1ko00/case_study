@@ -48,7 +48,7 @@ public class Title : MonoBehaviour
             return;
         }
 
-        sceneLoader.LoadScene(SceneLoader.SceneName.MainScene_KimTest2);
+        sceneLoader.LoadScene(SceneLoader.SceneName.MainScene);
     }
 
     private void OnQuitClicked()
