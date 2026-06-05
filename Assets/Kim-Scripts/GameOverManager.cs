@@ -54,6 +54,7 @@ public class GameOverManager : MonoBehaviour
     [Header("プレイヤー制御の停止")]
     [Tooltip("ゲームオーバー時に停止させたいスクリプト（視点操作や移動など）をここに登録")]
     [SerializeField] private Behaviour[] scriptsToDisable;
+    [SerializeField] public CameraSwitcher Camera;
 
     private bool _isGameOver = false;
 
@@ -96,11 +97,9 @@ public class GameOverManager : MonoBehaviour
         if (_isGameOver) return;
         _isGameOver = true;
 
-        ////先にカメラのUIを消す
-        //if (cameraCanvas != null)
-        //{
-        //    cameraCanvas.SetActive(false);
-        //}
+        //cameraCanvas.SetActive(isSubCamera)
+        //先にカメラのUIを消す
+        Camera.SetCameraState(0);
 
         //if (gameOverText != null)
         //    gameOverText.text = gameOverMessage;
