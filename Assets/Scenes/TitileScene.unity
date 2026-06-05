@@ -432,6 +432,7 @@ GameObject:
   - component: {fileID: 695125624}
   - component: {fileID: 695125623}
   - component: {fileID: 695125622}
+  - component: {fileID: 695125626}
   m_Layer: 5
   m_Name: GameStartButton
   m_TagString: Untagged
@@ -496,7 +497,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -541,6 +542,28 @@ RectTransform:
   m_AnchoredPosition: {x: -650, y: -150}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &695125626
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 695125621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24991234a1e7aa94bb38cbef0263735a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonNoiseHover
+  glitchShiftX: 20
+  glitchShiftY: 3
+  glitchFrequency: 10
+  glitchDuration: 0.5
+  flickerChance: 0.08
+  enableChromatic: 1
+  chromaticOffset: 10
+  ghostAlpha: 0.8
+  fadeInDuration: 0.08
+  fadeOutDuration: 0.12
 --- !u!1 &810277683
 GameObject:
   m_ObjectHideFlags: 0
@@ -704,6 +727,11 @@ MonoBehaviour:
   uvScrollSpeed: {x: 2, y: 1.5}
   uvJitterStrength: 0.15
   uvTiling: {x: 2, y: 2}
+  noiseAudioSource: {fileID: 0}
+  noiseLoopSE: {fileID: 8300000, guid: 297427cd8d965a74eaa392e7f4a23a39, type: 3}
+  noiseStartSE: {fileID: 0}
+  noiseVolume: 0.7
+  fadeAudioWithAlpha: 1
 --- !u!4 &1116758891
 Transform:
   m_ObjectHideFlags: 0
@@ -786,8 +814,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -961,6 +989,7 @@ GameObject:
   - component: {fileID: 1453948140}
   - component: {fileID: 1453948139}
   - component: {fileID: 1453948138}
+  - component: {fileID: 1453948142}
   m_Layer: 5
   m_Name: GameExitButton
   m_TagString: Untagged
@@ -1025,7 +1054,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -1070,6 +1099,28 @@ RectTransform:
   m_AnchoredPosition: {x: -650, y: -250}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &1453948142
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1453948137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24991234a1e7aa94bb38cbef0263735a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ButtonNoiseHover
+  glitchShiftX: 20
+  glitchShiftY: 3
+  glitchFrequency: 10
+  glitchDuration: 0.5
+  flickerChance: 0.08
+  enableChromatic: 1
+  chromaticOffset: 10
+  ghostAlpha: 0.8
+  fadeInDuration: 0.08
+  fadeOutDuration: 0.12
 --- !u!1 &1473353021
 GameObject:
   m_ObjectHideFlags: 0
@@ -1256,8 +1307,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4281479730
-  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+    rgba: 4294967295
+  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:

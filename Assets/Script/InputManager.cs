@@ -23,11 +23,13 @@ public class InputManager : MonoBehaviour
 
     void OnEnable()
     {
+        if (inputActions == null) return;
         inputActions.Enable();
     }
 
     void OnDisable()
     {
+        if (inputActions == null) return;
         inputActions.Disable();
     }
 }
