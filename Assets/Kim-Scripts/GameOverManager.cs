@@ -81,8 +81,6 @@ public class GameOverManager : MonoBehaviour
         // リトライボタン イベント登録
         if (retryButton != null)
             retryButton.onClick.AddListener(OnRetryClicked);
-
-        monster.SetVisible(false);
     }
 
     // ───────────────────────────────────────────
@@ -171,7 +169,7 @@ public class GameOverManager : MonoBehaviour
         if (enemyAnimator != null)
         {
             Debug.Log("[GameOverManager] 敵のアニメーション再生");
-            monster.SetVisible(true);
+            SetLayerRecursively(monster.gameObject, 0);
             enemyAnimator.SetTrigger(animationTriggerName);
         }
 
@@ -222,5 +220,18 @@ public class GameOverManager : MonoBehaviour
         SceneManager.LoadScene(sceneName);
 
         Debug.Log($"[GameOverManager] リトライ → {sceneName}");
+    }
+
+    /// <summary>
+    /// 親も子もまとめてレイヤーを変更する
+    /// </summary>
+    private void SetLayerRecursively(GameObject obj, int newLayer)
+    {
+        if (obj == null) return;
+        obj.layer = newLayer;
+        foreach (Transform child in obj.transform)
+        {
+            SetLayerRecursively(child.gameObject, newLayer);
+        }
     }
 }

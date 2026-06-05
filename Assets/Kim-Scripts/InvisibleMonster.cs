@@ -144,12 +144,12 @@ public class InvisibleMonster : MonoBehaviour
 
     private void Update()
     {
-        if(unique)
-        {
-            SetVisible(false);
-            unique = false;
-            Debug.Log("[InvisibleMonster] 初期化: 見えなく設定");
-        }
+        //if(unique)
+        //{
+        //    SetVisible(false);
+        //    unique = false;
+        //    Debug.Log("[InvisibleMonster] 初期化: 見えなく設定");
+        //}
 
         // スタン中は FOV も状態更新もスキップ
         if (_currentState == State.Stunned)
@@ -549,11 +549,11 @@ public class InvisibleMonster : MonoBehaviour
     /// <summary>
     /// Renderer の表示/非表示を切り替える。
     /// </summary>
-    public void SetVisible(bool visible)
-    {
-        foreach (Renderer r in _renderers)
-            r.enabled = visible;
-    }
+    //public void SetVisible(bool visible)
+    //{
+    //    foreach (Renderer r in _renderers)
+    //        r.enabled = visible;
+    //}
 
     /// <summary>
     /// どの状態からでも気絶状態に遷移する。すでにスタン中なら時間延長。
