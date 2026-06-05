@@ -34,6 +34,9 @@ public class CameraSwitcher : MonoBehaviour
     // 直前に見ていた監視カメラの番号を記憶
     private int lastSubCameraIndex = 1;
 
+    private bool cameraLocked = false;
+
+
     void Start()
     {
         EnsureCamerasInitialized();
@@ -128,6 +131,9 @@ public class CameraSwitcher : MonoBehaviour
     /// </summary>
     public void ToggleCamera()
     {
+        //カメラがロックされている場合は切り替えを無効化します
+        if (cameraLocked)
+            return;
         if (CurrentCameraIndex == 0)
         {
             // メインカメラなら、記憶している監視カメラへ切り替え
@@ -140,5 +146,11 @@ public class CameraSwitcher : MonoBehaviour
             SetCameraState(0);
             player_Main.SetMoveEnabled(true); // プレイヤーの移動を再開
         }
+    }
+
+    public void LockCamera()
+    {
+        cameraLocked = true;
+        SetCameraState(0);
     }
 }
