@@ -113,6 +113,7 @@ public class KeyPadController : MonoBehaviour
         {
             if (x == 0) return 9;   // 0
             if (x == 1) return 10;  // Enter
+            if (x == 1) return 11;  // Back
         }
 
         return 0;
