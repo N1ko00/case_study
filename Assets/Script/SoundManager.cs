@@ -21,7 +21,7 @@ public class SoundManager : MonoBehaviour
     //音発生関数
     public void EmitNoise(Vector3 soundPos, float radius, NoiseSourceType sourceType)
     {
-        Debug.Log($"EmitNoise: pos={soundPos}, radius={radius}, source={sourceType}");
+        //Debug.Log($"EmitNoise: pos={soundPos}, radius={radius}, source={sourceType}");
 
         if (sourceType == NoiseSourceType.Player)
         {
@@ -32,7 +32,7 @@ public class SoundManager : MonoBehaviour
             {
                 float distance = Vector3.Distance(soundPos, enemy.transform.position);
 
-                Debug.Log($"[Player->Enemy] distance to {enemy.name} = {distance}");
+               // Debug.Log($"[Player->Enemy] distance to {enemy.name} = {distance}");
 
                 if (distance <= radius)
                 {
@@ -41,7 +41,7 @@ public class SoundManager : MonoBehaviour
 
                     if (Physics.Raycast(soundPos, dir, out RaycastHit hit, distance, wallLayer))
                     {
-                        Debug.Log($"[WallCheck] Enemyとの間に壁あり: {hit.collider.name}");
+                        //Debug.Log($"[WallCheck] Enemyとの間に壁あり: {hit.collider.name}");
                         continue;
                     }
                     else
@@ -65,7 +65,7 @@ public class SoundManager : MonoBehaviour
 
             float distance = Vector3.Distance(soundPos, player.transform.position);
 
-            Debug.Log($"[Enemy->Player] distance = {distance}");
+            //Debug.Log($"[Enemy->Player] distance = {distance}");
 
             if (distance <= radius)
             {
@@ -74,12 +74,12 @@ public class SoundManager : MonoBehaviour
 
                 if (Physics.Raycast(soundPos, dir, out RaycastHit hit, distance, wallLayer))
                 {
-                    Debug.Log($"[WallCheck] Playerとの間に壁あり: {hit.collider.name}");
+                   // Debug.Log($"[WallCheck] Playerとの間に壁あり: {hit.collider.name}");
                     return;
                 }
                 else
                 {
-                    Debug.Log("[WallCheck] 壁なし → SE再生");
+                    //Debug.Log("[WallCheck] 壁なし → SE再生");
 
                     //SE再生
                     //諸事情でいったんoff

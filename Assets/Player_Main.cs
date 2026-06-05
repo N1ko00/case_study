@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
@@ -6,24 +6,24 @@ public class FPSController : MonoBehaviour
 {
     public Transform playerCamera;
 
-    [Header("ˆÚ“®İ’è")]
+    [Header("ç§»å‹•è¨­å®š")]
     public float walkSpeed = 5f;
     public float runSpeed = 10f;
     public float gravity = -9.81f;
 
-    [Header("ƒAƒCƒeƒ€æ“¾")]
+    [Header("ã‚¢ã‚¤ãƒ†ãƒ å–å¾—")]
     public float itemPickupDistance = 3f;
 
-    [Header("‹“_")]
+    [Header("è¦–ç‚¹")]
     public float mouseSensitivity = 0.1f;
     public float minLookAngle = -75f;
     public float maxLookAngle = 75f;
 
-    [Header("‰¹EŒŸ’m‚Ì“–‚½‚è”»’èİ’è")]
+    [Header("éŸ³ãƒ»æ¤œçŸ¥ã®å½“ãŸã‚Šåˆ¤å®šè¨­å®š")]
     public float voiceDetectionRadius = 5f;
     public float actionSoundRadius = 8f;
 
-    [Header("‘«‰¹İ’è")]
+    [Header("è¶³éŸ³è¨­å®š")]
     [SerializeField] private float footstepInterval = 0.5f;
     [SerializeField] private float footstepRadius = 8f;
 
@@ -42,10 +42,12 @@ public class FPSController : MonoBehaviour
 
     private WorldItem currentlyHighlightingItem;
 
-    // ===== ’Ç‰Á =====
-    [Header("ƒvƒŒƒCƒ„[“®‚«ƒJƒƒ‰~‚ß‚é—p")]
+    [Header("ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼å‹•ãã‚«ãƒ¡ãƒ©æ­¢ã‚ã‚‹ç”¨")]
     [SerializeField] private bool canMove = true;
     [SerializeField] private bool canLook = true;
+
+    [Header("åˆ¶é™è¨­å®š")]
+    [SerializeField] private bool hasTablet = false;
 
     void Awake()
     {
@@ -66,13 +68,20 @@ public class FPSController : MonoBehaviour
             return;
         }
 
-        // ƒJƒƒ‰‘€ì
+        // ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã®å…¥åŠ›åˆ¶é™ï¼ˆã‚¿ãƒ–ãƒ¬ãƒƒãƒˆãŒãªã„ã¨ãã¯å¼¾ãï¼‰
+        if (!hasTablet && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            Debug.Log("ã‚¿ãƒ–ãƒ¬ãƒƒãƒˆã‚’æŒã£ã¦ã„ãªã„ãŸã‚ã€ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã¯ç„¡åŠ¹ã§ã™ã€‚");
+            return; // ã“ã‚Œä»¥é™ã®å‡¦ç†ã‚’ã•ã›ãªã„
+        }
+
+        // ã‚«ãƒ¡ãƒ©æ“ä½œ
         if (canLook)
         {
             Look();
         }
 
-        // ˆÚ“®ˆ—
+        // ç§»å‹•å‡¦ç†
         if (canMove)
         {
             Move();
@@ -83,7 +92,6 @@ public class FPSController : MonoBehaviour
 
     void SetupDetectionColliders()
     {
-        // 1. º‚ÌŒŸ’m—p
         GameObject voiceObj = new GameObject("VoiceDetectionArea");
         voiceObj.transform.SetParent(this.transform);
         voiceObj.transform.localPosition = Vector3.up * 1.5f;
@@ -93,9 +101,8 @@ public class FPSController : MonoBehaviour
         voiceCollider.radius = voiceDetectionRadius;
 
         var voiceDetector = voiceObj.AddComponent<DetectionTrigger>();
-        voiceDetector.areaName = "º‚Ì“Í‚­”ÍˆÍ";
+        voiceDetector.areaName = "å£°ã®å±Šãç¯„å›²";
 
-        // 2. ƒAƒNƒVƒ‡ƒ“‰¹—p
         GameObject actionObj = new GameObject("ActionSoundArea");
         actionObj.transform.SetParent(this.transform);
         actionObj.transform.localPosition = Vector3.zero;
@@ -105,7 +112,7 @@ public class FPSController : MonoBehaviour
         actionCollider.radius = actionSoundRadius;
 
         var actionDetector = actionObj.AddComponent<DetectionTrigger>();
-        actionDetector.areaName = "ƒAƒNƒVƒ‡ƒ“‰¹‚Ì”ÍˆÍ";
+        actionDetector.areaName = "ã‚¢ã‚¯ã‚·ãƒ§ãƒ³éŸ³ã®ç¯„å›²";
     }
 
     public void OnMove(InputAction.CallbackContext context)
@@ -140,7 +147,6 @@ public class FPSController : MonoBehaviour
 
         controller.Move(velocity * Time.deltaTime);
 
-        // ‘«‰¹ˆ—
         HandleFootstep(isMoving);
     }
 
@@ -173,7 +179,7 @@ public class FPSController : MonoBehaviour
             footstepTimer =
                 isRunning ? footstepInterval * 0.6f : footstepInterval;
 
-            Debug.Log("‘«‰¹”­¶I");
+            //Debug.Log("è¶³éŸ³ç™ºç”Ÿï¼");
 
             SoundManager.Instance.EmitNoise(
                 this.transform.position,
@@ -183,37 +189,11 @@ public class FPSController : MonoBehaviour
         }
     }
 
-    //void HandleItemPickup()
-    //{
-    //    if (Mouse.current.leftButton.wasPressedThisFrame)
-    //    {
-    //        Ray ray = new Ray(playerCamera.position, playerCamera.forward);
-
-    //        if (Physics.Raycast(ray, out RaycastHit hit, itemPickupDistance))
-    //        {
-    //            if (hit.collider.CompareTag("Item"))
-    //            {
-    //                WorldItem item =
-    //                    hit.collider.GetComponent<WorldItem>();
-
-    //                if (item != null)
-    //                {
-    //                    Debug.Log("E‚Á‚½F" + item.itemData.itemName);
-
-    //                    InventoryManager.Instance.AddItem(item.itemData);
-
-    //                    Destroy(item.gameObject);
-    //                }
-    //            }
-    //        }
-    //    }
-    //}
     void HandleItemPickup()
     {
         Ray ray = new Ray(playerCamera.position, playerCamera.forward);
         WorldItem itemInView = null;
 
-        // 1. ƒAƒCƒeƒ€ê—pƒŒƒCƒ„[iItemj‚¾‚¯‚ğ‘_‚¢Œ‚‚¿‚µ‚ÄAƒƒbƒJ[‚Ì•Ç‚ğŠÑ’Ê‚³‚¹‚é
         int itemLayerMask = LayerMask.GetMask("Item");
 
         if (Physics.Raycast(ray, out RaycastHit hit, itemPickupDistance, itemLayerMask))
@@ -224,13 +204,10 @@ public class FPSController : MonoBehaviour
 
                 if (foundItem != null)
                 {
-                    // 2. ƒAƒCƒeƒ€‚ÌeŠK‘w‚©‚ç LockerDoor ƒXƒNƒŠƒvƒg‚ğæ“¾
                     LockerDoor locker = foundItem.GetComponentInParent<LockerDoor>();
 
                     if (locker != null)
                     {
-                        // 3. yŠmÀ‚È•û–@zƒƒbƒJ[‚ÌƒXƒNƒŠƒvƒg‚É‚­‚Á‚Â‚¢‚Ä‚¢‚éu‰ñ“]‘ÎÛidoorPivotjv‚ğ’¼Ú’²‚×‚é
-                        // ƒŠƒtƒŒƒNƒVƒ‡ƒ“iSystem.Reflectionj‚ğg‚Á‚ÄAprivate‚ÈƒtƒB[ƒ‹ƒhudoorPivotv‚Ì’†g‚ğ”`‚«Œ©‚µ‚Ü‚·
                         var field = typeof(LockerDoor).GetField("doorPivot", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
 
                         if (field != null)
@@ -239,10 +216,8 @@ public class FPSController : MonoBehaviour
 
                             if (doorPivotTransform != null)
                             {
-                                // ”à‚Ì‰ŠúŠp“xi0,0,0j‚©‚ç‚ÌƒYƒŒi‰ñ“]Špj‚ğŒvZ
                                 float angleDiff = Quaternion.Angle(doorPivotTransform.localRotation, Quaternion.identity);
 
-                                // y”»’èzƒYƒŒ‚ª 10“x–¢–i‚Ü‚¾‚Ù‚Ú•Â‚Ü‚Á‚Ä‚¢‚éó‘Ôj‚È‚çAƒAƒCƒeƒ€‚ğŒŸ’m‚³‚¹‚È‚¢I
                                 if (angleDiff < 10f)
                                 {
                                     foundItem = null;
@@ -251,13 +226,11 @@ public class FPSController : MonoBehaviour
                         }
                     }
 
-                    // ƒhƒA‚ªŠJ‚¢‚Ä‚¢‚éA‚Ü‚½‚ÍŒ³‚©‚çŠO‚É’u‚¢‚Ä‚ ‚éƒAƒCƒeƒ€‚È‚ç³í‚ÉƒZƒbƒg‚³‚ê‚é
                     itemInView = foundItem;
                 }
             }
         }
 
-        // --- ˆÈ‰ºAƒnƒCƒ‰ƒCƒg‚âƒNƒŠƒbƒNˆ—‚Í‚»‚Ì‚Ü‚ÜG‚ç‚È‚­‚ÄOKI ---
         if (itemInView != currentlyHighlightingItem)
         {
             if (currentlyHighlightingItem != null) currentlyHighlightingItem.SetHighlight(false);
@@ -267,23 +240,33 @@ public class FPSController : MonoBehaviour
 
         if (Mouse.current.leftButton.wasPressedThisFrame && currentlyHighlightingItem != null)
         {
-            Debug.Log("E‚Á‚½F" + currentlyHighlightingItem.itemData.itemName);
+            Debug.Log("æ‹¾ã£ãŸï¼š" + currentlyHighlightingItem.itemData.itemName);
+
+            if (currentlyHighlightingItem.itemData.itemName == "Tablet")
+            {
+                hasTablet = true;
+                Debug.Log("ã‚¿ãƒ–ãƒ¬ãƒƒãƒˆã‚’å…¥æ‰‹ï¼ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ãŒè§£æ”¾ã•ã‚Œã¾ã—ãŸã€‚");
+            }
+
             InventoryManager.Instance.AddItem(currentlyHighlightingItem.itemData);
+
+            GameObject objectToDelete = currentlyHighlightingItem.gameObject;
             currentlyHighlightingItem = null;
-            Destroy(hit.collider.gameObject);
+            Destroy(objectToDelete);
         }
     }
 
-    // ==================================================
-    // ŠO•”‚©‚çŒÄ‚×‚éˆ—
-    // ==================================================
+    // â˜… å¤–éƒ¨ï¼ˆç‹¬ç«‹ã‚¿ãƒ–ãƒ¬ãƒƒãƒˆã‚¹ã‚¯ãƒªãƒ—ãƒˆï¼‰ã‹ã‚‰å‘¼ã³å‡ºã—ã¦ãƒ­ãƒƒã‚¯è§£é™¤ã™ã‚‹é–¢æ•°
+    public void UnlockSpaceKey()
+    {
+        hasTablet = true;
+        Debug.Log("ã‚¿ãƒ–ãƒ¬ãƒƒãƒˆãŒè¦–èªã•ã‚Œã‚¯ãƒªãƒƒã‚¯ã•ã‚Œã¾ã—ãŸã€‚ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã‚’è§£æ”¾ã—ã¾ã™ã€‚");
+    }
 
-    // ˆÚ“®ON/OFF
     public void SetMoveEnabled(bool value)
     {
         canMove = value;
 
-        // ’â~‚É“ü—Í‚ğƒŠƒZƒbƒg
         if (!value)
         {
             moveInput = Vector2.zero;
@@ -291,19 +274,16 @@ public class FPSController : MonoBehaviour
         }
     }
 
-    // ƒJƒƒ‰ON/OFF
     public void SetLookEnabled(bool value)
     {
         canLook = value;
 
-        // ’â~‚É“ü—Í‚ğƒŠƒZƒbƒg
         if (!value)
         {
             lookInput = Vector2.zero;
         }
     }
 
-    // —¼•û‚Ü‚Æ‚ß‚Ä§Œä
     public void SetPlayerControl(bool move, bool look)
     {
         SetMoveEnabled(move);
@@ -311,7 +291,7 @@ public class FPSController : MonoBehaviour
     }
 }
 
-// ”»’è‚ğŒŸ’m‚·‚é‚½‚ß‚Ì¬‚³‚ÈƒNƒ‰ƒX
+// ğŸ’¡ æ‹¬å¼§ã®ä¸æ•´åˆã‚’é˜²ããŸã‚ã€DetectionTriggerã¯ã‚¯ãƒ©ã‚¹å¤–ã®æœ«å°¾ã«å®Œå…¨ç‹¬ç«‹ã—ã¦é…ç½®
 public class DetectionTrigger : MonoBehaviour
 {
     public string areaName;
@@ -320,7 +300,7 @@ public class DetectionTrigger : MonoBehaviour
     {
         if (!other.CompareTag("Player"))
         {
-            Debug.Log($"{areaName} ‚É {other.name} ‚ª“ü‚è‚Ü‚µ‚½I");
+            //Debug.Log($"{areaName} ã« {other.name} ãŒå…¥ã‚Šã¾ã—ãŸï¼");
         }
     }
 }
