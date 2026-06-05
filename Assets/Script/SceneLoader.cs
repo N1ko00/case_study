@@ -25,11 +25,24 @@ public class SceneLoader : MonoBehaviour
     [Tooltip("UVスケール (大きいほど細かいノイズ)")]
     [SerializeField] private Vector2 uvTiling = new Vector2(2f, 2f);
 
+    [Header("TVノイズSE")]
+    [Tooltip("ノイズ演出中に流すAudioSource")]
+    [SerializeField] private AudioSource noiseAudioSource;
+    [Tooltip("ノイズのループSE。ループ再生される")]
+    [SerializeField] private AudioClip noiseLoopSE;
+    [Tooltip("ノイズが出る瞬間の一発SE (任意)")]
+    [SerializeField] private AudioClip noiseStartSE;
+    [Range(0f, 1f)]
+    [SerializeField] private float noiseVolume = 0.7f;
+    [Tooltip("ループSEのフェードイン/フェードアウトに合わせて音量も補間する")]
+    [SerializeField] private bool fadeAudioWithAlpha = true;
+
     // シーン名の列挙型
     public enum SceneName
     {
         TitleScene,
         MainScene,
+        MainScene_KimTest2,
         GameOverScene,
         GameClearScene,
         ResultScene
@@ -45,6 +58,16 @@ public class SceneLoader : MonoBehaviour
             noiseGroup.alpha = 0f;
             noiseGroup.blocksRaycasts = false;
         }
+
+        // AudioSource 未設定なら自動追加
+        if (noiseAudioSource == null)
+        {
+            noiseAudioSource = gameObject.AddComponent<AudioSource>();
+            noiseAudioSource.playOnAwake = false;
+            noiseAudioSource.spatialBlend = 0f;     // 2D
+            noiseAudioSource.loop = true;
+            noiseAudioSource.ignoreListenerPause = true; // Time.timeScale=0 でも止まらない
+        }
     }
 
     public void LoadScene(SceneName name)
@@ -57,6 +80,7 @@ public class SceneLoader : MonoBehaviour
     // ───────────────────────────────────────────
     IEnumerator LoadSceneCoroutine(SceneName name)
     {
+        StartNoiseSE();
         // 1) ノイズで画面を覆う
         yield return NoiseFadeIn();
 
@@ -71,6 +95,46 @@ public class SceneLoader : MonoBehaviour
 
         // 5) ノイズをフェードアウト (この間もUVは動き続ける → NoiseFadeOut内で処理)
         yield return NoiseFadeOut();
+
+        StopNoiseSE();
+    }
+
+    // ───────────────────────────────────────────
+    // ノイズSE制御
+    // ───────────────────────────────────────────
+    private void StartNoiseSE()
+    {
+        if (noiseAudioSource == null) return;
+
+        // 一発SE (スタート瞬間のバチッ音など)
+        if (noiseStartSE != null)
+            noiseAudioSource.PlayOneShot(noiseStartSE, noiseVolume);
+
+        // ループSE (砂嵐のザーッ音)
+        if (noiseLoopSE != null)
+        {
+            noiseAudioSource.clip = noiseLoopSE;
+            noiseAudioSource.loop = true;
+            noiseAudioSource.volume = fadeAudioWithAlpha ? 0f : noiseVolume;
+            noiseAudioSource.Play();
+        }
+    }
+
+    private void StopNoiseSE()
+    {
+        if (noiseAudioSource == null) return;
+        noiseAudioSource.Stop();
+        noiseAudioSource.clip = null;
+    }
+
+    /// <summary>
+    /// CanvasGroup.alpha に合わせてSE音量も上下させる。
+    /// </summary>
+    private void SyncAudioVolumeToAlpha()
+    {
+        if (!fadeAudioWithAlpha) return;
+        if (noiseAudioSource == null || noiseGroup == null) return;
+        noiseAudioSource.volume = noiseGroup.alpha * noiseVolume;
     }
 
     // ───────────────────────────────────────────
@@ -87,9 +151,11 @@ public class SceneLoader : MonoBehaviour
             t += Time.unscaledDeltaTime;       // Time.timeScale=0 でも動く
             noiseGroup.alpha = Mathf.Clamp01(t / noiseFadeInDuration);
             UpdateNoiseUV(Time.unscaledDeltaTime);
+            SyncAudioVolumeToAlpha();
             yield return null;
         }
         noiseGroup.alpha = 1f;
+        SyncAudioVolumeToAlpha();
     }
 
     IEnumerator NoiseHold(float duration)
@@ -113,10 +179,12 @@ public class SceneLoader : MonoBehaviour
             t += Time.unscaledDeltaTime;
             noiseGroup.alpha = 1f - Mathf.Clamp01(t / noiseFadeOutDuration);
             UpdateNoiseUV(Time.unscaledDeltaTime);
+            SyncAudioVolumeToAlpha();
             yield return null;
         }
         noiseGroup.alpha = 0f;
         noiseGroup.blocksRaycasts = false;
+        SyncAudioVolumeToAlpha();
     }
 
     /// <summary>
