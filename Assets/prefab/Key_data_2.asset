@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 785dafbfcc4d4cc4f84e9c69f5a412de, type: 3}
   m_Name: Key_data_2
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: Key_2
+  itemName: "\u30AB\u30FC\u30C9\u30AD\u30FCLv2"
   icon: {fileID: -241981689, guid: c7b6878547301c84ab264830bad49488, type: 3}
   type: 2
   isUsed: 0
