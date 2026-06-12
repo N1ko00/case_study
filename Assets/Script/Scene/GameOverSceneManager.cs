@@ -28,6 +28,8 @@ public class GameOverSceneManager : MonoBehaviour
 
     private void Awake()
     {
+        // timeScale ‚ª‚O‚Ì‚Ü‚Ü‘JˆÚ‚µ‚Ä—ˆ‚½ê‡‚É”õ‚¦‚ÄƒŠƒZƒbƒg
+        Time.timeScale = 1f;
         // SceneLoader ‚ª–¢İ’è‚È‚ç©“®ŒŸõ 
         if (sceneLoader == null)
             sceneLoader = FindAnyObjectByType<SceneLoader>(FindObjectsInactive.Include);
