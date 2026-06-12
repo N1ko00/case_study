@@ -174,9 +174,9 @@ public class CameraSwitcher : MonoBehaviour
     /// </summary>
     public void ToggleCamera()
     {
-        //カメラがロックされている場合は切り替えを無効化します
-        if (cameraLocked&&!IsToggled)
-            return;
+        // カメラ切替がロックされている場合は、切替を行わないようにします
+        if (cameraLocked) return;
+
         if (CurrentCameraIndex == 0)
         {
             // メインカメラなら、記憶している監視カメラへ切り替え
