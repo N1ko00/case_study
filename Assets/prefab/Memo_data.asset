@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 785dafbfcc4d4cc4f84e9c69f5a412de, type: 3}
   m_Name: Memo_data
   m_EditorClassIdentifier: Assembly-CSharp::ItemData
-  itemName: memo
+  itemName: "\u30E1\u30E2"
   icon: {fileID: 113573173, guid: 6977b4906a37d1c4c956f228a60aacfd, type: 3}
   type: 1
   isUsed: 0
   slotTypeIndex: 1
   isConsumable: 0
-  description: 
+  description: "2026\u5E741\u670829\u65E5"
