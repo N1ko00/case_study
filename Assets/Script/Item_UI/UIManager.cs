@@ -1,16 +1,83 @@
+ï»¿//using UnityEngine;
+//using UnityEngine.UI;
+//using System.Collections;
+
+//public class UIManager : MonoBehaviour
+//{
+//    public static UIManager Instance;
+
+//    [Header("UIã®å‚ç…§")]
+//    public GameObject messageWindow; // messagewindow.pngã‚’ä»˜ã‘ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+//    public Text itemNameText;        // ã€è¿½åŠ ã€‘ä¸Šã®ã‚¿ãƒ–ã«å…¥ã‚Œã‚‹ã‚¢ã‚¤ãƒ†ãƒ åç”¨ãƒ†ã‚­ã‚¹ãƒˆ
+//    public Text messageContentText;  // ä¸‹ã®åºƒã„ã‚¹ãƒšãƒ¼ã‚¹ã«å…¥ã‚Œã‚‹ã€Œã€œã‚’è¦‹ã¤ã‘ãŸã€ç”¨ãƒ†ã‚­ã‚¹ãƒˆ
+
+//    [Header("è¡¨ç¤ºæ™‚é–“è¨­å®š")]
+//    public float displayDuration = 3.0f;
+
+//    private Coroutine hideTextCoroutine;
+
+//    void Awake()
+//    {
+//        Instance = this;
+//    }
+
+//    void Start()
+//    {
+//        // åˆæœŸçŠ¶æ…‹ã¯ã™ã¹ã¦éè¡¨ç¤º
+//        if (itemNameText != null) itemNameText.text = "";
+//        if (messageContentText != null) messageContentText.text = "";
+//        if (messageWindow != null) messageWindow.SetActive(false);
+//    }
+
+//    // ã‚¢ã‚¤ãƒ†ãƒ åã¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’åˆ¥ã€…ã«å—ã‘å–ã£ã¦è¡¨ç¤ºã™ã‚‹é–¢æ•°
+//    public void ShowItemMessage(string itemName, string content)
+//    {
+//        if (messageWindow == null) return;
+
+//        if (hideTextCoroutine != null)
+//        {
+//            StopCoroutine(hideTextCoroutine);
+//        }
+
+//        // ãƒ†ã‚­ã‚¹ãƒˆã‚’ãã‚Œãã‚Œã®å ´æ‰€ã«ã‚»ãƒƒãƒˆ
+//        if (itemNameText != null) itemNameText.text = itemName;
+//        if (messageContentText != null) messageContentText.text = content;
+
+//        // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’è¡¨ç¤º
+//        messageWindow.SetActive(true);
+
+//        // ã‚¿ã‚¤ãƒãƒ¼é–‹å§‹
+//        hideTextCoroutine = StartCoroutine(HideTextAfterDelay());
+//    }
+
+//    IEnumerator HideTextAfterDelay()
+//    {
+//        yield return new WaitForSeconds(displayDuration);
+
+//        if (itemNameText != null) itemNameText.text = "";
+//        if (messageContentText != null) messageContentText.text = "";
+//        if (messageWindow != null) messageWindow.SetActive(false);
+
+//        hideTextCoroutine = null;
+//    }
+//}
+
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections; // ƒRƒ‹[ƒ`ƒ“iŠÔŒv‘ªj‚ğg‚¤‚½‚ß‚É•K{‚Å‚·
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
-    public Text messageText;
 
-    [Header("•¶š‚ğ•\¦‚µ‚Ä‚¨‚­ŠÔi•bj")]
+    [Header("UIã®å‚ç…§")]
+    public GameObject messageWindow; // messagewindow.pngã‚’ä»˜ã‘ãŸã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+    public Text itemNameText;        // ä¸Šã®ã‚¿ãƒ–ã«å…¥ã‚Œã‚‹ã‚¢ã‚¤ãƒ†ãƒ åç”¨ãƒ†ã‚­ã‚¹ãƒˆ
+    public Text messageContentText;  // ä¸‹ã®åºƒã„ã‚¹ãƒšãƒ¼ã‚¹ã«å…¥ã‚Œã‚‹ãƒ†ã‚­ã‚¹ãƒˆ
+
+    [Header("è¡¨ç¤ºæ™‚é–“è¨­å®š")]
     public float displayDuration = 3.0f;
 
-    // Œ»İ“®‚¢‚Ä‚¢‚é•¶šÁ‹ƒ^ƒCƒ}[‚ğ‹L‰¯‚·‚é•Ï”
     private Coroutine hideTextCoroutine;
 
     void Awake()
@@ -20,40 +87,52 @@ public class UIManager : MonoBehaviour
 
     void Start()
     {
-        // ƒQ[ƒ€ŠJn‚ÍƒƒbƒZ[ƒW‚ğ‹ó‚Á‚Ûi”ñ•\¦j‚É‚µ‚Ä‚¨‚­
-        if (messageText != null)
-        {
-            messageText.text = "";
-        }
+        // åˆæœŸçŠ¶æ…‹ã¯ã™ã¹ã¦éè¡¨ç¤º
+        if (itemNameText != null) itemNameText.text = "";
+        if (messageContentText != null) messageContentText.text = "";
+        if (messageWindow != null) messageWindow.SetActive(false);
     }
 
-    public void ShowMessage(string msg)
+    // é€šå¸¸ã®ã‚¢ã‚¤ãƒ†ãƒ æ‹¾ã£ãŸæ™‚ãƒ»ä½¿ç”¨æ™‚ç”¨ï¼ˆ3ç§’ã§è‡ªå‹•ã§æ¶ˆãˆã‚‹ï¼‰
+    public void ShowItemMessage(string itemName, string content)
     {
-        if (messageText == null) return;
+        if (messageWindow == null) return;
 
-        // ‚à‚µA‚·‚Å‚É‘O‚Ì•¶š‚Ìƒ^ƒCƒ}[i3•bƒJƒEƒ“ƒg‚È‚Çj‚ª“®‚¢‚Ä‚¢‚½‚çAˆê“x~‚ß‚é
         if (hideTextCoroutine != null)
         {
             StopCoroutine(hideTextCoroutine);
         }
 
-        // V‚µ‚¢•¶š‚ğ•\¦
-        messageText.text = msg;
+        if (itemNameText != null) itemNameText.text = itemName;
+        if (messageContentText != null) messageContentText.text = content;
 
-        // V‚µ‚­•¶šÁ‹ƒ^ƒCƒ}[iƒRƒ‹[ƒ`ƒ“j‚ğƒXƒ^[ƒg‚·‚é
+        messageWindow.SetActive(true);
         hideTextCoroutine = StartCoroutine(HideTextAfterDelay());
     }
 
-    // w’è‚³‚ê‚½ŠÔi•bj‘Ò‚Á‚Ä‚©‚ç•¶š‚ğÁ‚·ˆ—
+    // â˜…ã€è¿½åŠ æ©Ÿèƒ½ã€‘ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªç”¨ï¼šè‡ªå‹•ã§æ¶ˆãˆãªã„ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤ºï¼ˆã‚«ãƒ¼ã‚½ãƒ«ãŒå¤–ã‚Œã‚‹ã¾ã§å‡ºã—ç¶šã‘ã‚‹ï¼‰
+    public void ShowPersistentItemMessage(string itemName, string content)
+    {
+        if (messageWindow == null) return;
+
+        // 3ç§’ã§æ¶ˆãˆã‚‹ã‚³ãƒ«ãƒ¼ãƒãƒ³ãŒå‹•ã„ã¦ã„ãŸã‚‰å³åº§ã«æ­¢ã‚ã‚‹
+        if (hideTextCoroutine != null)
+        {
+            StopCoroutine(hideTextCoroutine);
+        }
+
+        if (itemNameText != null) itemNameText.text = itemName;
+        if (messageContentText != null) messageContentText.text = content;
+
+        messageWindow.SetActive(true);
+    }
+
     IEnumerator HideTextAfterDelay()
     {
-        // displayDurationiƒCƒ“ƒXƒyƒNƒ^[‚Åİ’è‚µ‚½•b”j‚¾‚¯‘Ò‚Â
         yield return new WaitForSeconds(displayDuration);
 
-        // •¶š‚ğ‹ó‚É‚·‚é
-        messageText.text = "";
-
-        // ƒ^ƒCƒ}[‚Ì‹L‰¯‚ğƒŠƒZƒbƒg
-        hideTextCoroutine = null;
+        if (itemNameText != null) itemNameText.text = "";
+        if (messageContentText != null) messageContentText.text = "";
+        if (messageWindow != null) messageWindow.SetActive(false);
     }
 }

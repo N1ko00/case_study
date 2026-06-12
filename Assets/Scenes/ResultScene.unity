@@ -285,6 +285,11 @@ MonoBehaviour:
   uvScrollSpeed: {x: 2, y: 1.5}
   uvJitterStrength: 0.15
   uvTiling: {x: 2, y: 2}
+  noiseAudioSource: {fileID: 0}
+  noiseLoopSE: {fileID: 0}
+  noiseStartSE: {fileID: 0}
+  noiseVolume: 0.7
+  fadeAudioWithAlpha: 1
 --- !u!4 &239100421
 Transform:
   m_ObjectHideFlags: 0
@@ -328,7 +333,7 @@ RectTransform:
   m_GameObject: {fileID: 404350033}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1758052, y: 1.1356, z: 1}
+  m_LocalScale: {x: 2.525133, y: 2.8552392, z: 1.1972}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1819829285}
@@ -336,7 +341,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 3, y: -129}
+  m_AnchoredPosition: {x: -521, y: 96}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &404350035
@@ -358,7 +363,7 @@ MonoBehaviour:
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
     m_SelectOnRight: {fileID: 0}
-  m_Transition: 1
+  m_Transition: 2
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
     m_HighlightedColor: {r: 0.9607843, g: 0.9607843, b: 0.9607843, a: 1}
@@ -369,8 +374,8 @@ MonoBehaviour:
     m_FadeDuration: 0.1
   m_SpriteState:
     m_HighlightedSprite: {fileID: 0}
-    m_PressedSprite: {fileID: 0}
-    m_SelectedSprite: {fileID: 0}
+    m_PressedSprite: {fileID: 21300000, guid: e2de1905752b2234abe07f6520e06d48, type: 3}
+    m_SelectedSprite: {fileID: 21300000, guid: e2de1905752b2234abe07f6520e06d48, type: 3}
     m_DisabledSprite: {fileID: 0}
   m_AnimationTriggers:
     m_NormalTrigger: Normal
@@ -403,8 +408,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 21300000, guid: 18b3a223f5f49794d8aef001c79f3e9f, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -921,7 +926,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: f9be47b12f00b994e9d2a3f8c827efb4, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 0d284be277a7b1540b86023a525ab251, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1032,7 +1037,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1819829285
 RectTransform:
   m_ObjectHideFlags: 0
