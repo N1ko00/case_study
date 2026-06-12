@@ -20,10 +20,10 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/EnemyScene.unity
     guid: 0bd6ced10e434914a8feeb2fc7f382cc
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/MainScene_KimTest2.unity
     guid: 56b11fbad484a144d847989bac915251
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/ResultScene.unity
     guid: ecfaaedd7f9cb9840ae3eef1b9b42c52
   m_configObjects:
