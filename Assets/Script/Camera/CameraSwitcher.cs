@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.Serialization;
 using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
+using UnityEngine.UI;
 
 public class CameraSwitcher : MonoBehaviour
 {
@@ -22,6 +23,12 @@ public class CameraSwitcher : MonoBehaviour
 
     [Header("UI")]
     [SerializeField] private GameObject cameraCanvas;
+
+    [Header("Camera Buttons UI")]
+    [Tooltip("監視カメラ1, 2... に対応するボタンを順番に入れてくださいませ")]
+    [SerializeField] private List<Button> cameraButtons = new List<Button>();
+    [SerializeField] private Color normalColor = Color.white; // 通常時の色
+    [SerializeField] private Color selectedColor = Color.green; // 選択中の色
 
     //停止対象プレイヤー
     [SerializeField] private FPSController player_Main;
@@ -123,7 +130,41 @@ public class CameraSwitcher : MonoBehaviour
         Cursor.visible = isSubCamera;
         Cursor.lockState = isSubCamera ? CursorLockMode.None : CursorLockMode.Locked;
 
-       // if (monster != null) monster.SetVisible(isSubCamera);
+        // if (monster != null) monster.SetVisible(isSubCamera);
+
+        UpdateButtonColors();
+    }
+
+    private void UpdateButtonColors()
+    {
+        for (int i = 0; i < cameraButtons.Count; i++)
+        {
+            if (cameraButtons[i] == null) continue;
+
+            // camerasリストの0番目はメインカメラなので、ボタンの0番目は監視カメラ1（cameras[1]）に対応します
+            int targetCameraIndex = i + 1;
+
+            Button button = cameraButtons[i];
+
+            // ButtonからColorBlockを取得
+            ColorBlock cb = button.colors;
+
+            if (targetCameraIndex == CurrentCameraIndex)
+            {
+                // 見ているカメラなら、通常時の色を選択色に差し替え
+                cb.normalColor = selectedColor;
+
+                cb.selectedColor = selectedColor;
+            }
+            else
+            {
+                cb.normalColor = normalColor;
+
+                cb.selectedColor = normalColor;
+            }
+
+            button.colors = cb;
+        }
     }
 
     /// <summary>
