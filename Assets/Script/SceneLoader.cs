@@ -45,6 +45,7 @@ public class SceneLoader : MonoBehaviour
         MainScene_KimTest2,
         GameOverScene,
         GameClearScene,
+        GameOver_Test_Kim,
         ResultScene
     }
 
