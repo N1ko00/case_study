@@ -144,18 +144,26 @@ public class CameraSwitcher : MonoBehaviour
             // camerasリストの0番目はメインカメラなので、ボタンの0番目は監視カメラ1（cameras[1]）に対応します
             int targetCameraIndex = i + 1;
 
-            Image buttonImage = cameraButtons[i].GetComponent<Image>();
-            if (buttonImage != null)
+            Button button = cameraButtons[i];
+
+            // ButtonからColorBlockを取得
+            ColorBlock cb = button.colors;
+
+            if (targetCameraIndex == CurrentCameraIndex)
             {
-                if (targetCameraIndex == CurrentCameraIndex)
-                {
-                    buttonImage.color = selectedColor; // 見ているカメラなら色を変える
-                }
-                else
-                {
-                    buttonImage.color = normalColor; // それ以外は元の色
-                }
+                // 見ているカメラなら、通常時の色を選択色に差し替え
+                cb.normalColor = selectedColor;
+
+                cb.selectedColor = selectedColor;
             }
+            else
+            {
+                cb.normalColor = normalColor;
+
+                cb.selectedColor = normalColor;
+            }
+
+            button.colors = cb;
         }
     }
 
