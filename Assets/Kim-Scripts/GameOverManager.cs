@@ -101,6 +101,8 @@ public class GameOverManager : MonoBehaviour
         //æ‚ÉƒJƒƒ‰‚ÌUI‚ğÁ‚·
         Camera.SetCameraState(0);
 
+        Camera.IsToggled = false;
+
         //if (gameOverText != null)
         //    gameOverText.text = gameOverMessage;
 

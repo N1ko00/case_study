@@ -43,6 +43,8 @@ public class CameraSwitcher : MonoBehaviour
 
     private bool cameraLocked = false;
 
+    public bool IsToggled = true;
+
 
     void Start()
     {
@@ -173,7 +175,7 @@ public class CameraSwitcher : MonoBehaviour
     public void ToggleCamera()
     {
         //カメラがロックされている場合は切り替えを無効化します
-        if (cameraLocked)
+        if (cameraLocked&&!IsToggled)
             return;
         if (CurrentCameraIndex == 0)
         {
