@@ -16409,7 +16409,7 @@ MonoBehaviour:
   monster: {fileID: 1724526796}
   scriptsToDisable:
   - {fileID: 2019746526}
-  Camera: {fileID: 0}
+  Camera: {fileID: 863671113}
 --- !u!4 &1909217784
 Transform:
   m_ObjectHideFlags: 0
