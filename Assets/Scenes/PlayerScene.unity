@@ -920,6 +920,10 @@ PrefabInstance:
       propertyPath: m_Color.a
       value: 0.2784314
       objectReference: {fileID: 0}
+    - target: {fileID: 979980493961923245, guid: 4ab0eaaecf596d545b7bdee4f6ca1057, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 1354261296474560200, guid: 4ab0eaaecf596d545b7bdee4f6ca1057, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -1046,7 +1050,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6835610416286570560, guid: 4ab0eaaecf596d545b7bdee4f6ca1057, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7972952290869563659, guid: 4ab0eaaecf596d545b7bdee4f6ca1057, type: 3}
       propertyPath: m_SizeDelta.x
