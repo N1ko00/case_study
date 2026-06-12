@@ -13,6 +13,11 @@ public class Result : MonoBehaviour
     [Header("É{É^ÉìéQè∆")]
     [SerializeField] private Button ReturnTitle;
 
+    void Start()
+    {
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
+    }
     void OnEnable()
     {
         if (ReturnTitle != null)
