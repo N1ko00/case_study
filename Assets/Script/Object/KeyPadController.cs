@@ -31,14 +31,16 @@ public class KeyPadController : MonoBehaviour
             return;
         }
 
-        InputManager.Instance.inputActions.Password.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
-        InputManager.Instance.inputActions.Password.Move.canceled += ctx => moveInput = Vector2.zero;
-        InputManager.Instance.inputActions.Password.Submit.performed += OnSubmit;
+        //InputManager.Instance.inputActions.Password.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
+        //InputManager.Instance.inputActions.Password.Move.canceled += ctx => moveInput = Vector2.zero;
+        //InputManager.Instance.inputActions.Password.Submit.performed += OnSubmit;
     }
 
     private void Start()
     {
         UpdateSelection();
+        Cursor.visible = true;
+        Cursor.lockState = CursorLockMode.None;
     }
     void OnEnable()
     {
@@ -48,6 +50,9 @@ public class KeyPadController : MonoBehaviour
 
     void OnDisable()
     {
+        Debug.Log("KeyPadController OnDisable called");
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         InputManager.Instance.inputActions.UI.Disable();
         InputManager.Instance.inputActions.Player.Enable();
     }
