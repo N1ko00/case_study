@@ -11,7 +11,7 @@ public class KeyPadController : MonoBehaviour
     int x = 0;
     int y = 0;
 
-    // ˆÚ“®‚Ì˜A‘Å–h~—p
+    // ç§»å‹•ã®é€£æ‰“é˜²æ­¢ç”¨
     bool moveConsumed = false;
 
     public Color normalColor;
@@ -22,7 +22,7 @@ public class KeyPadController : MonoBehaviour
     {
         if (InputManager.Instance?.inputActions == null)
         {
-            Debug.LogError("InputManager ‚ª null ‚Å‚·");
+            Debug.LogError("InputManager ãŒ null ã§ã™");
             return;
         }
 
@@ -41,23 +41,26 @@ public class KeyPadController : MonoBehaviour
 
     void OnDisable()
     {
+        Debug.Log("KeyPadController OnDisable called");
+        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Locked;
         InputManager.Instance.inputActions.UI.Disable();
         InputManager.Instance.inputActions.Player.Enable();
     }
 
     void Update()
     {
-        // š ReadValue ‚Å–ˆƒtƒŒ[ƒ€’¼Úæ“¾iperformedƒCƒxƒ“ƒgŒo—R‚ğ‚â‚ß‚éj
+        // â˜… ReadValue ã§æ¯ãƒ•ãƒ¬ãƒ¼ãƒ ç›´æ¥å–å¾—ï¼ˆperformedã‚¤ãƒ™ãƒ³ãƒˆçµŒç”±ã‚’ã‚„ã‚ã‚‹ï¼‰
         Vector2 move = InputManager.Instance.inputActions.Password.Move.ReadValue<Vector2>();
 
         if (move == Vector2.zero)
         {
-            // “ü—Í‚ª‚È‚­‚È‚Á‚½‚çƒŠƒZƒbƒgiŸ‚Ì“ü—Í‚ğó‚¯•t‚¯‚éj
+            // å…¥åŠ›ãŒãªããªã£ãŸã‚‰ãƒªã‚»ãƒƒãƒˆï¼ˆæ¬¡ã®å…¥åŠ›ã‚’å—ã‘ä»˜ã‘ã‚‹ï¼‰
             moveConsumed = false;
             return;
         }
 
-        // ‰Ÿ‚µ‚Á‚Ï‚È‚µ‘ÎôF“ü—Í‚ğ1‰ñ‚¾‚¯Á”ï
+        // æŠ¼ã—ã£ã±ãªã—å¯¾ç­–ï¼šå…¥åŠ›ã‚’1å›ã ã‘æ¶ˆè²»
         if (moveConsumed)
             return;
 
@@ -68,8 +71,8 @@ public class KeyPadController : MonoBehaviour
 
         if (move.x > 0.5f) nextX++;
         if (move.x < -0.5f) nextX--;
-        if (move.y > 0.5f) nextY--;   // ãƒL[ ¨ yŒ¸iã‚Ìs‚Öj
-        if (move.y < -0.5f) nextY++;   // ‰ºƒL[ ¨ y‘i‰º‚Ìs‚Öj
+        if (move.y > 0.5f) nextY--;   // ä¸Šã‚­ãƒ¼ â†’ yæ¸›ï¼ˆä¸Šã®è¡Œã¸ï¼‰
+        if (move.y < -0.5f) nextY++;   // ä¸‹ã‚­ãƒ¼ â†’ yå¢—ï¼ˆä¸‹ã®è¡Œã¸ï¼‰
 
         nextX = Mathf.Clamp(nextX, 0, 2);
         nextY = Mathf.Clamp(nextY, 0, 3);
@@ -82,7 +85,7 @@ public class KeyPadController : MonoBehaviour
         }
     }
 
-    // Å‰º’i(y==3)‚Í 0(x=0), Enter(x=1), Back(x=2) ‚Ì3‚Â‘S•”—LŒø
+    // æœ€ä¸‹æ®µ(y==3)ã¯ 0(x=0), Enter(x=1), Back(x=2) ã®3ã¤å…¨éƒ¨æœ‰åŠ¹
     bool IsValidPosition(int px, int py)
     {
         if (py == 3)
@@ -99,7 +102,7 @@ public class KeyPadController : MonoBehaviour
         {
             if (x == 0) return 9;    // 0
             if (x == 1) return 10;   // Enter
-            if (x == 2) return 11;   // Back © ‚±‚±‚ªŒ³‚ÌƒoƒOix==1‚ªd•¡‚µ‚Ä‚¢‚½j
+            if (x == 2) return 11;   // Back â† ã“ã“ãŒå…ƒã®ãƒã‚°ï¼ˆx==1ãŒé‡è¤‡ã—ã¦ã„ãŸï¼‰
         }
         return 0;
     }

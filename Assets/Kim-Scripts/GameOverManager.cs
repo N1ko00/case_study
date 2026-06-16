@@ -97,9 +97,12 @@ public class GameOverManager : MonoBehaviour
         if (_isGameOver) return;
         _isGameOver = true;
 
-        //cameraCanvas.SetActive(isSubCamera)
-        //先にカメラのUIを消す
-        Camera.SetCameraState(0);
+
+        // 先にメインカメラへ戻し、カメラ切替をロックする
+        if (Camera != null)
+        {
+            Camera.LockCamera(); // CameraSwitcher の LockCamera() は SetCameraState(0) かつ切替無効化を行う
+        }
 
         //if (gameOverText != null)
         //    gameOverText.text = gameOverMessage;
