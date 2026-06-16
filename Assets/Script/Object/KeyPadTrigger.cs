@@ -29,16 +29,12 @@ public class KeyPadTrigger : MonoBehaviour
 
     private void OnShowPassPerformed(InputAction.CallbackContext ctx)
     {
-        if (!playerInRange)
-            return;
-
-        if (passwordSystem.IsUnlocked())
-            return;
+        if (!playerInRange) return;
+        if (passwordSystem.IsUnlocked()) return;
 
         keypadUI.SetActive(true);
-
         Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = false;
+        Cursor.visible = true; // true Ç…èCê≥
     }
 
     void OnTriggerEnter(Collider other)
