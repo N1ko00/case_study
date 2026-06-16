@@ -356,6 +356,9 @@ public class FPSController : MonoBehaviour
     [Header("制限設定")]
     [SerializeField] private bool hasTablet = false;
 
+    [Header("キーパッド参照")]
+    public GameObject keypadUI; // ← KeyPadTriggerと同じGameObjectを割り当て
+
     void Awake()
     {
         controller = GetComponent<CharacterController>();
@@ -370,6 +373,10 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
+        // ★ 追加：キーパッドが表示中は操作を止める
+        if (keypadUI != null && keypadUI.activeSelf)
+            return;
+
         if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
         {
             return;
