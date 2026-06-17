@@ -74,12 +74,17 @@ public class CameraSwitchNoiseHook : MonoBehaviour
     private void Update()
     {
         // Spaceキー → CameraSwitcher.ToggleCamera() と同じタイミングでノイズ
-        if (reactToSpaceKey
-            && Keyboard.current != null
-            && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            PlayNoiseWithSE();
-        }
+        if (!reactToSpaceKey) return;
+        if (Keyboard.current == null) return;
+        if (!Keyboard.current.spaceKey.wasPressedThisFrame) return;
+
+        // インベントリが開いている間はノイズも鳴らさない
+        if (UIInventory.Instance != null && UIInventory.Instance.IsOpen) return;
+
+        // カメラがロックされている時もノイズを鳴らさない
+        if (cameraSwitcher != null && cameraSwitcher.IsLocked) return;
+
+        PlayNoiseWithSE();
     }
 
     /// <summary>

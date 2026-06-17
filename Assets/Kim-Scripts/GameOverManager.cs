@@ -56,8 +56,16 @@ public class GameOverManager : MonoBehaviour
     [SerializeField] private Behaviour[] scriptsToDisable;
     [SerializeField] public CameraSwitcher Camera;
 
+    [Header("シーン遷移")]
+    [Tooltip("DontDestroyOnLoad の SceneLoade")]
+    [SerializeField] private SceneLoader sceneLoader;
+    [Tooltip("遷移先のシーン")]
+    [SerializeField] private SceneLoader.SceneName gameOverSceneName = SceneLoader.SceneName.GameOverScene;
+
+
     private bool _isGameOver = false;
 
+    public bool IsGameOver => _isGameOver;
 
     // ───────────────────────────────────────────
     // Unity ライフサイクル
@@ -71,6 +79,10 @@ public class GameOverManager : MonoBehaviour
             return;
         }
         Instance = this;
+
+        // SceneLoader 自動検索
+        if (sceneLoader == null)
+            sceneLoader = FindAnyObjectByType<SceneLoader>(FindObjectsInactive.Include);
     }
 
     private void Start()
@@ -98,11 +110,12 @@ public class GameOverManager : MonoBehaviour
         _isGameOver = true;
 
 
-        // 先にメインカメラへ戻し、カメラ切替をロックする
-        if (Camera != null)
-        {
-            Camera.LockCamera(); // CameraSwitcher の LockCamera() は SetCameraState(0) かつ切替無効化を行う
-        }
+        // カメラのUIを消し、カメラ切替をロック
+        Camera.LockCamera();
+
+        // インベントリが開いていたら強制で閉じる
+        if (InventoryToggle.Instance != null)
+            InventoryToggle.Instance.CloseInventory();
 
         //if (gameOverText != null)
         //    gameOverText.text = gameOverMessage;
@@ -178,9 +191,35 @@ public class GameOverManager : MonoBehaviour
         // 待機時間
         yield return new WaitForSeconds(waitBeforeUI);
 
-        // UIを表示してゲームを停止
-        ShowGameOverUI();
+        TransitionToGameOverScene();
     }
+
+
+    /// <summary>
+    /// SceneLoader のノイズ演出つきで GameOverScene へ遷移します。
+    /// SceneLoader が見つからない場合は従来の UI 表示にフォールバックします。
+    /// </summary>
+    private void TransitionToGameOverScene()
+    {
+        // カーソル解放
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // 新シーンが正常に動くよう timeScale をリセット
+        Time.timeScale = 1f;
+
+        if (sceneLoader != null)
+        {
+            Debug.Log($"[GameOverManager] ノイズ演出 → {gameOverSceneName} へ遷移");
+            sceneLoader.LoadScene(gameOverSceneName);
+        }
+        else
+        {
+            Debug.LogWarning("[GameOverManager] SceneLoader 未検出 → UI表示にフォールバック");
+            ShowGameOverUI();
+        }
+    }
+
 
     /// <summary>
     /// 最終的なUI表示と時間停止を行いますわ

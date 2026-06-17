@@ -44,6 +44,9 @@ public class GameOverSceneManager : MonoBehaviour
             crtRootGroup.interactable = false;
         }
 
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
         if (retryButton != null) retryButton.onClick.AddListener(OnRetryClicked);
         if (titleButton != null) titleButton.onClick.AddListener(OnTitleClicked);
 
