@@ -359,7 +359,7 @@ MonoBehaviour:
   openOffsetR: {x: 0, y: 0, z: 1}
   speed: 4
   isUnlocked: 0
-  usePassword: 0
+  usePassword: 1
   audioSource: {fileID: 20178011611916885}
   openClip: {fileID: 8300000, guid: 8fc2814eb5242a44f9339cd471308507, type: 3}
   closeClip: {fileID: 8300000, guid: 4476f66d8911dac459300996bd4957b9, type: 3}
