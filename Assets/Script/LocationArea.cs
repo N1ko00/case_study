@@ -6,8 +6,9 @@ public class LocationArea : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if(!other.CompareTag("Player")) return;
+        if(!other.transform.root.CompareTag("Player")) return;
 
+        Debug.Log("playerに触れた");
         if (LocationUIController.Instance != null)
         {
             LocationUIController.Instance.SetLocation(locationName);

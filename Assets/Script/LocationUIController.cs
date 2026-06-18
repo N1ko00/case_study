@@ -22,7 +22,7 @@ public class LocationUIController : MonoBehaviour
     [SerializeField] private bool showOnlyWhenPlayerControllable = true;
 
     [Header("インベントリ中は非表示")]
-    [SerializeField] private bool hideWhenInventoryOpen = false;
+    [SerializeField] private bool hideWhenInventoryOpen = true;
 
     [Header("一人称判定用")]
     [SerializeField] private CameraSwitcher cameraSwitcher;
@@ -53,6 +53,7 @@ public class LocationUIController : MonoBehaviour
 
     public void SetLocation(string locationName)
     {
+        Debug.Log("場所が変更された: " + locationName);
         currentLocationName = locationName;
         RefreshText();
     }
@@ -70,10 +71,11 @@ public class LocationUIController : MonoBehaviour
         if (locationUIRoot == null) return;
 
         bool shouldShow = !string.IsNullOrEmpty(currentLocationName);
+        Debug.Log("currentLocationName=" + currentLocationName + " / shouldShow=" + shouldShow);
 
         if (isFirstPersonOnly && cameraSwitcher != null)
         {
-            shouldShow &= !cameraSwitcher.IsLocked;
+            shouldShow &= (cameraSwitcher.CurrentCameraIndex == 0);
         }
 
         if (ishideonGameOver && gameOverManager != null)
@@ -91,6 +93,7 @@ public class LocationUIController : MonoBehaviour
             shouldShow &= !UIInventory.Instance.IsOpen;
         }
 
+        Debug.Log("UIの表示状態: " + shouldShow);
         locationUIRoot.SetActive(shouldShow);
     }
 }
