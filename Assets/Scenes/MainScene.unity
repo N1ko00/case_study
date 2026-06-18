@@ -7346,6 +7346,14 @@ PrefabInstance:
       propertyPath: isOpen
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6682538445196754076, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
+      propertyPath: isUnlocked
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6682538445196754076, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
+      propertyPath: usePassword
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7546092798823593377, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
       propertyPath: m_LocalScale.x
       value: 3
@@ -12317,6 +12325,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: keypadUI
+      value: 
+      objectReference: {fileID: 1580030987}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
       propertyPath: canUseSpaceKey
       value: 0
       objectReference: {fileID: 0}
@@ -15270,6 +15282,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b7123567dcb2a14e931f2bfcecef8ff, type: 3}
+--- !u!1 &1580030987 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5981286853104704314, guid: e1168689418dea046967ebcc6ab17da6, type: 3}
+  m_PrefabInstance: {fileID: 373473608}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1588592977
 GameObject:
   m_ObjectHideFlags: 0
@@ -16736,6 +16753,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6682538445196754076, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
       propertyPath: isUnlocked
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6682538445196754076, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
+      propertyPath: usePassword
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7546092798823593377, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
