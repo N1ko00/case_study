@@ -36,9 +36,10 @@ public class AutoDoor : MonoBehaviour
     void OnTriggerEnter(Collider other)
     {
 
-        if (!other.CompareTag("Player"))
+        if (!other.transform.root.CompareTag("Player"))
             return;
 
+        Debug.Log("ドアに入った");    
 
         if (isUnlocked)
             OpenDoor();
@@ -46,7 +47,7 @@ public class AutoDoor : MonoBehaviour
 
     void OnTriggerExit(Collider other)
     {
-        if (!other.CompareTag("Player"))
+        if (!other.transform.root.CompareTag("Player"))
             return;
 
         if (isUnlocked)
