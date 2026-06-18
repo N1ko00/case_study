@@ -402,6 +402,10 @@ PrefabInstance:
       propertyPath: inventoryUI
       value: 
       objectReference: {fileID: 934873787}
+    - target: {fileID: 4702597622277726939, guid: 6ff95657e44ffef4880aa96bdfa5e4b5, type: 3}
+      propertyPath: cameraSwitcher
+      value: 
+      objectReference: {fileID: 863671113}
     - target: {fileID: 4704691559744671836, guid: 6ff95657e44ffef4880aa96bdfa5e4b5, type: 3}
       propertyPath: m_Name
       value: GameManager
@@ -5848,6 +5852,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0b7123567dcb2a14e931f2bfcecef8ff, type: 3}
+--- !u!225 &603828199 stripped
+CanvasGroup:
+  m_CorrespondingSourceObject: {fileID: 5347652998553002227, guid: 49c1e3cdf2ba646409439be9e0447684, type: 3}
+  m_PrefabInstance: {fileID: 1275956175}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &652711388
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6944,6 +6953,7 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
   player_Main: {fileID: 2019746526}
+  IsToggled: 1
 --- !u!4 &863671114
 Transform:
   m_ObjectHideFlags: 0
@@ -11618,6 +11628,17 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e82553b9fb631d438898d244dff40e1, type: 3}
+--- !u!114 &1265113562 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3275457045757536386, guid: 49c1e3cdf2ba646409439be9e0447684, type: 3}
+  m_PrefabInstance: {fileID: 1275956175}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
 --- !u!1001 &1267408244
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -16468,10 +16489,11 @@ MonoBehaviour:
   animationTriggerName: GameOverTrigger
   waitBeforeUI: 3
   monster: {fileID: 1724526796}
-  KeyInputStop: 0
   scriptsToDisable:
   - {fileID: 2019746526}
   Camera: {fileID: 863671113}
+  sceneLoader: {fileID: 1931957163}
+  gameOverSceneName: 3
 --- !u!4 &1909217784
 Transform:
   m_ObjectHideFlags: 0
@@ -16884,16 +16906,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SceneLoader
   fadeImage: {fileID: 0}
   fadeDuration: 0.5
-  noiseGroup: {fileID: 0}
-  noiseImage: {fileID: 0}
+  noiseGroup: {fileID: 603828199}
+  noiseImage: {fileID: 1265113562}
   noiseFadeInDuration: 0.8
   noiseHoldDuration: 0.4
   noiseFadeOutDuration: 0.6
   uvScrollSpeed: {x: 2, y: 1.5}
   uvJitterStrength: 0.15
   uvTiling: {x: 2, y: 2}
-  noiseAudioSource: {fileID: 0}
-  noiseLoopSE: {fileID: 0}
+  noiseAudioSource: {fileID: 714976276}
+  noiseLoopSE: {fileID: 8300000, guid: 297427cd8d965a74eaa392e7f4a23a39, type: 3}
   noiseStartSE: {fileID: 0}
   noiseVolume: 0.7
   fadeAudioWithAlpha: 1

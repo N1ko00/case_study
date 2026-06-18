@@ -43,6 +43,9 @@ public class CameraSwitcher : MonoBehaviour
 
     private bool cameraLocked = false;
 
+    // 外部からロック状態を確認するためのプロパティ
+    public bool IsLocked => cameraLocked;
+
     public bool IsToggled = true;
 
 
@@ -87,6 +90,15 @@ public class CameraSwitcher : MonoBehaviour
             }
             unique = false;
         }
+
+        // インベントリが開いている時は、無効化
+        if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
+        {
+            return;
+        }
+
+        // ロック中は Space 入力自体を受け付けない
+        if (cameraLocked) return;
 
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
