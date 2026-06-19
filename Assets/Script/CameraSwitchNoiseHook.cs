@@ -5,7 +5,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 /// <summary>
-/// CameraSwitcherと同じGameObjectに貼ってあると、CameraSwitcherの切り替え時にノイズが入るフック
+/// CameraSwitcherと同じGameObjectに?ってあると、CameraSwitcherの切り替え時にノイズが入るフック
 /// </summary>
 
 public class CameraSwitchNoiseHook : MonoBehaviour
@@ -13,7 +13,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
     [Header("参照")]
     [Tooltip("未設定なら同じGameObjectから自動取得")]
     [SerializeField] private CameraSwitcher cameraSwitcher;
-    [Tooltip("未設定ならシーンから自動検索")]
+    [Tooltip("未設定ならシ?ンから自動検索")]
     [SerializeField] private TVNoiseEffect noiseEffect;
 
     [Header("演出時間")]
@@ -22,13 +22,13 @@ public class CameraSwitchNoiseHook : MonoBehaviour
     [SerializeField] private float fadeOut = 0.25f;
 
     [Header("動作設定")]
-    [Tooltip("Spaceキーでの切替時もノイズを鳴らす")]
+    [Tooltip("Spaceキ?での切替時もノイズを鳴らす")]
     [SerializeField] private bool reactToSpaceKey = true;
     [Tooltip("cameraCanvas配下のButtonクリックでもノイズを鳴らす")]
     [SerializeField] private bool reactToButtonClick = true;
 
     [Header("SE設定")]
-    [Tooltip("ノイズ演出中に流すループSE (砂嵐音)")]
+    [Tooltip("ノイズ演出中に流すル?プSE (砂嵐音)")]
     [SerializeField] private AudioClip noiseSE;
     [Tooltip("未設定なら自動追加")]
     [SerializeField] private AudioSource audioSource;
@@ -73,7 +73,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
 
     private void Update()
     {
-        // Spaceキー → CameraSwitcher.ToggleCamera() と同じタイミングでノイズ
+        // Spaceキ? → CameraSwitcher.ToggleCamera() と同じ?イ?ングでノイズ
         if (!reactToSpaceKey) return;
         if (Keyboard.current == null) return;
         if (!Keyboard.current.spaceKey.wasPressedThisFrame) return;
@@ -89,7 +89,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
 
     /// <summary>
     /// CameraSwitcher の private な cameraCanvas を取得し、配下の全Buttonに
-    /// PlayNoise を onClick リスナーとして追加する。
+    /// PlayNoise を onClick リスナ?として追加する。
     /// </summary>
     private void HookCameraCanvasButtons()
     {
@@ -108,7 +108,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
             b.onClick.AddListener(PlayNoiseWithSE);
         }
 
-        Debug.Log($"[CameraSwitcherNoiseHook] {buttons.Length}個のボタンにノイズフックを追加");
+        Debug.Log($"[CameraSwitcherNoiseHook] {buttons.Length}個の??ンにノイズフックを追加");
     }
 
     private void PlayNoiseWithSE()
@@ -117,7 +117,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
         PlaySESynced();
     }
 
-    // ノイズ演出のみ (Spaceキー用)
+    // ノイズ演出のみ (Spaceキ?用)
     private void PlayNoise()
     {
         if (noiseEffect == null) return;
@@ -132,7 +132,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
             fadeOut: fadeOut);
     }
 
-    // ノイズ演出に合わせてSEをフェードイン→フェードアウト
+    // ノイズ演出に合わせてSEをフェ?ドイン→フェ?ドアウト
     private void PlaySESynced()
     {
         if (audioSource == null || noiseSE == null) return;
@@ -148,7 +148,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
         audioSource.volume = 0f;
         audioSource.Play();
 
-        // フェードイン (ノイズが出てくるのに合わせて)
+        // フェ?ドイン (ノイズが出てくるのに合わせて)
         float t = 0f;
         while (t < fadeIn)
         {
@@ -158,7 +158,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
         }
         audioSource.volume = seVolume;
 
-        // ホールド
+        // ホ?ルド
         t = 0f;
         while (t < hold)
         {
@@ -166,7 +166,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
             yield return null;
         }
 
-        // フェードアウト (ノイズが消えるのに合わせて)
+        // フェ?ドアウト (ノイズが消えるのに合わせて)
         t = 0f;
         while (t < fadeOut)
         {
@@ -175,7 +175,7 @@ public class CameraSwitchNoiseHook : MonoBehaviour
             yield return null;
         }
 
-        // SE完全停止
+        // SE完全停?
         audioSource.Stop();
         audioSource.volume = 0f;
         _audioCoroutine = null;

@@ -373,7 +373,11 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
-        // ★ 追加：キーパッドが表示中は操作を止める
+        // ポーズメニュー表示中は操作を止める
+        if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsOpen)
+            return;
+
+        // キーパッドが表示中は操作を止める
         if (keypadUI != null && keypadUI.activeSelf)
             return;
 

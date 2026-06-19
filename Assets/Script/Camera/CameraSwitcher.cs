@@ -105,6 +105,11 @@ public class CameraSwitcher : MonoBehaviour
             return;
         }
 
+        // ボーズ中はカメラ切り替え無効
+        if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsOpen)
+        {
+            return;
+        }
         // ロック中は Space 入力自体を受け付けない
         if (cameraLocked) return;
 

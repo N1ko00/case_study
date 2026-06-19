@@ -1,4 +1,4 @@
-//using UnityEngine;
+ï»¿//using UnityEngine;
 //using UnityEngine.InputSystem;
 
 //public class InventoryToggle : MonoBehaviour
@@ -12,7 +12,7 @@
 //            bool isOpen = !inventoryUI.activeSelf;
 //            inventoryUI.SetActive(isOpen);
 
-//            // ‚±‚±‚ªd—v
+//            // ê¶ê¶ê¶•ë¢£ë¾´
 //            Cursor.lockState = isOpen ? CursorLockMode.None : CursorLockMode.Locked;
 //            Cursor.visible = isOpen;
 //        }
@@ -24,20 +24,17 @@ using UnityEngine.InputSystem;
 
 public class InventoryToggle : MonoBehaviour
 {
-    // ŠO•”‚ÌƒXƒNƒŠƒvƒg‚©‚çŒÄ‚Ño‚¹‚é‚æ‚¤‚ÉƒVƒ“ƒOƒ‹ƒgƒ“‰»
+    // ë‘–ë¸«ê¶»ê¸šê¸ê¹ê¸µê¸£ê¶”ê·ëšê·‚ë¢¯ê¶§ê·¡ê·ê¶ê¶¸ê¸˜ê¹›ê¸ê¹‘ê¸£ê¹›ë¸
     public static InventoryToggle Instance { get; private set; }
 
-    [Header("ƒCƒ“ƒxƒ“ƒgƒŠ–{‘ÌiInventoryPanel_1j‚ğ“o˜^")]
+    [Header("ê·½ê¹›ê¸¹ê¹›ê¸£ê¹?ë«¬ê±InventoryPanel_1ê±‚ê·©ë±‹?")]
     public GameObject inventoryUI;
 
-    [Header("ˆê‚Éo‚µ‚½‚¢”wŒiiinventorybackgroundj‚ğ“o˜^")]
+    [Header("ë‡ë£’ê¶¸ë¢¯ê¶¢ê¶«ê¶‹ë´¶ë˜§ê±inventorybackgroundê±‚ê·©ë±‹?")]
     public GameObject inventoryBG;
 
-    [Header("ƒJƒƒ‰Ø‘Ö‚ÌQÆ")]
+    [Header("ê¸‡ê¸½ê¹‹ë¨›ë«¶ê¶»ë·ë¤–")]
     [SerializeField] private CameraSwitcher cameraSwitcher;
-
-    [Header("ƒL[ƒpƒbƒhQÆ")]
-    public GameObject keypadUI; // © KeyPadTrigger‚Æ“¯‚¶GameObject‚ğŠ„‚è“–‚Ä
 
     void Awake()
     {
@@ -46,11 +43,11 @@ public class InventoryToggle : MonoBehaviour
 
     void Start()
     {
-        // ƒQ[ƒ€ŠJn‚Í–{‘Ì‚à”wŒi‚àŠmÀ‚ÉÁ‚µ‚Ä‚¨‚­
+        // ê¸’??ë‘ëŸ‘ë „ê¶¼?ë«¬ê·–ë´¶ë˜§ê·–ë‘´ë ³ê¶¸ë¤‘ê¶¢ê¶²ê¶“ê¶˜
         if (inventoryUI != null) inventoryUI.SetActive(false);
         if (inventoryBG != null) inventoryBG.SetActive(false);
 
-        // ©“®ŒŸõ
+        // ë ”ë²ë™šëŠ
         if (cameraSwitcher == null)
         {
             cameraSwitcher = FindAnyObjectByType<CameraSwitcher>(FindObjectsInactive.Include);
@@ -59,26 +56,24 @@ public class InventoryToggle : MonoBehaviour
 
     void Update()
     {
-        // TabƒL[‚ª‰Ÿ‚³‚ê‚½uŠÔ‚ğŒŸ’m
+        // Tabê¸Œ?ê¶•ë“ê¶ ê·¢ê¶«ë¢·ë“©ê·©ë™šë­¢
         if (Keyboard.current.tabKey.wasPressedThisFrame)
         {
             if (inventoryUI == null) return;
 
-            if (keypadUI != null && keypadUI.activeSelf)
-                return;
-
-            if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
-                return;
-
-            // ƒQ[ƒ€ƒI[ƒo[’†‚ÍƒCƒ“ƒxƒ“ƒgƒŠ‚ğŠJ‚©‚¹‚È‚¢
+            // ê¸’??ê¸†?ê¸«?ë­·ê¶¼ê·½ê¹›ê¸¹ê¹›ê¸£ê¹ê·©ë‘ê¶”ê¶§ê¶¶ê¶‹
             if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver)
                 return;
 
-            // ŠÄ‹ƒJƒƒ‰•\¦’†‚ÍƒCƒ“ƒxƒ“ƒgƒŠ‚ğŠJ‚©‚¹‚È‚¢
+            // ãƒãƒ¼ã‚ºä¸­ã¯ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã‚’é–‹ã‹ãªã„
+            if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsOpen)
+                return;
+
+            // ë“’ëŸ¨ê¸‡ê¸½ê¹‹?ë ‘ë­·ê¶¼ê·½ê¹›ê¸¹ê¹›ê¸£ê¹ê·©ë‘ê¶”ê¶§ê¶¶ê¶‹
             if (cameraSwitcher != null && cameraSwitcher.CurrentCameraIndex != 0)
                 return;
 
-            // Œ»İ‚Ì•\¦ó‘Ô‚ğ”½“]
+            // ë™¸ëªê¶»?ë ‘ë¥‰ë«´ê·©ëµ¿?
             bool isOpen = !inventoryUI.activeSelf;
 
             if (isOpen)
@@ -97,11 +92,11 @@ public class InventoryToggle : MonoBehaviour
         if (inventoryUI != null) inventoryUI.SetActive(true);
         if (inventoryBG != null) inventoryBG.SetActive(true);
 
-        // ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğ•\¦‚µ‚Ä“®‚©‚¹‚é‚æ‚¤‚É‚·‚é
+        // ?ê¸‚ê¸šê¸‡??ê¹‘ê·©?ë ‘ê¶¢ê¶²ë²ê¶”ê¶§ê·¡ê·ê¶ê¶¸ê¶¥ê·¡
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // ƒXƒƒbƒg‚ğÅV‚ÉXV
+        // ê¸šê¹“ê¸ê¸£ê·©ëë¥·ê¶¸ë››ë¥·
         if (UIInventory.Instance != null)
         {
             UIInventory.Instance.Refresh();
@@ -113,10 +108,10 @@ public class InventoryToggle : MonoBehaviour
         if (inventoryUI != null) inventoryUI.SetActive(false);
         if (inventoryBG != null) inventoryBG.SetActive(false);
 
-        // ƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ğ”ñ•\¦‚É‚µ‚ÄƒƒbƒN‚·‚é
+        // ?ê¸‚ê¸šê¸‡??ê¹‘ê·©ë·„?ë ‘ê¶¸ê¶¢ê¶²ê¹“ê¸ê¸ê¶¥ê·¡
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.Log("ƒCƒ“ƒxƒ“ƒgƒŠ‚Æ”wŒi‚ğŠ®‘S‚É•Â‚¶‚Ü‚µ‚½");
+        Debug.Log("ê·½ê¹›ê¸¹ê¹›ê¸£ê¹ê¶´ë´¶ë˜§ê·©ë’¶ë©£ê¶¸ë¹§ê¶£ê·ê¶¢ê¶«");
     }
 }

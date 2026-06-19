@@ -4,23 +4,23 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// ホバー中にデジタルグリッチ演出を出す。
+/// ホバ?中にデジ?ルグリッ?演出を出す。
 /// </summary>
 public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
-    [Header("グリッチ強度")]
+    [Header("グリッ?強度")]
     [Tooltip("水平方向の最大ずれ量")]
     [SerializeField] private float glitchShiftX = 15f;
     [Tooltip("垂直方向の最大ずれ量 ")]
     [SerializeField] private float glitchShiftY = 3f;
-    [Tooltip("1秒間に何回グリッチするか")]
+    [Tooltip("1秒間に何回グリッ?するか")]
     [SerializeField] private float glitchFrequency = 10f;
-    [Tooltip("1回のグリッチが続く時間 (秒)")]
+    [Tooltip("1回のグリッ?が続く時間 (秒)")]
     [SerializeField] private float glitchDuration = 1f;
-    [Tooltip("アルファが0になる確率 (0~1)")]
+    [Tooltip("アルフ?が0になる確率 (0~1)")]
     [SerializeField] private float flickerChance = 0.08f;
 
-    [Header("クロマティックアベレーション")]
+    [Header("クロ?ティックアベレ?ション")]
     [Tooltip("色ずれ残像を有効にする")]
     [SerializeField] private bool enableChromatic = true;
     [Tooltip("R残像のずれ量 (px)")]
@@ -28,7 +28,7 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     [Tooltip("残像の透明度")]
     [SerializeField][Range(0f, 1f)] private float ghostAlpha = 0.4f;
 
-    [Header("フェード")]
+    [Header("フェ?ド")]
     [SerializeField] private float fadeInDuration = 0.06f;
     [SerializeField] private float fadeOutDuration = 0.1f;
 
@@ -44,7 +44,7 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private Coroutine _fadeCoroutine;
     private Coroutine _glitchCoroutine;
 
-    // クロマティックアベレーション用の残像オブジェクト
+    // クロ?ティックアベレ?ション用の残像オブジェクト
     private RectTransform _ghostR;  // 赤残像
     private RectTransform _ghostB;  // 青残像
 
@@ -81,7 +81,7 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
         GameObject go = new GameObject(goName, typeof(RectTransform));
         go.transform.SetParent(transform, false);
 
-        // 元と同じサイズ・ピボット
+        // 元と同じサイズ・ピ?ット
         RectTransform rt = go.GetComponent<RectTransform>();
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
@@ -102,13 +102,13 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
         // 残像は元の下に配置 (Siblingを一番後ろに)
         go.transform.SetAsFirstSibling();
 
-        // 最初は非表示
+        // 最初は非?示
         go.SetActive(false);
         return rt;
     }
 
     // ────────────────────────────────────────────
-    // ホバーイベント
+    // ホバ?イベント
     // ────────────────────────────────────────────
     public void OnPointerEnter(PointerEventData eventData)
     {
@@ -131,7 +131,7 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     // ────────────────────────────────────────────
-    // グリッチループ
+    // グリッ?ル?プ
     // ────────────────────────────────────────────
     private IEnumerator GlitchLoop()
     {
@@ -139,7 +139,7 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
         while (true)
         {
-            // 次のグリッチまで待機
+            // 次のグリッ?まで待?
             yield return new WaitForSecondsRealtime(interval * Random.Range(0.5f, 1.5f));
 
             // effectStrengthが低ければ弱めに
@@ -162,12 +162,12 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
             float str = _effectStrength;
 
-            // ── メイン本体をランダムにスナップ ──
+            // ── メイン?体をラン??にスナップ ──
             float ox = Random.Range(-glitchShiftX, glitchShiftX) * str;
             float oy = Random.Range(-glitchShiftY, glitchShiftY) * str;
             _rectTransform.localPosition = _originPos + new Vector3(ox, oy, 0f);
 
-            // ── アルファちらつき ──
+            // ── アルフ?ちらつき ──
             if (_canvasGroup != null)
             {
                 _canvasGroup.alpha = (Random.value < flickerChance * str) ? 0f : 1f;
@@ -190,13 +190,13 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
             yield return null;
         }
 
-        // グリッチ終了 → 元に戻す
+        // グリッ?終了 → 元に戻す
         ResetToOrigin();
         SetGhostsActive(false);
     }
 
     // ────────────────────────────────────────────
-    // エフェクト強度フェード
+    // エフェクト強度フェ?ド
     // ────────────────────────────────────────────
     private void SetFade(float target, float duration)
     {
@@ -219,7 +219,7 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     }
 
     // ────────────────────────────────────────────
-    // ヘルパー
+    // ヘルパ?
     // ────────────────────────────────────────────
     private void ResetToOrigin()
     {

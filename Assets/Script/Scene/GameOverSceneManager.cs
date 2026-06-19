@@ -11,19 +11,19 @@ public class GameOverSceneManager : MonoBehaviour
     [Header("SceneLoader参照")]
     [SerializeField] private SceneLoader sceneLoader;
 
-    [Header("ボタン参照")]
+    [Header("??ン参照")]
     [SerializeField] private Button retryButton;
     [SerializeField] private Button titleButton;
 
-    [Header("遷移先シーン")]
+    [Header("遷移先シ?ン")]
     [SerializeField] private SceneLoader.SceneName retryScene = SceneLoader.SceneName.MainScene;
     [SerializeField] private SceneLoader.SceneName titleScene = SceneLoader.SceneName.TitleScene;
 
-    [Header("登場フェードイン")]
+    [Header("登場フェ?ドイン")]
     [Tooltip("CRT_Root の CanvasGroup をアサイン")]
     [SerializeField] private CanvasGroup crtRootGroup;
-    [SerializeField] private float appearDelay = 0.3f;   // 入場直後の黒画面キープ
-    [SerializeField] private float fadeInDuration = 1.2f;   // フェードイン時間
+    [SerializeField] private float appearDelay = 0.3f;   // 入場直後の黒画面キ?プ
+    [SerializeField] private float fadeInDuration = 1.2f;   // フェ?ドイン時間
 
 
     private void Awake()
@@ -37,7 +37,7 @@ public class GameOverSceneManager : MonoBehaviour
 
     private void Start()
     {
-        // 登場前はUI非表示・非インタラクティブ
+        // 登場前はUI非?示・非イン?ラクティブ
         if (crtRootGroup != null)
         {
             crtRootGroup.alpha = 0f;
@@ -89,7 +89,7 @@ public class GameOverSceneManager : MonoBehaviour
 
     private void LoadWithNoise(SceneLoader.SceneName target)
     {
-        // ボタンを無効化して二重押し防止
+        // ??ンを無効化して二重押し防?
         if (retryButton != null) retryButton.interactable = false;
         if (titleButton != null) titleButton.interactable = false;
 

@@ -2,18 +2,18 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
-/// TV 画面のノイズを常時ループ再生します。
+/// TV 画面のノイズを常時ル?プ再生します。
 /// </summary>
 public class CRTScreenEffect : MonoBehaviour
 {
     [Header("ノイズ設定")]
-    [Tooltip("ノイズテクスチャを貼った RawImage")]
+    [Tooltip("ノイズテクス?ャを?った RawImage")]
     [SerializeField] private RawImage noiseImage;
 
-    [Tooltip("UV スクロール速度")]
+    [Tooltip("UV スクロ?ル速度")]
     [SerializeField] private Vector2 uvScrollSpeed = new Vector2(1.5f, 2.5f);
 
-    [Tooltip("毎フレームのブレ強度")]
+    [Tooltip("毎フレ??のブレ強度")]
     [SerializeField][Range(0f, 0.2f)] private float uvJitter = 0.04f;
 
     [SerializeField] private Vector2 uvTiling = new Vector2(2f, 2f);

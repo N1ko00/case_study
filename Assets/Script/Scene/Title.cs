@@ -8,10 +8,10 @@ public class Title : MonoBehaviour
 {
     InputSystem_Actions inputAction;
 
-    //めんどくなったのでインスタンス参照
+    //めんどくなったのでインス?ンス参照
     [SerializeField] SceneLoader sceneLoader;
 
-    [Header("ボタン参照")]
+    [Header("??ン参照")]
     [SerializeField] private Button gameSatrtButton;
     [SerializeField] private Button gameExitButton;
     // Update is called once per frame
@@ -44,7 +44,7 @@ public class Title : MonoBehaviour
     {
         if(sceneLoader == null)
         {
-            Debug.LogWarning("[Title] SceneLoaderが　ない");
+            Debug.LogWarning("[Title] SceneLoaderが?ない");
             return;
         }
 
@@ -53,7 +53,7 @@ public class Title : MonoBehaviour
 
     private void OnQuitClicked()
     {
-        Debug.Log("[Title] ゲーム終了");
+        Debug.Log("[Title] ゲ??終了");
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
