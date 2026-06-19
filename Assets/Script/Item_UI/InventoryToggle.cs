@@ -36,6 +36,9 @@ public class InventoryToggle : MonoBehaviour
     [Header("カメラ切替の参照")]
     [SerializeField] private CameraSwitcher cameraSwitcher;
 
+    [Header("キーパッド参照")]
+    public GameObject keypadUI; // ← KeyPadTriggerと同じGameObjectを割り当て
+
     void Awake()
     {
         Instance = this;
@@ -60,6 +63,12 @@ public class InventoryToggle : MonoBehaviour
         if (Keyboard.current.tabKey.wasPressedThisFrame)
         {
             if (inventoryUI == null) return;
+
+            if (keypadUI != null && keypadUI.activeSelf)
+                return;
+
+            if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
+                return;
 
             // ゲームオーバー中はインベントリを開かせない
             if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver)
