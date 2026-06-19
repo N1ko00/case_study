@@ -33,6 +33,14 @@ public class CameraSwitcher : MonoBehaviour
     //停止対象プレイヤー
     [SerializeField] private FPSController player_Main;
 
+    //初回メッセージ用の設定
+    [Header("First Return Message")]
+    [Tooltip("メインカメラに初めて戻った時のセリフ")]
+    [SerializeField] private string firstReturnMessage = "入った時は誰もおらんかったけどな";
+    private bool hasReturnedToMainCameraOnce = false; // 初回判定用フラグ
+    private bool hasSwitchedToSubCamera = false;
+
+
     // 初回アップデート時の初期化用フラグ
     private bool unique = true;
 
@@ -125,6 +133,23 @@ public class CameraSwitcher : MonoBehaviour
     public void SetCameraState(int index)
     {
         if (index < 0 || index >= cameras.Count) return;
+
+        // 監視カメラ（0番以外）を見たらフラグをオンにする
+        if (index != 0)
+        {
+            hasSwitchedToSubCamera = true;
+        }
+
+        //監視カメラからメインカメラに戻った時の初回メッセージ表示
+        if (index == 0 && hasSwitchedToSubCamera && !hasReturnedToMainCameraOnce)
+        {
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowItemMessage("", firstReturnMessage);
+            }
+            hasReturnedToMainCameraOnce = true; // フラグを立てて二度と表示させない
+        }
+
 
         // 監視カメラ（1番目以降）を選択しているなら、その番号を記録します
         if (index != 0)
