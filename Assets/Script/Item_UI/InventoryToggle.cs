@@ -36,6 +36,9 @@ public class InventoryToggle : MonoBehaviour
     [Header("긇긽깋먛뫶궻랷뤖")]
     [SerializeField] private CameraSwitcher cameraSwitcher;
 
+    [Header("キーパッド参照")]
+    public GameObject keypadUI; // ← KeyPadTriggerと同じGameObjectを割り当て
+
     void Awake()
     {
         Instance = this;
@@ -59,6 +62,12 @@ public class InventoryToggle : MonoBehaviour
         // Tab긌?궕돓궠귢궫뢷듩귩뙚뭢
         if (Keyboard.current.tabKey.wasPressedThisFrame)
         {
+            // ★ 追加：キーパッドが表示中は操作を止める
+            if (keypadUI != null && keypadUI.activeSelf)
+                return;
+
+            if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
+                return;
             if (inventoryUI == null) return;
 
             // 긒??긆?긫?뭷궼귽깛긹깛긣깏귩둎궔궧궶궋
