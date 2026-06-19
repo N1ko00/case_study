@@ -1,6 +1,6 @@
-//using UnityEngine;
+ï»¿//using UnityEngine;
 //using UnityEngine.UI;
-//using UnityEngine.EventSystems; // šƒ}ƒEƒX‚Ìuæ‚Á‚½vuŠO‚ê‚½v‚ğŒŸ’m‚·‚é‚½‚ß‚É•K{
+//using UnityEngine.EventSystems; // â˜…ãƒã‚¦ã‚¹æ¤œçŸ¥ï¼ˆIPointerEnter, IPointerExitï¼‰ã«å¿…é ˆ
 
 //public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 //{
@@ -18,47 +18,45 @@
 //        ItemUseHandler.Instance.UseItem(item);
 //    }
 
-//    // šƒAƒCƒeƒ€ƒXƒƒbƒg‚Éƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ªæ‚Á‚½uŠÔ‚É©“®‚ÅÀs‚³‚ê‚éŠÖ”
+//    // â˜…ã‚¢ã‚¤ãƒ†ãƒ ã‚¹ãƒ­ãƒƒãƒˆã«ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ãŒä¹—ã£ãŸã¨ãï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’å‡ºã—ã¦ä¸­èº«ã‚’è¡¨ç¤º
 //    public void OnPointerEnter(PointerEventData eventData)
 //    {
 //        if (item == null) return;
 
-//        // UIManager‚ğg‚Á‚ÄAƒƒbƒZ[ƒWƒEƒBƒ“ƒhƒE‚ğ•\¦‚µAƒAƒCƒeƒ€–¼‚Æà–¾•¶‚ğƒZƒbƒg‚·‚é
 //        if (UIManager.Instance != null)
 //        {
-//            // ShowPersistentItemMessage‚ğŒÄ‚Ño‚µ‚ÄAƒ^ƒCƒ}[‚ÅŸè‚ÉÁ‚¦‚È‚¢‚æ‚¤‚É•\¦‚µ‚Ü‚·
+//            // ã‚«ãƒ¼ã‚½ãƒ«ãŒä¹—ã£ã¦ã„ã‚‹é–“ã¯å‹æ‰‹ã«æ¶ˆãˆãªã„ãƒ¢ãƒ¼ãƒ‰ï¼ˆShowPersistentItemMessageï¼‰ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ON
 //            UIManager.Instance.ShowPersistentItemMessage(item.itemName, item.description);
 //        }
 //    }
 
-//    // šƒAƒCƒeƒ€ƒXƒƒbƒg‚©‚çƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ªŠO‚ê‚½uŠÔ‚É©“®‚ÅÀs‚³‚ê‚éŠÖ”
+//    // â˜…ã‚¢ã‚¤ãƒ†ãƒ ã‚¹ãƒ­ãƒƒãƒˆã‹ã‚‰ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ãŒå¤–ã‚ŒãŸã¨ãï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’å®Œå…¨ã«éè¡¨ç¤ºã«ã™ã‚‹
 //    public void OnPointerExit(PointerEventData eventData)
 //    {
-//        // ƒJ[ƒ\ƒ‹‚ªŠO‚ê‚½‚çAƒƒbƒZ[ƒWƒEƒBƒ“ƒhƒE‚Ì•¶š‚ğÁ‚µ‚ÄƒEƒBƒ“ƒhƒE‚à•Â‚¶‚Ü‚·
+//        // ãƒã‚¦ã‚¹ãŒå¤–ã‚ŒãŸã‚‰ã€å³åº§ã«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¨ãƒ†ã‚­ã‚¹ãƒˆã‚’æ¶ˆã™å‡¦ç†ã‚’å®Ÿè¡Œã—ã¾ã™
 //        ClearMessageAll();
 //    }
 
-//    // ƒCƒ“ƒxƒ“ƒgƒŠ©‘Ì‚ğ•Â‚¶‚½iƒXƒƒbƒgƒIƒuƒWƒFƒNƒg‚ª”ñ•\¦‚É‚È‚Á‚½j‚ÌˆÀ‘Sˆ—
+//    // ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªè‡ªä½“ã‚’é–‰ã˜ãŸï¼ˆã‚¹ãƒ­ãƒƒãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒéè¡¨ç¤ºã«ãªã£ãŸï¼‰ã¨ã
 //    void OnDisable()
 //    {
-//        // ƒEƒBƒ“ƒhƒEimessageWindowj‚²‚ÆÁ‚µ‚Ä‚µ‚Ü‚¤‚ÆA
-//        // ƒAƒCƒeƒ€g—p¸”s‚Ìu‚±‚±‚Å‚Íg‚¦‚È‚¢‚æ‚¤‚¾v‚Ì•\¦‚Ü‚Å“¹˜A‚ê‚ÅÁ‚µ‚Ä‚µ‚Ü‚¤‚½‚ßA
-//        // ‚±‚±‚Å‚ÍƒeƒLƒXƒgi•¶šƒf[ƒ^j‚¾‚¯‚ğˆÀ‘S‚ÉƒNƒŠƒA‚µ‚Ü‚·B
+//        // ã“ã“ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã”ã¨æ¶ˆã—ã¦ã—ã¾ã†ã¨ã€ã‚¢ã‚¤ãƒ†ãƒ ä½¿ç”¨å¤±æ•—æ™‚ã®ã€Œã“ã“ã§ã¯ä½¿ãˆãªã„ã‚ˆã†ã ã€ã¾ã§
+//        // é“é€£ã‚Œã§æ¶ˆã—ã¦ã—ã¾ã†ãŸã‚ã€ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªãŒé–‰ã˜ã‚‹ã¨ãã¯ã‚ãˆã¦æ–‡å­—ãƒ‡ãƒ¼ã‚¿ï¼ˆä¸­èº«ï¼‰ã®ã‚¯ãƒªã‚¢ã ã‘ã«ç•™ã‚ã¾ã™ã€‚
 //        ClearTextOnly();
 //    }
 
-//    // •¶š‚àƒEƒBƒ“ƒhƒE‚àŠ®‘S‚É”ñ•\¦‚É‚·‚éi’Êí‚Ìƒ}ƒEƒXƒAƒEƒg—pj
+//    // ã€é€šå¸¸ã®ãƒã‚¦ã‚¹ã‚¢ã‚¦ãƒˆç”¨ã€‘æ–‡å­—ã‚‚ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚‚å®Œå…¨ã«éè¡¨ç¤ºã«ã™ã‚‹é–¢æ•°
 //    private void ClearMessageAll()
 //    {
 //        if (UIManager.Instance != null)
 //        {
 //            if (UIManager.Instance.itemNameText != null) UIManager.Instance.itemNameText.text = "";
 //            if (UIManager.Instance.messageContentText != null) UIManager.Instance.messageContentText.text = "";
-//            if (UIManager.Instance.messageWindow != null) UIManager.Instance.messageWindow.SetActive(false);
+//            if (UIManager.Instance.messageWindow != null) UIManager.Instance.messageWindow.SetActive(false); // â˜…ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’OFFã«ã™ã‚‹
 //        }
 //    }
 
-//    // ƒEƒBƒ“ƒhƒE‚ÍÁ‚³‚¸A’†‚Ì•¶šƒf[ƒ^‚¾‚¯‚ğƒNƒŠƒA‚·‚éiƒCƒ“ƒxƒ“ƒgƒŠ‚ğ•Â‚¶‚½—pj
+//    // ã€ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã‚’é–‰ã˜ãŸæ™‚ç”¨ã€‘ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¯æ¶ˆã•ãšã€ä¸­ã®æ–‡å­—ãƒ‡ãƒ¼ã‚¿ã ã‘ã‚’ã‚¯ãƒªã‚¢ã™ã‚‹é–¢æ•°
 //    private void ClearTextOnly()
 //    {
 //        if (UIManager.Instance != null)
@@ -71,12 +69,15 @@
 
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.EventSystems; // šƒ}ƒEƒXŒŸ’miIPointerEnter, IPointerExitj‚É•K{
+using UnityEngine.EventSystems; // ãƒã‚¦ã‚¹æ¤œçŸ¥ï¼ˆIPointerEnter, IPointerExitï¼‰ã«å¿…é ˆ
 
 public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image icon;
     private ItemData item;
+
+    // ç¾åœ¨ã“ã®ã‚¹ãƒ­ãƒƒãƒˆã®ä¸Šã«ãƒã‚¦ã‚¹ãŒä¹—ã£ã¦ã„ã‚‹ã‹ã‚’è¨˜éŒ²ã™ã‚‹ãƒ•ãƒ©ã‚°
+    private bool isHovering = false;
 
     public void SetItem(ItemData data)
     {
@@ -89,51 +90,50 @@ public class InventorySlot : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
         ItemUseHandler.Instance.UseItem(item);
     }
 
-    // šƒAƒCƒeƒ€ƒXƒƒbƒg‚Éƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ªæ‚Á‚½‚Æ‚«FƒEƒBƒ“ƒhƒE‚ğo‚µ‚Ä’†g‚ğ•\¦
+    // â˜…ã‚¢ã‚¤ãƒ†ãƒ ã‚¹ãƒ­ãƒƒãƒˆã«ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ãŒä¹—ã£ãŸã¨ãï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’å‡ºã—ã¦ä¸­èº«ã‚’è¡¨ç¤º
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (item == null) return;
 
+        isHovering = true;
+
         if (UIManager.Instance != null)
         {
-            // ƒJ[ƒ\ƒ‹‚ªæ‚Á‚Ä‚¢‚éŠÔ‚ÍŸè‚ÉÁ‚¦‚È‚¢ƒ‚[ƒhiShowPersistentItemMessagej‚ÅƒEƒBƒ“ƒhƒE‚ğON
+            // ã‚«ãƒ¼ã‚½ãƒ«ãŒä¹—ã£ã¦ã„ã‚‹é–“ã¯å‹æ‰‹ã«æ¶ˆãˆãªã„ãƒ¢ãƒ¼ãƒ‰ï¼ˆShowPersistentItemMessageï¼‰ã§ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’ON
             UIManager.Instance.ShowPersistentItemMessage(item.itemName, item.description);
         }
     }
 
-    // šƒAƒCƒeƒ€ƒXƒƒbƒg‚©‚çƒ}ƒEƒXƒJ[ƒ\ƒ‹‚ªŠO‚ê‚½‚Æ‚«FƒEƒBƒ“ƒhƒE‚ğŠ®‘S‚É”ñ•\¦‚É‚·‚é
+    // â˜…ã‚¢ã‚¤ãƒ†ãƒ ã‚¹ãƒ­ãƒƒãƒˆã‹ã‚‰ãƒã‚¦ã‚¹ã‚«ãƒ¼ã‚½ãƒ«ãŒå¤–ã‚ŒãŸã¨ãï¼šã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’å®Œå…¨ã«éè¡¨ç¤ºã«ã™ã‚‹
     public void OnPointerExit(PointerEventData eventData)
     {
-        // ƒ}ƒEƒX‚ªŠO‚ê‚½‚çA‘¦À‚ÉƒEƒBƒ“ƒhƒE‚ÆƒeƒLƒXƒg‚ğÁ‚·ˆ—‚ğÀs‚µ‚Ü‚·
+        isHovering = false;
+
+        // ãƒã‚¦ã‚¹ãŒå¤–ã‚ŒãŸã‚‰ã€å³åº§ã«ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã¨ãƒ†ã‚­ã‚¹ãƒˆã‚’æ¶ˆã™å‡¦ç†ã‚’å®Ÿè¡Œã—ã¾ã™
         ClearMessageAll();
     }
 
-    // ƒCƒ“ƒxƒ“ƒgƒŠ©‘Ì‚ğ•Â‚¶‚½iƒXƒƒbƒgƒIƒuƒWƒFƒNƒg‚ª”ñ•\¦‚É‚È‚Á‚½j‚Æ‚«
+    // ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªè‡ªä½“ã‚’é–‰ã˜ãŸï¼ˆã‚¹ãƒ­ãƒƒãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆãŒéè¡¨ç¤ºã«ãªã£ãŸï¼‰ã¨ã
     void OnDisable()
     {
-        // ‚±‚±‚ÅƒEƒBƒ“ƒhƒE‚²‚ÆÁ‚µ‚Ä‚µ‚Ü‚¤‚ÆAƒAƒCƒeƒ€g—p¸”s‚Ìu‚±‚±‚Å‚Íg‚¦‚È‚¢‚æ‚¤‚¾v‚Ü‚Å
-        // “¹˜A‚ê‚ÅÁ‚µ‚Ä‚µ‚Ü‚¤‚½‚ßAƒCƒ“ƒxƒ“ƒgƒŠ‚ª•Â‚¶‚é‚Æ‚«‚Í‚ ‚¦‚Ä•¶šƒf[ƒ^i’†gj‚ÌƒNƒŠƒA‚¾‚¯‚É—¯‚ß‚Ü‚·B
-        ClearTextOnly();
+        // è‡ªåˆ†ãŒãƒ›ãƒãƒ¼ä¸­ï¼ˆãƒã‚¦ã‚¹ãŒä¹—ã£ãŸã¾ã¾ï¼‰ã®çŠ¶æ…‹ã§ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªãŒé–‰ã˜ã‚‰ã‚ŒãŸæ™‚ã ã‘æ–‡å­—ã‚’ã‚¯ãƒªã‚¢ã—ã¾ã™ã€‚
+        // ã‚¢ã‚¤ãƒ†ãƒ ã‚’ã€Œä½¿ç”¨ã€ã—ã¦ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªãŒé–‰ã˜ãŸæ™‚ã¯ã€ã™ã§ã«ãƒã‚¦ã‚¹ãŒåˆ¥ã®ãƒœã‚¿ãƒ³ç­‰ã«ç§»å‹•ã—ã¦ã„ã¦
+        // isHoveringã¯falseã«ãªã£ã¦ã„ã‚‹ãŸã‚ã€ä½¿ç”¨ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ï¼ˆã€Œã€œã‚’ä½¿ç”¨ã—ãŸã€ï¼‰ã®æ–‡å­—ã‚’æ¶ˆã•ãšã«æ®‹ã›ã¾ã™ï¼
+        if (isHovering)
+        {
+            ClearMessageAll();
+            isHovering = false;
+        }
     }
 
-    // y’Êí‚Ìƒ}ƒEƒXƒAƒEƒg—pz•¶š‚àƒEƒBƒ“ƒhƒE‚àŠ®‘S‚É”ñ•\¦‚É‚·‚éŠÖ”
+    // æ–‡å­—ã‚‚ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚‚å®Œå…¨ã«éè¡¨ç¤ºã«ã™ã‚‹é–¢æ•°
     private void ClearMessageAll()
     {
         if (UIManager.Instance != null)
         {
             if (UIManager.Instance.itemNameText != null) UIManager.Instance.itemNameText.text = "";
             if (UIManager.Instance.messageContentText != null) UIManager.Instance.messageContentText.text = "";
-            if (UIManager.Instance.messageWindow != null) UIManager.Instance.messageWindow.SetActive(false); // šƒEƒBƒ“ƒhƒE‚ğOFF‚É‚·‚é
-        }
-    }
-
-    // yƒCƒ“ƒxƒ“ƒgƒŠ‚ğ•Â‚¶‚½—pzƒEƒBƒ“ƒhƒE‚ÍÁ‚³‚¸A’†‚Ì•¶šƒf[ƒ^‚¾‚¯‚ğƒNƒŠƒA‚·‚éŠÖ”
-    private void ClearTextOnly()
-    {
-        if (UIManager.Instance != null)
-        {
-            if (UIManager.Instance.itemNameText != null) UIManager.Instance.itemNameText.text = "";
-            if (UIManager.Instance.messageContentText != null) UIManager.Instance.messageContentText.text = "";
+            if (UIManager.Instance.messageWindow != null) UIManager.Instance.messageWindow.SetActive(false); // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’OFFã«ã™ã‚‹
         }
     }
 }
