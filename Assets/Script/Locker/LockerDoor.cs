@@ -213,8 +213,8 @@ public class LockerDoor : MonoBehaviour
 
     private void OnDisable()
     {
-        // 相互作用範囲内のままLockerが消えてもUIが残らないように
-        if (_playerInInteract && InteractPromptUI.Instance != null)
+        // Lockerが無効化/破棄された際にヒントUIが残らないようにする
+        if (InteractPromptUI.Instance != null)
             InteractPromptUI.Instance.Hide(this);
     }
 

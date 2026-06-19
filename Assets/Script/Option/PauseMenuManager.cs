@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// MainSceneでESCキーを押すと表示されるボーズメニュー。
+/// MainSceneでESCキーを押すと表示されるポーズメニュー。
 /// </summary>
 
 public class PauseMenuManager : MonoBehaviour
@@ -80,9 +80,17 @@ public class PauseMenuManager : MonoBehaviour
         // 対象シーン以外では機能無効
         if(SceneManager.GetActiveScene().name != allowedSceneName) return;
 
-        // ゲームオーバー中は無効
-        if(GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
-
+        // ゲームオーバー中は無効（ポーズ中なら解除して進行を止めない）
+        if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver)
+        {
+            if (_isPaused)
+            {
+                _isPaused = false;
+                if (pausePanel != null) pausePanel.SetActive(false);
+                Time.timeScale = 1f;
+            }
+            return;
+        }
         // キーバッドが開いているときは無視
         if (keypadUI != null && keypadUI.activeSelf) return;
 
