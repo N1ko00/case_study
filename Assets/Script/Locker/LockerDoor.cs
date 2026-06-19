@@ -1,46 +1,46 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem;
 
-// ƒƒbƒJ[‚ÌƒhƒAŠJ•Â
-// ‘€ì”ÍˆÍ(interactZone)‚Æ‰B‚êƒ][ƒ“(hideZone)‚ÍƒgƒŠƒK[•ª‚¯‚Ä‚é
-// •Â‚Ü‚Á‚Ä‚é‚É hideZone “à‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚½‚ç Hidden ƒŒƒCƒ„[‚ÉØ‚è‘Ö‚¦
+// ê¹“ê¸ê¸‡?ê¶»ê¸¤ê·ºë‘ë¹§
+// ?ë¿ë¶ëŒª(interactZone)ê¶´ë¨ê·¢??ê¹›(hideZone)ê¶¼ê¸£ê¹ê¸Š?ë¹ê¶šê¶²ê·¡
+// ë¹§ê·ê¶¯ê¶²ê·¡ë „ê¶¸ hideZone ë³™ê¶¸ê¸µê¹’ê·½ê¹‚?ê¶•ê¶‹ê¶«ê· Hidden ê¹’ê·½ê¹‚?ê¶¸ë¨›ê·Ÿë«¶ê¶‘
 public class LockerDoor : MonoBehaviour
 {
-    [Header("‰ñ“]‘ÎÛ ")]
+    [Header("ë·?ë«®ë¤­ ")]
     [SerializeField] private Transform doorPivot;
 
-    [Header("‰ñ“]İ’è")]
-    [SerializeField] private float openAngle = -110f;   // ŠJ‚¢‚½‚ÌŠp“x
-    [SerializeField] private float openSpeed = 200f;    // ‰ñ‚éƒXƒs[ƒh
+    [Header("ë·?ë¨ ë¯¦")]
+    [SerializeField] private float openAngle = -110f;   // ë‘ê¶‹ê¶«ë „ê¶»ë‘·ë±—
+    [SerializeField] private float openSpeed = 200f;    // ë·ê·¡ê¸šê¸¯?ê¸¤
 
-    [Header("‘€ìİ’è")]
+    [Header("?ë¿ë¨ ë¯¦")]
     [SerializeField] private Key interactKey = Key.E;
-    [Tooltip("‘€ì‚Å‚«‚é”ÍˆÍBƒƒbƒJ[‘O‚ ‚½‚è‚É‚¿‚å‚Á‚ÆL‚ß‚Å")]
+    [Tooltip("?ë¿ê¶³ê¶–ê·¡ë¶ëŒªê°ƒê¹“ê¸ê¸‡?ë©Ÿê¶‡ê¶«ê·Ÿê¶¸ê¶­ê·›ê¶¯ê¶´ë›ê·•ê¶³")]
     [SerializeField] private LockerTriggerRelay interactZone;
-    [Tooltip("‰B‚ê‚é”ÍˆÍBƒƒbƒJ[‚Ì’†‚É‚Ò‚Á‚½‚èû‚Ü‚éƒTƒCƒY‚Å")]
+    [Tooltip("ë¨ê·¢ê·¡ë¶ëŒªê°ƒê¹“ê¸ê¸‡?ê¶»ë­·ê¶¸ê·ƒê¶¯ê¶«ê·Ÿë¢ê·ê·¡ê¸–ê·½ê¸›ê¶³")]
     [SerializeField] private LockerTriggerRelay hideZone;
 
-    [Header("‰B‚êİ’è")]
-    [Tooltip("Project Settings ‘¤‚Åæ‚Éì‚Á‚Ä‚¨‚­")]
+    [Header("ë¨ê·¢ë¨ ë¯¦")]
+    [Tooltip("Project Settings ë«€ê¶³ë¨©ê¶¸ë¿ê¶¯ê¶²ê¶“ê¶˜")]
     [SerializeField] private string hiddenLayerName = "Hidden";
 
-    [Header("‰¹İ’è")]
+    [Header("ë¶ë¨ ë¯¦")]
     [SerializeField] private AudioClip openSE;
     [SerializeField] private AudioClip closeSE;
-    [SerializeField] private float noiseRadius = 6f;    // ƒ‚ƒ“ƒXƒ^[‚É•·‚±‚¦‚é”ÍˆÍ(ˆê‰Aì‚Á‚Ä‚¨‚­)
+    [SerializeField] private float noiseRadius = 6f;    // ê¸¾ê¹›ê¸š??ê¶¸ë¹“ê¶ê¶‘ê·¡ë¶ëŒª(ë‡ë’ê°‚ë¿ê¶¯ê¶²ê¶“ê¶˜)
 
-    [Header("Door Colliderİ’è")]
+    [Header("Door Colliderë¨ ë¯¦")]
     [SerializeField] private MeshCollider doorMeshCollider;
 
     private AudioSource _audio;
     private bool _isOpen = false;
-    private bool _isMoving = false;           // ƒhƒA‚ª‰ñ“]’†‚© 
-    private bool _playerInInteract = false;   // ‘€ì”ÍˆÍ“à‚É‚¢‚é‚©
-    private bool _playerInHide = false;       // ‰B‚êƒ][ƒ““à‚É‚¢‚é‚©
+    private bool _isMoving = false;           // ê¸¤ê·ºê¶•ë·?ë­·ê¶” 
+    private bool _playerInInteract = false;   // ?ë¿ë¶ëŒªë³™ê¶¸ê¶‹ê·¡ê¶”
+    private bool _playerInHide = false;       // ë¨ê·¢??ê¹›ë³™ê¶¸ê¶‹ê·¡ê¶”
     private Quaternion _closedRot;
     private Quaternion _openRot;
 
-    // ‰B‚êˆ——p
+    // ë¨ê·¢ë£‰ë¿šë¾­
     private GameObject _playerObj;
     private int _playerOriginalLayer;
     private int _hiddenLayer;
@@ -48,40 +48,56 @@ public class LockerDoor : MonoBehaviour
 
     private void Awake()
     {
-        // pivot “ü‚ê–Y‚ê–h~
+        // pivot ë³ºê·¢ë»’ê·¢ë»?
         if (doorPivot == null)
         {
-            Debug.LogError("[LockerDoor] doorPivot “ü‚ê‚Ä", this);
+            Debug.LogError("[LockerDoor] doorPivot ë³ºê·¢ê¶²", this);
             enabled = false;
             return;
         }
 
-        // •Â‚¶‚½ó‘Ô‚ğŠî€‚É‚µ‚ÄA‚»‚±‚©‚ç openAngle ‰ñ‚µ‚½Šp“x‚ğuŠJ‚¢‚½ó‘Ôv‚É‚·‚é
+        // ë¹§ê¶£ê¶«ë¥‰ë«´ê·©ë”ˆ?ê¶¸ê¶¢ê¶²ê°‚ê¶©ê¶ê¶”ê· openAngle ë·ê¶¢ê¶«ë‘·ë±—ê·©ê±ë‘ê¶‹ê¶«ë¥‰ë«´ê±ê¶¸ê¶¥ê·¡
         _closedRot = doorPivot.localRotation;
         _openRot = _closedRot * Quaternion.Euler(0f, openAngle, 0f);
 
-        // AudioSource ‚È‚©‚Á‚½‚çŸè‚É•t‚¯‚é
+        // AudioSource ê¶¶ê¶”ê¶¯ê¶«ê·ë£¦ë¡¨ê¶¸ë¸Šê¶šê·¡
         _audio = GetComponent<AudioSource>();
         if (_audio == null) _audio = gameObject.AddComponent<AudioSource>();
-        _audio.spatialBlend = 1f; // 3D ‚Å–Â‚ç‚·
+        _audio.spatialBlend = 1f; // 3D ê¶³ë¼¿ê·ê¶¥
 
-        // Hidden ƒŒƒCƒ„[æ“¾ (‚È‚©‚Á‚½‚çƒGƒ‰[)
+        // Hidden ê¹’ê·½ê¹‚?ë¡¦ë²¦ (ê¶¶ê¶”ê¶¯ê¶«ê·ê¸„ê¹‹?)
         _hiddenLayer = LayerMask.NameToLayer(hiddenLayerName);
         if (_hiddenLayer < 0)
-            Debug.LogError($"[LockerDoor] '{hiddenLayerName}' ƒŒƒCƒ„[ì‚Á‚Ä‚È‚¢", this);
+            Debug.LogError($"[LockerDoor] '{hiddenLayerName}' ê¹’ê·½ê¹‚?ë¿ê¶¯ê¶²ê¶¶ê¶‹", this);
 
-        // MeshCollider ‚ª–¢İ’è‚È‚ç doorPivot ˆÈ‰º‚©‚ç©“®æ“¾
+        // MeshCollider ê¶•ë¼Ÿë¨ ë¯¦ê¶¶ê· doorPivot ëŒ¥ë·ê¶”ê·ë ”ë²ë¡¦ë²¦
         if (doorMeshCollider == null)
             doorMeshCollider = doorPivot.GetComponentInChildren<MeshCollider>();
 
         if (doorMeshCollider == null)
-            Debug.LogWarning("[LockerDoor] doorPivot ˆÈ‰º‚É MeshCollider ‚ªŒ©‚Â‚©‚ç‚È‚¢", this);
+            Debug.LogWarning("[LockerDoor] doorPivot ëŒ¥ë·ê¶¸ MeshCollider ê¶•ë™¥ê¶°ê¶”ê·ê¶¶ê¶‹", this);
 
-        // qƒgƒŠƒK[‚ÌƒCƒxƒ“ƒg‚ğE‚¤
+        // ëŸ”ê¸£ê¹ê¸Š?ê¶»ê·½ê¸¹ê¹›ê¸£ê·©ë¢‰ê¶
         if (interactZone != null)
         {
-            interactZone.OnEnter = c => { if (c.CompareTag("Player")) _playerInInteract = true; };
-            interactZone.OnExit = c => { if (c.CompareTag("Player")) _playerInInteract = false; };
+            interactZone.OnEnter = c =>
+            {
+                if (!c.CompareTag("Player")) return;
+                _playerInInteract = true;
+
+                //ã€ŒPress Eã€è¡¨ç¤º
+                if (InteractPromptUI.Instance != null)
+                    InteractPromptUI.Instance.Show(this, "Press E");
+            };
+            interactZone.OnExit = c =>
+            {
+                if (!c.CompareTag("Player")) return;
+                _playerInInteract = false;
+
+                // è¡¨ç¤ºã‚’ã‚ªãƒ•
+                if (InteractPromptUI.Instance != null)
+                    InteractPromptUI.Instance.Hide(this);
+            };
         }
         if (hideZone != null)
         {
@@ -95,7 +111,7 @@ public class LockerDoor : MonoBehaviour
             {
                 if (!c.CompareTag("Player")) return;
                 _playerInHide = false;
-                // o‚é‘O‚É‰B‚ê‰ğœ‚µ‚Æ‚©‚È‚¢‚ÆƒŒƒCƒ„[–ß‚ç‚È‚¢
+                // ë¢¯ê·¡ë©Ÿê¶¸ë¨ê·¢ë¶ë££ê¶¢ê¶´ê¶”ê¶¶ê¶‹ê¶´ê¹’ê·½ê¹‚?ë½£ê·ê¶¶ê¶‹
                 if (_isPlayerHidden) SetPlayerHidden(false);
                 _playerObj = null;
             };
@@ -104,7 +120,7 @@ public class LockerDoor : MonoBehaviour
 
     private void Update()
     {
-        // ‘€ì”ÍˆÍ“à + E ‚ÅŠJ•Â
+        // ?ë¿ë¶ëŒªë³™ + E ê¶³ë‘ë¹§
         if (_playerInInteract
             && Keyboard.current != null
             && Keyboard.current[interactKey].wasPressedThisFrame)
@@ -122,7 +138,7 @@ public class LockerDoor : MonoBehaviour
                 openSpeed * Time.deltaTime
             );
 
-            // –Ú•WŠp“x‚É“’B‚µ‚½‚çƒRƒ‰ƒCƒ_[‚ğ–ß‚·
+            // ë½ë·­ë‘·ë±—ê¶¸ë±¸ë¬ªê¶¢ê¶«ê·ê¸“ê¹‹ê·½??ê·©ë½£ê¶¥
             if (Quaternion.Angle(doorPivot.localRotation, target) < 0.1f)
             {
                 doorPivot.localRotation = target;
@@ -131,7 +147,7 @@ public class LockerDoor : MonoBehaviour
             }
         }
 
-        // •Â‚Ü‚Á‚Ä‚Ä’†‚É‚¢‚é‚¾‚¯‰B‚ê‚é
+        // ë¹§ê·ê¶¯ê¶²ê¶²ë­·ê¶¸ê¶‹ê·¡ë „ê¶¬ê¶šë¨ê·¢ê·¡
         bool shouldHide = !_isOpen && _playerInHide;
         if (shouldHide && !_isPlayerHidden) SetPlayerHidden(true);
         else if (!shouldHide && _isPlayerHidden) SetPlayerHidden(false);
@@ -145,7 +161,7 @@ public class LockerDoor : MonoBehaviour
         }
     }
 
-    // ƒvƒŒƒCƒ„[‚ÌƒŒƒCƒ„[‚ğ Hidden ‚ÉØ‚è‘Ö‚¦ (–ß‚·‚ÍŒ³‚ÌƒŒƒCƒ„[‚É)
+    // ê¸µê¹’ê·½ê¹‚?ê¶»ê¹’ê·½ê¹‚?ê·© Hidden ê¶¸ë¨›ê·Ÿë«¶ê¶‘ (ë½£ê¶¥ë „ê¶¼ë™°ê¶»ê¹’ê·½ê¹‚?ê¶¸)
     private void SetPlayerHidden(bool hide)
     {
         if (_playerObj == null || _hiddenLayer < 0) return;
@@ -155,17 +171,17 @@ public class LockerDoor : MonoBehaviour
             _playerOriginalLayer = _playerObj.layer;
             SetLayerRecursive(_playerObj, _hiddenLayer);
             _isPlayerHidden = true;
-            Debug.Log("[LockerDoor] ‰B‚ê‚½");
+            Debug.Log("[LockerDoor] ë¨ê·¢ê¶«");
         }
         else
         {
             SetLayerRecursive(_playerObj, _playerOriginalLayer);
             _isPlayerHidden = false;
-            Debug.Log("[LockerDoor] ‰B‚ê‰ğœ");
+            Debug.Log("[LockerDoor] ë¨ê·¢ë¶ë££");
         }
     }
 
-    // q‹Ÿ‚Ü‚Å‚Ü‚Æ‚ß‚ÄƒŒƒCƒ„[•ÏX
+    // ëŸ”ë–‰ê·ê¶³ê·ê¶´ê·•ê¶²ê¹’ê·½ê¹‚?ë¹¾ë››
     private static void SetLayerRecursive(GameObject obj, int layer)
     {
         obj.layer = layer;
@@ -173,7 +189,7 @@ public class LockerDoor : MonoBehaviour
             SetLayerRecursive(child.gameObject, layer);
     }
 
-    // ŠJ‚¢‚Ä‚½‚ç•Â‚¶‚éA•Â‚¶‚Ä‚½‚çŠJ‚­
+    // ë‘ê¶‹ê¶²ê¶«ê·ë¹§ê¶£ê·¡ê°‚ë¹§ê¶£ê¶²ê¶«ê·ë‘ê¶˜
     public void Toggle()
     {
         _isOpen = !_isOpen;
@@ -184,7 +200,7 @@ public class LockerDoor : MonoBehaviour
         AudioClip clip = _isOpen ? openSE : closeSE;
         if (clip != null) _audio.PlayOneShot(clip);
 
-        // ƒhƒA‚Ì‰¹‚Åƒ‚ƒ“ƒXƒ^[ŒÄ‚Ô
+        // ê¸¤ê·ºê¶»ë¶ê¶³ê¸¾ê¹›ê¸š??ëšê·†
         if (SoundManager.Instance != null)
         {
             SoundManager.Instance.EmitNoise(
@@ -195,10 +211,17 @@ public class LockerDoor : MonoBehaviour
         }
     }
 
+    private void OnDisable()
+    {
+        // ç›¸äº’ä½œç”¨ç¯„å›²å†…ã®ã¾ã¾LockerãŒæ¶ˆãˆã¦ã‚‚UIãŒæ®‹ã‚‰ãªã„ã‚ˆã†ã«
+        if (_playerInInteract && InteractPromptUI.Instance != null)
+            InteractPromptUI.Instance.Hide(this);
+    }
+
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        // ‰¹‚Ì“Í‚­”ÍˆÍ‚¾‚¯•\¦BƒgƒŠƒK[”ÍˆÍ‚Íq‚Ì BoxCollider ‘¤‚ÅŒ©‚é
+        // ë¶ê¶»ë²¾ê¶˜ë¶ëŒªê¶¬ê¶š?ë ‘ê°ƒê¸£ê¹ê¸Š?ë¶ëŒªê¶¼ëŸ”ê¶» BoxCollider ë«€ê¶³ë™¥ê·¡
         Gizmos.color = new Color(1f, 0.5f, 0f, 0.4f);
         Gizmos.DrawWireSphere(transform.position, noiseRadius);
     }
