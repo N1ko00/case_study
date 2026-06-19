@@ -1875,7 +1875,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 77e6ff5446a53384d888e0d52da70094, type: 2}
+  - {fileID: 2100000, guid: 33a87f0df7fdef24e85eccb02c61363b, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5820,6 +5820,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Door (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 3653867253372418859, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 810465f9ad1041844bd919e4b378a8f3, type: 2}
+    - target: {fileID: 6165061924122112848, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 810465f9ad1041844bd919e4b378a8f3, type: 2}
     - target: {fileID: 6682538445196754076, guid: 96ad4364b330e054c86027d1175bee55, type: 3}
       propertyPath: isOpen
       value: 1
@@ -9278,7 +9286,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: badeb1f267c671144a26d4959a00ebbc, type: 2}
+  - {fileID: 2100000, guid: 66e25717e95e4d845a77e6267ac7e626, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
