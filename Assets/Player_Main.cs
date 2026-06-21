@@ -334,6 +334,9 @@ public class FPSController : MonoBehaviour
     [SerializeField] private float footstepInterval = 0.5f;
     [SerializeField] private float footstepRadius = 8f;
 
+    [Header("アイテムごとの専用セリフ設定")]
+    public System.Collections.Generic.List<ItemMessageData> customItemMessages;
+
     private float footstepTimer;
 
     private SphereCollider voiceCollider;
@@ -556,10 +559,27 @@ public class FPSController : MonoBehaviour
         {
             Debug.Log("拾った：" + currentlyHighlightingItem.itemData.itemName);
 
-            // ★ 追加：新しい背景付きメッセージウィンドウにアイテム名とメッセージを送る
+            // ★ 変更：インスペクターで設定したリストからセリフを探す
             if (UIManager.Instance != null && currentlyHighlightingItem.itemData != null)
             {
-                UIManager.Instance.ShowItemMessage(currentlyHighlightingItem.itemData.itemName, "を見つけた");
+                string itemName = currentlyHighlightingItem.itemData.itemName;
+
+                // 何も設定されていない場合のデフォルトメッセージ
+                string[] messages = new string[] { "を見つけた" };
+
+                // インスペクターのリストから、同じ名前のアイテムを探す
+                foreach (var customData in customItemMessages)
+                {
+                    if (customData.itemName == itemName)
+                    {
+                        // 見つかったら、インスペクターで設定したセリフに上書きする
+                        messages = customData.messages;
+                        break; // 見つかったら探すのをやめる
+                    }
+                }
+
+                // UIManagerへ送る
+                UIManager.Instance.ShowSequentialMessages(itemName, messages);
             }
 
             if (currentlyHighlightingItem.itemData.itemName == "Tablet")
@@ -609,6 +629,13 @@ public class FPSController : MonoBehaviour
         SetMoveEnabled(move);
         SetLookEnabled(look);
     }
+}
+
+[System.Serializable]
+public struct ItemMessageData
+{
+    public string itemName;      // アイテムの名前（例: Tablet）
+    public string[] messages;    // 表示したいセリフの配列
 }
 
 public class DetectionTrigger : MonoBehaviour

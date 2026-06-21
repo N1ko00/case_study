@@ -112,37 +112,60 @@ public class UIManager : MonoBehaviour
     }
 
     // ★【追加機能】複数のメッセージを順番に表示する機能
-    // 使い方： UIManager.Instance.ShowSequentialMessages("鍵", new string[] { "鍵を見つけた。", "錆びついているな……。" });
     public void ShowSequentialMessages(string itemName, string[] contents)
     {
         if (messageWindow == null || contents == null || contents.Length == 0) return;
 
-        StopAllMessageCoroutines(); // 実行中のメッセージ処理をリセットします
+        StopAllMessageCoroutines(); // 実行中のメッセージ処理をリセット
 
         sequenceCoroutine = StartCoroutine(ShowMessagesSequence(itemName, contents));
     }
 
-    // ★【追加】順番に表示するためのコルーチン
-    private IEnumerator ShowMessagesSequence(string itemName, string[] contents)
-    {
+
+ // ★【追加】順番に表示するためのコルーチン
+private IEnumerator ShowMessagesSequence(string itemName, string[] contents)
+{
         messageWindow.SetActive(true);
 
-        foreach (string content in contents)
+    for (int i = 0; i < contents.Length; i++)
+    {
+        // 1行目のセリフ（上部のアイテム名）は、1個目のメッセージの時だけ表示する
+        if (itemNameText != null)
         {
-            if (itemNameText != null) itemNameText.text = itemName;
-            if (messageContentText != null) messageContentText.text = content;
-
-            // 1つのメッセージにつき、displayDurationの秒数だけ待機します
-            yield return new WaitForSeconds(displayDuration);
+            if (i == 0)
+            {
+                itemNameText.text = itemName;
+            }
+            else
+            {
+                itemNameText.text = ""; // 2個目以降はアイテム名を消す
+            }
         }
 
-        // すべて表示し終わったらウィンドウを閉じますわ
-        if (itemNameText != null) itemNameText.text = "";
-        if (messageContentText != null) messageContentText.text = "";
-        if (messageWindow != null) messageWindow.SetActive(false);
+        // セリフ本文の表示
+        if (messageContentText != null) messageContentText.text = contents[i];
+
+        // 1つのメッセージにつき、displayDurationの秒数だけ待機
+        yield return new WaitForSeconds(displayDuration);
+
+        // 次のメッセージ（2個目のセリフなど）がまだある場合
+        if (i < contents.Length - 1)
+        {
+            // 次のテキストを表示する前に、一度テキストを完全に消して被りを防ぐ
+            if (messageContentText != null) messageContentText.text = "";
+
+            // 0.1秒だけ空白の時間を設けることで、切り替わりを分かりやすくする
+            yield return new WaitForSeconds(0.1f);
+        }
     }
 
-    // ★【追加機能】インベントリ用：自動で消えないメッセージ表示（カーソルが外れるまで出し続ける）
+    // すべて表示し終わったらウィンドウを閉じる
+    if (itemNameText != null) itemNameText.text = "";
+    if (messageContentText != null) messageContentText.text = "";
+    if (messageWindow != null) messageWindow.SetActive(false);
+}
+
+    // インベントリ用：自動で消えないメッセージ表示（カーソルが外れるまで出し続ける）
     public void ShowPersistentItemMessage(string itemName, string content)
     {
         if (messageWindow == null) return;
