@@ -56,6 +56,9 @@ public class CameraSwitcher : MonoBehaviour
 
     public bool IsToggled = true;
 
+    [Header("キーパッド参照")]
+    public GameObject keypadUI; // ← KeyPadTriggerと同じGameObjectを割り当て
+
 
     void Start()
     {
@@ -86,6 +89,12 @@ public class CameraSwitcher : MonoBehaviour
     {
         if (unique)
         {
+            // ★ 追加：キーパッドが表示中は操作を止める
+            if (keypadUI != null && keypadUI.activeSelf)
+                return;
+
+            if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
+                return;
             // monsterが存在する場合、最初は非表示にする処理を行います
             if (monster != null)
             {
