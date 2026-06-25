@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class GameClear : MonoBehaviour
 {
-    [SerializeField] SceneLoader sceneLoader;
     [SerializeField] ClearSequence clearSequence;
     private void OnTriggerEnter(Collider other)
     {
