@@ -3,7 +3,7 @@ using UnityEngine;
 public class GameClear : MonoBehaviour
 {
     [SerializeField] SceneLoader sceneLoader;
-
+    [SerializeField] ClearSequence clearSequence;
     private void OnTriggerEnter(Collider other)
     {
         // プレイヤーがゴールに触れたときの処理
@@ -12,6 +12,7 @@ public class GameClear : MonoBehaviour
             Debug.Log("ゲームクリア！");
             //シーン遷移処理
             sceneLoader.LoadScene(SceneLoader.SceneName.ResultScene);
+            clearSequence.Play();
         }
     }
 }
