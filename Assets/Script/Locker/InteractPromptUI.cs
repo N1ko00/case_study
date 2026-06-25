@@ -16,7 +16,7 @@ public class InteractPromptUI : MonoBehaviour
     [SerializeField] private TMP_Text promptText;
 
     [Header("デフォルト文")]
-    [SerializeField] private string defaultMessage = "Press E";
+    [SerializeField] private string defaultMessage = "Press R2";
 
     // 現在ヒントを表示している呼び出し元 
     private Object _currentOwner;
