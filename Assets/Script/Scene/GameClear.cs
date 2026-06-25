@@ -11,7 +11,7 @@ public class GameClear : MonoBehaviour
         {
             Debug.Log("ゲームクリア！");
             //シーン遷移処理
-            sceneLoader.LoadScene(SceneLoader.SceneName.ResultScene);
+            //sceneLoader.LoadScene(SceneLoader.SceneName.ResultScene);
             clearSequence.Play();
         }
     }
