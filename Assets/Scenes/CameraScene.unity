@@ -183,7 +183,10 @@ MonoBehaviour:
   - {fileID: 1029969851}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
-  player_Main: {fileID: 0}
+  player_Main: {fileID: 280676198}
+  firstReturnMessage: "\u5165\u3063\u305F\u6642\u306F\u8AB0\u3082\u304A\u3089\u3093\u304B\u3063\u305F\u3051\u3069\u306A"
+  IsToggled: 1
+  keypadUI: {fileID: 0}
 --- !u!1 &43718147
 GameObject:
   m_ObjectHideFlags: 0
@@ -1592,6 +1595,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: keypadUI
+      value: 
+      objectReference: {fileID: 1955853868}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: hasTablet
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5088285046778166793, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -2468,6 +2479,8 @@ MonoBehaviour:
   scriptsToDisable:
   - {fileID: 280676198}
   Camera: {fileID: 0}
+  sceneLoader: {fileID: 0}
+  gameOverSceneName: 3
 --- !u!4 &1832193732
 Transform:
   m_ObjectHideFlags: 0

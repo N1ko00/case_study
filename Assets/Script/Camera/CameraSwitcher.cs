@@ -5,6 +5,8 @@ using UnityEngine.Serialization;
 using System.Collections.Generic;
 using UnityEngine.Rendering.Universal;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using System.Collections;
 
 public class CameraSwitcher : MonoBehaviour
 {
@@ -122,7 +124,11 @@ public class CameraSwitcher : MonoBehaviour
         // ロック中は Space 入力自体を受け付けない
         if (cameraLocked) return;
 
-        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        // スペースキー、またはゲームパッドのXボタン(Xbox基準)が押されたかを判定します
+        bool isSpacePressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        bool isGamepadXPressed = Gamepad.current != null && Gamepad.current.buttonWest.wasPressedThisFrame;
+
+        if (isSpacePressed || isGamepadXPressed)
         {
             ToggleCamera();
         }
@@ -186,6 +192,17 @@ public class CameraSwitcher : MonoBehaviour
         // if (monster != null) monster.SetVisible(isSubCamera);
 
         UpdateButtonColors();
+
+        // 監視カメラ画面が開いた時、現在見ているカメラのボタンに十字キーのフォーカスを合わせます
+        if (isSubCamera && cameraButtons.Count > 0 && EventSystem.current != null)
+        {
+            int buttonIndex = CurrentCameraIndex - 1;
+            if (buttonIndex >= 0 && buttonIndex < cameraButtons.Count && cameraButtons[buttonIndex] != null)
+            {
+                // コルーチンを呼び出して、選択を少し遅らせます
+                StartCoroutine(SelectButtonNextFrame(cameraButtons[buttonIndex].gameObject));
+            }
+        }
     }
 
     private void UpdateButtonColors()
@@ -194,29 +211,25 @@ public class CameraSwitcher : MonoBehaviour
         {
             if (cameraButtons[i] == null) continue;
 
-            // camerasリストの0番目はメインカメラなので、ボタンの0番目は監視カメラ1（cameras[1]）に対応します
             int targetCameraIndex = i + 1;
-
             Button button = cameraButtons[i];
 
-            // ButtonからColorBlockを取得
-            ColorBlock cb = button.colors;
+            // ボタンの画像コンポーネント（Image）を直接取得します
+            Image buttonImage = button.GetComponent<Image>();
 
-            if (targetCameraIndex == CurrentCameraIndex)
+            if (buttonImage != null)
             {
-                // 見ているカメラなら、通常時の色を選択色に差し替え
-                cb.normalColor = selectedColor;
-
-                cb.selectedColor = selectedColor;
+                if (targetCameraIndex == CurrentCameraIndex)
+                {
+                    // 現在アクティブなカメラのボタンは、インスペクターで設定した「selectedColor（緑など）」にします
+                    buttonImage.color = selectedColor;
+                }
+                else
+                {
+                    // それ以外のボタンは「normalColor（白など）」に戻します
+                    buttonImage.color = normalColor;
+                }
             }
-            else
-            {
-                cb.normalColor = normalColor;
-
-                cb.selectedColor = normalColor;
-            }
-
-            button.colors = cb;
         }
     }
 
@@ -246,5 +259,13 @@ public class CameraSwitcher : MonoBehaviour
     {
         cameraLocked = true;
         SetCameraState(0);
+    }
+
+    private IEnumerator SelectButtonNextFrame(GameObject targetButton)
+    {
+        yield return null; // ここで1フレームだけ待ちますのよ
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(targetButton);
     }
 }
