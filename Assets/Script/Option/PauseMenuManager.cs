@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -42,6 +44,12 @@ public class PauseMenuManager : MonoBehaviour
     [Tooltip("キーパッドが開いている時はESCを無視する（任意）")]
     [SerializeField] private GameObject keypadUI;
 
+    [Header("コントローラー対応")]
+    [Tooltip("ポーズ表示時に最初に選択されるボタン (通常はResume)")]
+    [SerializeField] private Button firstSelectedButton;
+    [Tooltip("選択が外れた時に自動で再選択する")]
+    [SerializeField] private bool keepSelectionAlive = true;
+
     private bool _isPaused = false;
 
     /// <summary>外部からポーズ中か確認するためのプロパティ</summary>
@@ -77,28 +85,33 @@ public class PauseMenuManager : MonoBehaviour
 
     private void Update()
     {
-        // 対象シーン以外では機能無効
-        if(SceneManager.GetActiveScene().name != allowedSceneName) return;
-
-        // ゲームオーバー中は無効（ポーズ中なら解除して進行を止めない）
-        if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver)
+        // ポーズ中はEventSystemの選択が外れたら自動で再選択 (コントローラー対応)
+        if (_isPaused && keepSelectionAlive
+            && EventSystem.current != null
+            && EventSystem.current.currentSelectedGameObject == null)
         {
-            if (_isPaused)
-            {
-                _isPaused = false;
-                if (pausePanel != null) pausePanel.SetActive(false);
-                Time.timeScale = 1f;
-            }
-            return;
+            SelectFirstButton();
         }
+
+        // 対象シーン以外では機能無効
+        if (SceneManager.GetActiveScene().name != allowedSceneName) return;
+
+        // ゲームオーバー中は無効
+        if (GameOverManager.Instance != null && GameOverManager.Instance.IsGameOver) return;
+
         // キーバッドが開いているときは無視
         if (keypadUI != null && keypadUI.activeSelf) return;
 
         // インベントリが開いている時は無視
         if (!_isPaused && UIInventory.Instance != null && UIInventory.Instance.IsOpen) return;
 
-        if (Keyboard.current == null) return;
-        if (!Keyboard.current.escapeKey.wasPressedThisFrame) return;
+        // ESCキー または ゲームパッドのスタート(オプション)ボタンで開閉
+        bool keyboardPressed = Keyboard.current != null
+            && Keyboard.current.escapeKey.wasPressedThisFrame;
+        bool gamepadPressed = Gamepad.current != null
+            && Gamepad.current.startButton.wasPressedThisFrame;
+
+        if (!keyboardPressed && !gamepadPressed) return;
 
         if (_isPaused) Resume();
         else Pause();
@@ -121,6 +134,9 @@ public class PauseMenuManager : MonoBehaviour
         // 時間停止
         Time.timeScale = 0f;
 
+        // コントローラー操作のため最初のボタンを選択 (1フレーム遅延が安全)
+        StartCoroutine(SelectFirstButtonNextFrame());
+
         Debug.Log("[PauseMenuManager] Paused");
     }
 
@@ -132,6 +148,10 @@ public class PauseMenuManager : MonoBehaviour
 
         if (pausePanel != null) pausePanel.SetActive(false);
 
+        // EventSystemの選択を解除 (ゲームプレイ中に残らないように)
+        if (EventSystem.current != null)
+            EventSystem.current.SetSelectedGameObject(null);
+
         // カーソル非表示
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -139,6 +159,32 @@ public class PauseMenuManager : MonoBehaviour
         Time.timeScale = 1f;
 
         Debug.Log("[PauseMenuManager] Resumed");
+    }
+
+    // ----------------------------------------------------------------
+    // コントローラー選択処理
+    // ----------------------------------------------------------------
+
+    /// <summary>
+    /// firstSelectedButtonをEventSystemの選択対象に設定する。
+    /// 未設定ならResumeボタンをフォールバックに使う。
+    /// </summary>
+    private void SelectFirstButton()
+    {
+        if (EventSystem.current == null) return;
+
+        Button target = firstSelectedButton != null ? firstSelectedButton : resumeButton;
+        if (target == null) return;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(target.gameObject);
+    }
+
+    private IEnumerator SelectFirstButtonNextFrame()
+    {
+        // EventSystemの初期化を待つために1フレーム待機
+        yield return null;
+        SelectFirstButton();
     }
 
     // ----------------------------------------------------------------

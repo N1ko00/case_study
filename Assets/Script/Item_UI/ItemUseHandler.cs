@@ -29,21 +29,21 @@
 
 //    public void OnClickYes()
 //    {
-//        Debug.Log("Yesボタンが押されました");
+//        Debug.Log("Yes??ンが押されました");
 
 //        if (confirmPanel != null)
 //        {
 //            confirmPanel.SetActive(false);
 //        }
 
-//        // アイテム処理
+//        // アイテ?処理
 //        if (pendingItem != null)
 //        {
 //            ExecuteUseLogic(pendingItem);
 //            pendingItem = null;
 //        }
 
-//        // インベントリ本体と背景を同時に閉じて視点を戻す
+//        // インベントリ?体と背景を同時に閉じて視?を戻す
 //        ResetCursor();
 //    }
 
@@ -51,7 +51,7 @@
 //    {
 //        pendingItem = null;
 
-//        // 「いいえ」の時もインベントリを閉じて視点を戻す
+//        // 「いいえ」の時もインベントリを閉じて視?を戻す
 //        ResetCursor();
 //    }
 
@@ -137,14 +137,14 @@ public class ItemUseHandler : MonoBehaviour
 
     public void OnClickYes()
     {
-        Debug.Log("Yesボタンが押されました");
+        Debug.Log("Yes??ンが押されました");
 
         if (confirmPanel != null)
         {
             confirmPanel.SetActive(false);
         }
 
-        // アイテム処理
+        // アイテ?処理
         if (pendingItem != null)
         {
             ExecuteUseLogic(pendingItem);
@@ -156,7 +156,7 @@ public class ItemUseHandler : MonoBehaviour
     {
         pendingItem = null;
 
-        // 「いいえ」の時もインベントリを閉じて視点を戻す
+        // 「いいえ」の時もインベントリを閉じて視?を戻す
         ResetCursor();
     }
 
@@ -189,7 +189,7 @@ public class ItemUseHandler : MonoBehaviour
                     InventoryManager.Instance.RemoveItem(item);
                 }
 
-                // ① 使用に成功した場合のメッセージ表示
+                // ? 使用に成功した場合のメッセ?ジ?示
                 if (UIManager.Instance != null)
                 {
                     UIManager.Instance.ShowItemMessage(item.itemName, "を使用した");
@@ -202,16 +202,16 @@ public class ItemUseHandler : MonoBehaviour
 
         if (usedSuccess)
         {
-            // 使用成功時：インベントリと背景を閉じ、視点をロックする
+            // 使用成功時：インベントリと背景を閉じ、視?をロックする
             ResetCursor();
         }
         else
         {
             // ★【ここを修正】インベントリを閉じる（ResetCursor）を「先」に実行します！
-            // これにより、インベントリ裏のUIリセットに邪魔されることなくメッセージが上書き表示されます。
+            // これにより、インベントリ裏のUIリセットに邪魔されることなくメッセ?ジが上書き?示されます。
             ResetCursor();
 
-            // ② 使用に失敗した場合（ここでは使えない場合）のメッセージ表示を「後」から呼ぶ
+            // ② 使用に失敗した場合（ここでは使えない場合）のメッセ?ジ?示を「後」から呼ぶ
             if (UIManager.Instance != null)
             {
                 UIManager.Instance.ShowItemMessage(item.itemName, "はここでは使えないようだ");

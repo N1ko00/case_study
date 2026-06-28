@@ -1,38 +1,42 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 /// <summary>
-/// ƒzƒo?’†‚ÉƒfƒW?ƒ‹ƒOƒŠƒb?‰‰o‚ğo‚·B
+/// ãƒœã‚¿ãƒ³ãƒ›ãƒãƒ¼æ™‚ã«ãƒ‡ã‚¸ã‚¿ãƒ«ã‚°ãƒªãƒƒãƒåŠ¹æœã‚’å‡ºã™ã€‚
+/// ãƒã‚¦ã‚¹ãƒ›ãƒãƒ¼ (IPointerEnter/Exit) ã¨
+/// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼/ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰é¸æŠ (ISelect/Deselect) ã®ä¸¡æ–¹ã«åå¿œã€‚
 /// </summary>
-public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class ButtonNoiseHover : MonoBehaviour,
+    IPointerEnterHandler, IPointerExitHandler,
+    ISelectHandler, IDeselectHandler
 {
-    [Header("ƒOƒŠƒb?‹­“x")]
-    [Tooltip("…•½•ûŒü‚ÌÅ‘å‚¸‚ê—Ê")]
+    [Header("ã‚°ãƒªãƒƒãƒå¼·åº¦")]
+    [Tooltip("æ°´å¹³æ–¹å‘ã®æœ€å¤§ãšã‚Œé‡")]
     [SerializeField] private float glitchShiftX = 15f;
-    [Tooltip("‚’¼•ûŒü‚ÌÅ‘å‚¸‚ê—Ê ")]
+    [Tooltip("å‚ç›´æ–¹å‘ã®æœ€å¤§ãšã‚Œé‡")]
     [SerializeField] private float glitchShiftY = 3f;
-    [Tooltip("1•bŠÔ‚É‰½‰ñƒOƒŠƒb?‚·‚é‚©")]
+    [Tooltip("1ç§’é–“ã«ä½•å›ã‚°ãƒªãƒƒãƒã™ã‚‹ã‹")]
     [SerializeField] private float glitchFrequency = 10f;
-    [Tooltip("1‰ñ‚ÌƒOƒŠƒb?‚ª‘±‚­ŠÔ (•b)")]
+    [Tooltip("1å›ã®ã‚°ãƒªãƒƒãƒãŒç¶šãæ™‚é–“ (ç§’)")]
     [SerializeField] private float glitchDuration = 1f;
-    [Tooltip("ƒAƒ‹ƒt?‚ª0‚É‚È‚éŠm—¦ (0~1)")]
+    [Tooltip("ã‚¢ãƒ«ãƒ•ã‚¡ãŒ0ã«ãªã‚‹ç¢ºç‡ (0~1)")]
     [SerializeField] private float flickerChance = 0.08f;
 
-    [Header("ƒNƒ?ƒeƒBƒbƒNƒAƒxƒŒ?ƒVƒ‡ƒ“")]
-    [Tooltip("F‚¸‚êc‘œ‚ğ—LŒø‚É‚·‚é")]
+    [Header("ã‚¯ãƒ­ãƒãƒ†ã‚£ãƒƒã‚¯ã‚¢ãƒ™ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³")]
+    [Tooltip("è‰²ãšã‚Œæ®‹åƒã‚’æœ‰åŠ¹ã«ã™ã‚‹")]
     [SerializeField] private bool enableChromatic = true;
-    [Tooltip("Rc‘œ‚Ì‚¸‚ê—Ê (px)")]
+    [Tooltip("Ræ®‹åƒã®ãšã‚Œé‡ (px)")]
     [SerializeField] private float chromaticOffset = 5f;
-    [Tooltip("c‘œ‚Ì“§–¾“x")]
+    [Tooltip("æ®‹åƒã®é€æ˜åº¦")]
     [SerializeField][Range(0f, 1f)] private float ghostAlpha = 0.4f;
 
-    [Header("ƒtƒF?ƒh")]
+    [Header("ãƒ•ã‚§ãƒ¼ãƒ‰")]
     [SerializeField] private float fadeInDuration = 0.06f;
     [SerializeField] private float fadeOutDuration = 0.1f;
 
-    // „Ÿ„Ÿ “à•” „Ÿ„Ÿ
+    // â”€â”€ å†…éƒ¨ â”€â”€
     private RectTransform _rectTransform;
     private CanvasGroup _canvasGroup;
     private Graphic _graphic;
@@ -44,13 +48,17 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     private Coroutine _fadeCoroutine;
     private Coroutine _glitchCoroutine;
 
-    // ƒNƒ?ƒeƒBƒbƒNƒAƒxƒŒ?ƒVƒ‡ƒ“—p‚Ìc‘œƒIƒuƒWƒFƒNƒg
-    private RectTransform _ghostR;  // Ôc‘œ
-    private RectTransform _ghostB;  // Âc‘œ
+    // ã‚¯ãƒ­ãƒãƒ†ã‚£ãƒƒã‚¯ã‚¢ãƒ™ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ç”¨ã®æ®‹åƒã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ
+    private RectTransform _ghostR;  // èµ¤æ®‹åƒ
+    private RectTransform _ghostB;  // é’æ®‹åƒ
 
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
-    // ‰Šú‰»
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
+    // ãƒ›ãƒãƒ¼ã¨é¸æŠã‚’ç‹¬ç«‹ã—ã¦æ‰±ã†ãŸã‚ã®ãƒ•ãƒ©ã‚°
+    private bool _isPointerOver = false;
+    private bool _isSelected = false;
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // åˆæœŸåŒ–
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void Awake()
     {
         _rectTransform = GetComponent<RectTransform>();
@@ -67,9 +75,6 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
             CreateGhosts();
     }
 
-    /// <summary>
-    /// Œ³‚ÌGraphic‚ğ•¡»‚µ‚ÄR/Bc‘œ‚ğì‚éB
-    /// </summary>
     private void CreateGhosts()
     {
         _ghostR = CreateGhost("Ghost_R", new Color(1f, 0.05f, 0.05f, ghostAlpha));
@@ -81,14 +86,12 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
         GameObject go = new GameObject(goName, typeof(RectTransform));
         go.transform.SetParent(transform, false);
 
-        // Œ³‚Æ“¯‚¶ƒTƒCƒYEƒs?ƒbƒg
         RectTransform rt = go.GetComponent<RectTransform>();
         rt.anchorMin = Vector2.zero;
         rt.anchorMax = Vector2.one;
         rt.offsetMin = Vector2.zero;
         rt.offsetMax = Vector2.zero;
 
-        // Œ³‚ÌImage‚ğ•¡»
         Image srcImage = GetComponent<Image>();
         if (srcImage != null)
         {
@@ -99,18 +102,45 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
             ghost.type = srcImage.type;
         }
 
-        // c‘œ‚ÍŒ³‚Ì‰º‚É”z’u (Sibling‚ğˆê”ÔŒã‚ë‚É)
         go.transform.SetAsFirstSibling();
-
-        // Å‰‚Í”ñ?¦
         go.SetActive(false);
         return rt;
     }
 
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
-    // ƒzƒo?ƒCƒxƒ“ƒg
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ãƒã‚¦ã‚¹ã‚¤ãƒ™ãƒ³ãƒˆ
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     public void OnPointerEnter(PointerEventData eventData)
+    {
+        _isPointerOver = true;
+        StartEffect();
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        _isPointerOver = false;
+        TryStopEffect();
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼/ã‚­ãƒ¼ãƒœãƒ¼ãƒ‰é¸æŠã‚¤ãƒ™ãƒ³ãƒˆ
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    public void OnSelect(BaseEventData eventData)
+    {
+        _isSelected = true;
+        StartEffect();
+    }
+
+    public void OnDeselect(BaseEventData eventData)
+    {
+        _isSelected = false;
+        TryStopEffect();
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ã‚¨ãƒ•ã‚§ã‚¯ãƒˆON/OFFåˆ¶å¾¡ (ãƒ›ãƒãƒ¼ or é¸æŠã®ã©ã¡ã‚‰ã‹ã§æœ‰åŠ¹)
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    private void StartEffect()
     {
         SetFade(1f, fadeInDuration);
 
@@ -118,34 +148,54 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
         _glitchCoroutine = StartCoroutine(GlitchLoop());
     }
 
-    public void OnPointerExit(PointerEventData eventData)
+    private void TryStopEffect()
     {
-        SetFade(0f, fadeOutDuration);
+        // ãƒã‚¦ã‚¹ã‚‚ä¹—ã£ã¦ãŠã‚‰ãšã€é¸æŠã‚‚ã•ã‚Œã¦ã„ãªã„æ™‚ã ã‘åœæ­¢
+        if (_isPointerOver || _isSelected) return;
 
+        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆã‚’ã‚¹ã‚­ãƒƒãƒ—ã—ã¦å³åº§ã«å…¨ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’æ­¢ã‚ã‚‹
+        StopEffectImmediate();
+    }
+
+    /// <summary>
+    /// å…¨ã‚¨ãƒ•ã‚§ã‚¯ãƒˆã‚’å³åº§ã«åœæ­¢ã™ã‚‹ã€‚
+    /// åˆ¥ã®ãƒœã‚¿ãƒ³ã«ç§»å‹•ã—ãŸã¨ãã«æ®‹åƒãŒæ®‹ã‚‰ãªã„ã‚ˆã†ã«ã™ã‚‹ãŸã‚ã®ç¬é–“åœæ­¢å‡¦ç†ã€‚
+    /// </summary>
+    private void StopEffectImmediate()
+    {
+        if (_fadeCoroutine != null)
+        {
+            StopCoroutine(_fadeCoroutine);
+            _fadeCoroutine = null;
+        }
         if (_glitchCoroutine != null)
         {
             StopCoroutine(_glitchCoroutine);
             _glitchCoroutine = null;
         }
+
+        // å¼·åº¦ã‚’å³åº§ã«0ã«ãƒªã‚»ãƒƒãƒˆ
+        _effectStrength = 0f;
+
+        // è¦‹ãŸç›®ã‚’å®Œå…¨ã«å…ƒã«æˆ»ã™
         ResetToOrigin();
+        SetGhostsActive(false);
     }
 
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
-    // ƒOƒŠƒb?ƒ‹?ƒv
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ã‚°ãƒªãƒƒãƒãƒ«ãƒ¼ãƒ—
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private IEnumerator GlitchLoop()
     {
         float interval = 1f / glitchFrequency;
 
         while (true)
         {
-            // Ÿ‚ÌƒOƒŠƒb?‚Ü‚Å‘Ò?
             yield return new WaitForSecondsRealtime(interval * Random.Range(0.5f, 1.5f));
 
-            // effectStrength‚ª’á‚¯‚ê‚Îã‚ß‚É
             if (Random.value > _effectStrength) continue;
 
-            yield return StartCoroutine(DoGlitch());
+            yield return DoGlitch();
         }
     }
 
@@ -153,7 +203,6 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
     {
         float elapsed = 0f;
 
-        // c‘œ‚ğ—LŒø‰»
         SetGhostsActive(true);
 
         while (elapsed < glitchDuration)
@@ -162,18 +211,15 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
             float str = _effectStrength;
 
-            // „Ÿ„Ÿ ƒƒCƒ“?‘Ì‚ğƒ‰ƒ“??‚ÉƒXƒiƒbƒv „Ÿ„Ÿ
             float ox = Random.Range(-glitchShiftX, glitchShiftX) * str;
             float oy = Random.Range(-glitchShiftY, glitchShiftY) * str;
             _rectTransform.localPosition = _originPos + new Vector3(ox, oy, 0f);
 
-            // „Ÿ„Ÿ ƒAƒ‹ƒt?‚¿‚ç‚Â‚« „Ÿ„Ÿ
             if (_canvasGroup != null)
             {
                 _canvasGroup.alpha = (Random.value < flickerChance * str) ? 0f : 1f;
             }
 
-            // „Ÿ„Ÿ R/Bc‘œ‚ğ‚¸‚ç‚· „Ÿ„Ÿ
             if (enableChromatic)
             {
                 float co = chromaticOffset * str;
@@ -190,14 +236,13 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
             yield return null;
         }
 
-        // ƒOƒŠƒb?I—¹ ¨ Œ³‚É–ß‚·
         ResetToOrigin();
         SetGhostsActive(false);
     }
 
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
-    // ƒGƒtƒFƒNƒg‹­“xƒtƒF?ƒh
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ãƒ•ã‚§ãƒ¼ãƒ‰
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void SetFade(float target, float duration)
     {
         if (_fadeCoroutine != null) StopCoroutine(_fadeCoroutine);
@@ -218,9 +263,9 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
         _fadeCoroutine = null;
     }
 
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
-    // ƒwƒ‹ƒp?
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ãƒ˜ãƒ«ãƒ‘ãƒ¼
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private void ResetToOrigin()
     {
         _rectTransform.localPosition = _originPos;
@@ -236,8 +281,8 @@ public class ButtonNoiseHover : MonoBehaviour, IPointerEnterHandler, IPointerExi
 
     private void OnDisable()
     {
-        _effectStrength = 0f;
-        ResetToOrigin();
-        SetGhostsActive(false);
+        _isPointerOver = false;
+        _isSelected = false;
+        StopEffectImmediate();
     }
 }
