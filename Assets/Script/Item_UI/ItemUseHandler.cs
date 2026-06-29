@@ -1,4 +1,7 @@
+
 //using UnityEngine;
+//using UnityEngine.InputSystem; // ★追加
+//using UnityEngine.EventSystems; // ★追加
 
 //public class ItemUseHandler : MonoBehaviour
 //{
@@ -8,12 +11,27 @@
 //    [Header("確認用UIパネル")]
 //    public GameObject confirmPanel;
 
+//    [Header("ゲームパッドで最初に選択させるYesボタンのGameObject")]
+//    public GameObject yesButtonObject;
+
 //    private ItemData pendingItem;
 
 //    void Awake()
 //    {
 //        Instance = this;
 //        if (confirmPanel != null) confirmPanel.SetActive(false);
+//    }
+
+//    void Update()
+//    {
+//        // ★ 確認パネルが表示されている時、ゲームパッドのBボタン（buttonEast）でキャンセル（No）にする
+//        if (confirmPanel != null && confirmPanel.activeSelf)
+//        {
+//            if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
+//            {
+//                OnClickNo();
+//            }
+//        }
 //    }
 
 //    public void UseItem(ItemData item)
@@ -25,25 +43,27 @@
 
 //        Cursor.lockState = CursorLockMode.None;
 //        Cursor.visible = true;
+
+//        // ★ ゲームパッド用に確認パネルの「Yes」ボタンを自動選択する
+//        if (yesButtonObject != null)
+//        {
+//            EventSystem.current.SetSelectedGameObject(yesButtonObject);
+//        }
 //    }
 
 //    public void OnClickYes()
 //    {
-//        Debug.Log("Yesボタンが押されました");
-
 //        if (confirmPanel != null)
 //        {
 //            confirmPanel.SetActive(false);
 //        }
 
-//        // アイテム処理
 //        if (pendingItem != null)
 //        {
 //            ExecuteUseLogic(pendingItem);
 //            pendingItem = null;
 //        }
 
-//        // インベントリ本体と背景を同時に閉じて視点を戻す
 //        ResetCursor();
 //    }
 
@@ -51,18 +71,27 @@
 //    {
 //        pendingItem = null;
 
-//        // 「いいえ」の時もインベントリを閉じて視点を戻す
-//        ResetCursor();
+//        if (confirmPanel != null)
+//        {
+//            confirmPanel.SetActive(false);
+//        }
+
+//        // キャンセルした時はインベントリのスロットに選択を戻す
+//        if (UIInventory.Instance != null)
+//        {
+//            UIInventory.Instance.SelectFirstSlot();
+//        }
 //    }
 
 //    private void ResetCursor()
 //    {
-//        if (confirmPanel != null) confirmPanel.SetActive(false);
-
-//        // ★重要：新しく作った InventoryToggle の閉じ処理を呼ぶことで、背景も確実に一緒に消します
 //        if (InventoryToggle.Instance != null)
 //        {
 //            InventoryToggle.Instance.CloseInventory();
+//        }
+//        else if (UIInventory.Instance != null)
+//        {
+//            UIInventory.Instance.CloseInventory();
 //        }
 //    }
 
@@ -94,19 +123,24 @@
 //            }
 //        }
 
-//        if (!usedSuccess && UIManager.Instance != null)
+//        if (usedSuccess)
 //        {
-//            UIManager.Instance.ShowItemMessage(item.itemName, "ここでは使えないよういだ");
+//            ResetCursor();
 //        }
-
-//        if (UIInventory.Instance != null)
+//        else
 //        {
-//            UIInventory.Instance.Refresh();
+//            ResetCursor();
+//            if (UIManager.Instance != null)
+//            {
+//                UIManager.Instance.ShowItemMessage(item.itemName, "ここでは使えない");
+//            }
 //        }
 //    }
 //}
 
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class ItemUseHandler : MonoBehaviour
 {
@@ -116,12 +150,27 @@ public class ItemUseHandler : MonoBehaviour
     [Header("確認用UIパネル")]
     public GameObject confirmPanel;
 
+    [Header("ゲームパッドで最初に選択させるYesボタンのGameObject")]
+    public GameObject yesButtonObject;
+
     private ItemData pendingItem;
 
     void Awake()
     {
         Instance = this;
         if (confirmPanel != null) confirmPanel.SetActive(false);
+    }
+
+    void Update()
+    {
+        // ★確認パネルが表示されている時、ゲームパッドのBボタン（buttonEast）でキャンセル（No）にする
+        if (confirmPanel != null && confirmPanel.activeSelf)
+        {
+            if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
+            {
+                OnClickNo();
+            }
+        }
     }
 
     public void UseItem(ItemData item)
@@ -133,41 +182,55 @@ public class ItemUseHandler : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // ★確認パネルが開いた瞬間、「Yes」ボタンに自動でフォーカスを合わせる（十字キーでNoに移動可能）
+        if (yesButtonObject != null)
+        {
+            EventSystem.current.SetSelectedGameObject(yesButtonObject);
+        }
     }
 
     public void OnClickYes()
     {
-        Debug.Log("Yesボタンが押されました");
-
         if (confirmPanel != null)
         {
             confirmPanel.SetActive(false);
         }
 
-        // アイテム処理
         if (pendingItem != null)
         {
             ExecuteUseLogic(pendingItem);
             pendingItem = null;
         }
+
+        ResetCursor();
     }
 
     public void OnClickNo()
     {
         pendingItem = null;
 
-        // 「いいえ」の時もインベントリを閉じて視点を戻す
-        ResetCursor();
+        if (confirmPanel != null)
+        {
+            confirmPanel.SetActive(false);
+        }
+
+        // ★キャンセルして確認ウィンドウを閉じたら、インベントリの最初のスロットにフォーカスを戻す
+        if (UIInventory.Instance != null)
+        {
+            UIInventory.Instance.SelectFirstSlot();
+        }
     }
 
     private void ResetCursor()
     {
-        if (confirmPanel != null) confirmPanel.SetActive(false);
-
-        // InventoryToggle の閉じ処理を呼ぶことで、背景も確実に一緒に消します
         if (InventoryToggle.Instance != null)
         {
             InventoryToggle.Instance.CloseInventory();
+        }
+        else if (UIInventory.Instance != null)
+        {
+            UIInventory.Instance.CloseInventory();
         }
     }
 
@@ -189,7 +252,6 @@ public class ItemUseHandler : MonoBehaviour
                     InventoryManager.Instance.RemoveItem(item);
                 }
 
-                // ① 使用に成功した場合のメッセージ表示
                 if (UIManager.Instance != null)
                 {
                     UIManager.Instance.ShowItemMessage(item.itemName, "を使用した");
@@ -202,25 +264,15 @@ public class ItemUseHandler : MonoBehaviour
 
         if (usedSuccess)
         {
-            // 使用成功時：インベントリと背景を閉じ、視点をロックする
             ResetCursor();
         }
         else
         {
-            // ★【ここを修正】インベントリを閉じる（ResetCursor）を「先」に実行します！
-            // これにより、インベントリ裏のUIリセットに邪魔されることなくメッセージが上書き表示されます。
             ResetCursor();
-
-            // ② 使用に失敗した場合（ここでは使えない場合）のメッセージ表示を「後」から呼ぶ
             if (UIManager.Instance != null)
             {
-                UIManager.Instance.ShowItemMessage(item.itemName, "はここでは使えないようだ");
+                UIManager.Instance.ShowItemMessage(item.itemName, "ここでは使えない");
             }
-        }
-
-        if (UIInventory.Instance != null)
-        {
-            UIInventory.Instance.Refresh();
         }
     }
 }

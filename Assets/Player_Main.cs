@@ -1,4 +1,5 @@
-﻿//using UnityEngine;
+﻿
+//using UnityEngine;
 //using UnityEngine.InputSystem;
 
 //[RequireComponent(typeof(CharacterController))]
@@ -16,6 +17,7 @@
 
 //    [Header("視点")]
 //    public float mouseSensitivity = 0.1f;
+//    public float gamepadSensitivity = 150f; // ★ ゲームパッド専用の感度（インスペクターで調整可能）
 //    public float minLookAngle = -75f;
 //    public float maxLookAngle = 75f;
 
@@ -26,6 +28,9 @@
 //    [Header("足音設定")]
 //    [SerializeField] private float footstepInterval = 0.5f;
 //    [SerializeField] private float footstepRadius = 8f;
+
+//    [Header("アイテムごとの専用セリフ設定")]
+//    public System.Collections.Generic.List<ItemMessageData> customItemMessages;
 
 //    private float footstepTimer;
 
@@ -49,6 +54,11 @@
 //    [Header("制限設定")]
 //    [SerializeField] private bool hasTablet = false;
 
+//    [Header("キーパッド参照")]
+//    public GameObject keypadUI;
+
+//    private bool isUsingGamepad = false; // ★ マウスとゲームパッドの入力を識別するフラグ
+
 //    void Awake()
 //    {
 //        controller = GetComponent<CharacterController>();
@@ -63,16 +73,27 @@
 
 //    void Update()
 //    {
+//        // ポーズメニュー表示中は操作を止める
+//        if (PauseMenuManager.Instance != null && PauseMenuManager.Instance.IsOpen)
+//            return;
+
+//        // キーパッドが表示中は操作を止める
+//        if (keypadUI != null && keypadUI.activeSelf)
+//            return;
+
 //        if (UIInventory.Instance != null && UIInventory.Instance.IsOpen)
 //        {
 //            return;
 //        }
 
-//        // スペースキーの入力制限（タブレットがないときは弾く）
-//        if (!hasTablet && Keyboard.current.spaceKey.wasPressedThisFrame)
+//        // ★ スペースキー、またはゲームパッドの南ボタン（XboxのA / PSの×）の入力を判定
+//        bool spacePressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+//        bool gamepadActionPressed = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+//        if (!hasTablet && (spacePressed || gamepadActionPressed))
 //        {
-//            Debug.Log("タブレットを持っていないため、スペースキーは無効です。");
-//            return; // これ以降の処理をさせない
+//            Debug.Log("タブレットを持っていないため、アクション（スペース/Aボタン）は無効です。");
+//            return;
 //        }
 
 //        // カメラ操作
@@ -119,7 +140,11 @@
 //        => moveInput = context.ReadValue<Vector2>();
 
 //    public void OnLook(InputAction.CallbackContext context)
-//        => lookInput = context.ReadValue<Vector2>();
+//    {
+//        lookInput = context.ReadValue<Vector2>();
+//        // ★ 現在の入力がゲームパッド（スティック）によるものか自動識別
+//        isUsingGamepad = context.control.device is Gamepad;
+//    }
 
 //    public void OnRun(InputAction.CallbackContext context)
 //    {
@@ -152,8 +177,20 @@
 
 //    void Look()
 //    {
-//        float mouseX = lookInput.x * mouseSensitivity;
-//        float mouseY = lookInput.y * mouseSensitivity;
+//        float mouseX, mouseY;
+
+//        if (isUsingGamepad)
+//        {
+//            // ★ ゲームパッドの感度計算（フレームレートに依存しないよう Time.deltaTime を乗算）
+//            mouseX = lookInput.x * gamepadSensitivity * Time.deltaTime;
+//            mouseY = lookInput.y * gamepadSensitivity * Time.deltaTime;
+//        }
+//        else
+//        {
+//            // マウスの感度計算（マウスデルタはそのまま利用）
+//            mouseX = lookInput.x * mouseSensitivity;
+//            mouseY = lookInput.y * mouseSensitivity;
+//        }
 
 //        xRotation -= mouseY;
 //        xRotation = Mathf.Clamp(xRotation, minLookAngle, maxLookAngle);
@@ -178,8 +215,6 @@
 //        {
 //            footstepTimer =
 //                isRunning ? footstepInterval * 0.6f : footstepInterval;
-
-//            //Debug.Log("足音発生！");
 
 //            SoundManager.Instance.EmitNoise(
 //                this.transform.position,
@@ -238,14 +273,35 @@
 //            currentlyHighlightingItem = itemInView;
 //        }
 
-//        if (Mouse.current.leftButton.wasPressedThisFrame && currentlyHighlightingItem != null)
+//        // ★ 左クリック、またはゲームパッドの南ボタン（A/×ボタン）での取得に対応
+//        bool mouseClick = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+//        bool gampadInteract = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+//        if ((mouseClick || gampadInteract) && currentlyHighlightingItem != null)
 //        {
 //            Debug.Log("拾った：" + currentlyHighlightingItem.itemData.itemName);
+
+//            if (UIManager.Instance != null && currentlyHighlightingItem.itemData != null)
+//            {
+//                string itemName = currentlyHighlightingItem.itemData.itemName;
+//                string[] messages = new string[] { "を見つけた" };
+
+//                foreach (var customData in customItemMessages)
+//                {
+//                    if (customData.itemName == itemName)
+//                    {
+//                        messages = customData.messages;
+//                        break;
+//                    }
+//                }
+
+//                UIManager.Instance.ShowSequentialMessages(itemName, messages);
+//            }
 
 //            if (currentlyHighlightingItem.itemData.itemName == "Tablet")
 //            {
 //                hasTablet = true;
-//                Debug.Log("タブレットを入手！スペースキーが解放されました。");
+//                Debug.Log("タブレットを入手！制限が解放されました。");
 //            }
 
 //            InventoryManager.Instance.AddItem(currentlyHighlightingItem.itemData);
@@ -256,11 +312,10 @@
 //        }
 //    }
 
-//    // ★ 外部（独立タブレットスクリプト）から呼び出してロック解除する関数
 //    public void UnlockSpaceKey()
 //    {
 //        hasTablet = true;
-//        Debug.Log("タブレットが視認されクリックされました。スペースキーを解放します。");
+//        Debug.Log("タブレットが視認されクリックされました。制限を解放します。");
 //    }
 
 //    public void SetMoveEnabled(bool value)
@@ -291,7 +346,13 @@
 //    }
 //}
 
-//// 💡 括弧の不整合を防ぐため、DetectionTriggerはクラス外の末尾に完全独立して配置
+//[System.Serializable]
+//public struct ItemMessageData
+//{
+//    public string itemName;
+//    public string[] messages;
+//}
+
 //public class DetectionTrigger : MonoBehaviour
 //{
 //    public string areaName;
@@ -323,6 +384,7 @@ public class FPSController : MonoBehaviour
 
     [Header("視点")]
     public float mouseSensitivity = 0.1f;
+    public float gamepadSensitivity = 150f; // ★ ゲームパッド専用の感度（インスペクターで調整可能）
     public float minLookAngle = -75f;
     public float maxLookAngle = 75f;
 
@@ -360,7 +422,9 @@ public class FPSController : MonoBehaviour
     [SerializeField] private bool hasTablet = false;
 
     [Header("キーパッド参照")]
-    public GameObject keypadUI; // ← KeyPadTriggerと同じGameObjectを割り当て
+    public GameObject keypadUI;
+
+    private bool isUsingGamepad = false; // ★ マウスとゲームパッドの入力を識別するフラグ
 
     void Awake()
     {
@@ -389,13 +453,6 @@ public class FPSController : MonoBehaviour
             return;
         }
 
-        // スペースキーの入力制限（タブレットがないときは弾く）
-        if (!hasTablet && Keyboard.current.spaceKey.wasPressedThisFrame)
-        {
-            Debug.Log("タブレットを持っていないため、スペースキーは無効です。");
-            return; // これ以降の処理をさせない
-        }
-
         // カメラ操作
         if (canLook)
         {
@@ -408,7 +465,21 @@ public class FPSController : MonoBehaviour
             Move();
         }
 
+        // 先にアイテム取得の判定処理を行います（タブレット制限の影響を受けずに拾えるようにするため）
         HandleItemPickup();
+
+        // ★ タブレットをまだ持っていない場合、その他の汎用アクション（スペースキーやAボタンでの別処理など）を制限する
+        bool spacePressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
+        bool gamepadActionPressed = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+        if (!hasTablet && (spacePressed || gamepadActionPressed))
+        {
+            // アイテムをハイライトしていない時だけ、制限メッセージを出す（誤作動を防ぐ）
+            if (currentlyHighlightingItem == null)
+            {
+                Debug.Log("タブレットを持っていないため、アクション（スペース/Aボタン）は無効です。");
+            }
+        }
     }
 
     void SetupDetectionColliders()
@@ -440,7 +511,11 @@ public class FPSController : MonoBehaviour
         => moveInput = context.ReadValue<Vector2>();
 
     public void OnLook(InputAction.CallbackContext context)
-        => lookInput = context.ReadValue<Vector2>();
+    {
+        lookInput = context.ReadValue<Vector2>();
+        // ★ 現在の入力がゲームパッド（スティック）によるものか自動識別
+        isUsingGamepad = context.control.device is Gamepad;
+    }
 
     public void OnRun(InputAction.CallbackContext context)
     {
@@ -473,8 +548,20 @@ public class FPSController : MonoBehaviour
 
     void Look()
     {
-        float mouseX = lookInput.x * mouseSensitivity;
-        float mouseY = lookInput.y * mouseSensitivity;
+        float mouseX, mouseY;
+
+        if (isUsingGamepad)
+        {
+            // ★ ゲームパッドの感度計算（フレームレートに依存しないよう Time.deltaTime を乗算）
+            mouseX = lookInput.x * gamepadSensitivity * Time.deltaTime;
+            mouseY = lookInput.y * gamepadSensitivity * Time.deltaTime;
+        }
+        else
+        {
+            // マウスの感度計算（マウスデルタはそのまま利用）
+            mouseX = lookInput.x * mouseSensitivity;
+            mouseY = lookInput.y * mouseSensitivity;
+        }
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, minLookAngle, maxLookAngle);
@@ -499,8 +586,6 @@ public class FPSController : MonoBehaviour
         {
             footstepTimer =
                 isRunning ? footstepInterval * 0.6f : footstepInterval;
-
-            //Debug.Log("足音発生！");
 
             SoundManager.Instance.EmitNoise(
                 this.transform.position,
@@ -559,37 +644,35 @@ public class FPSController : MonoBehaviour
             currentlyHighlightingItem = itemInView;
         }
 
-        if (Mouse.current.leftButton.wasPressedThisFrame && currentlyHighlightingItem != null)
+        // ★ 左クリック、またはゲームパッドの南ボタン（XboxのA / PSの×ボタン）での取得に対応
+        bool mouseClick = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        bool gampadInteract = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+        if ((mouseClick || gampadInteract) && currentlyHighlightingItem != null)
         {
             Debug.Log("拾った：" + currentlyHighlightingItem.itemData.itemName);
 
-            // ★ 変更：インスペクターで設定したリストからセリフを探す
             if (UIManager.Instance != null && currentlyHighlightingItem.itemData != null)
             {
                 string itemName = currentlyHighlightingItem.itemData.itemName;
-
-                // 何も設定されていない場合のデフォルトメッセージ
                 string[] messages = new string[] { "を見つけた" };
 
-                // インスペクターのリストから、同じ名前のアイテムを探す
                 foreach (var customData in customItemMessages)
                 {
                     if (customData.itemName == itemName)
                     {
-                        // 見つかったら、インスペクターで設定したセリフに上書きする
                         messages = customData.messages;
-                        break; // 見つかったら探すのをやめる
+                        break;
                     }
                 }
 
-                // UIManagerへ送る
                 UIManager.Instance.ShowSequentialMessages(itemName, messages);
             }
 
             if (currentlyHighlightingItem.itemData.itemName == "Tablet")
             {
                 hasTablet = true;
-                Debug.Log("タブレットを入手！スペースキーが解放されました。");
+                Debug.Log("タブレットを入手！制限が解放されました。");
             }
 
             InventoryManager.Instance.AddItem(currentlyHighlightingItem.itemData);
@@ -600,11 +683,10 @@ public class FPSController : MonoBehaviour
         }
     }
 
-    // ★ 外部（独立タブレットスクリプト）から呼び出してロック解除する関数
     public void UnlockSpaceKey()
     {
         hasTablet = true;
-        Debug.Log("タブレットが視認されクリックされました。スペースキーを解放します。");
+        Debug.Log("タブレットが視認されクリックされました。制限を解放します。");
     }
 
     public void SetMoveEnabled(bool value)
@@ -635,11 +717,13 @@ public class FPSController : MonoBehaviour
     }
 }
 
+// ⬇ ファイル末尾に必要なデータ定義を追加しました ⬇
+
 [System.Serializable]
 public struct ItemMessageData
 {
-    public string itemName;      // アイテムの名前（例: Tablet）
-    public string[] messages;    // 表示したいセリフの配列
+    public string itemName;
+    public string[] messages;
 }
 
 public class DetectionTrigger : MonoBehaviour
