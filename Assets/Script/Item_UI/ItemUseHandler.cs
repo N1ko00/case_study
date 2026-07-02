@@ -1,17 +1,17 @@
 
 //using UnityEngine;
-//using UnityEngine.InputSystem; // š’Ç‰Á
-//using UnityEngine.EventSystems; // š’Ç‰Á
+//using UnityEngine.InputSystem; // â˜…è¿½åŠ 
+//using UnityEngine.EventSystems; // â˜…è¿½åŠ 
 
 //public class ItemUseHandler : MonoBehaviour
 //{
 //    public static ItemUseHandler Instance;
 //    public Transform player;
 
-//    [Header("Šm”F—pUIƒpƒlƒ‹")]
+//    [Header("ç¢ºèªç”¨UIãƒ‘ãƒãƒ«")]
 //    public GameObject confirmPanel;
 
-//    [Header("ƒQ[ƒ€ƒpƒbƒh‚ÅÅ‰‚É‘I‘ğ‚³‚¹‚éYesƒ{ƒ^ƒ“‚ÌGameObject")]
+//    [Header("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã§æœ€åˆã«é¸æŠã•ã›ã‚‹Yesãƒœã‚¿ãƒ³ã®GameObject")]
 //    public GameObject yesButtonObject;
 
 //    private ItemData pendingItem;
@@ -24,7 +24,7 @@
 
 //    void Update()
 //    {
-//        // š Šm”Fƒpƒlƒ‹‚ª•\¦‚³‚ê‚Ä‚¢‚éAƒQ[ƒ€ƒpƒbƒh‚ÌBƒ{ƒ^ƒ“ibuttonEastj‚ÅƒLƒƒƒ“ƒZƒ‹iNoj‚É‚·‚é
+//        // â˜… ç¢ºèªãƒ‘ãƒãƒ«ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹æ™‚ã€ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®Bãƒœã‚¿ãƒ³ï¼ˆbuttonEastï¼‰ã§ã‚­ãƒ£ãƒ³ã‚»ãƒ«ï¼ˆNoï¼‰ã«ã™ã‚‹
 //        if (confirmPanel != null && confirmPanel.activeSelf)
 //        {
 //            if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
@@ -44,7 +44,7 @@
 //        Cursor.lockState = CursorLockMode.None;
 //        Cursor.visible = true;
 
-//        // š ƒQ[ƒ€ƒpƒbƒh—p‚ÉŠm”Fƒpƒlƒ‹‚ÌuYesvƒ{ƒ^ƒ“‚ğ©“®‘I‘ğ‚·‚é
+//        // â˜… ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ç”¨ã«ç¢ºèªãƒ‘ãƒãƒ«ã®ã€ŒYesã€ãƒœã‚¿ãƒ³ã‚’è‡ªå‹•é¸æŠã™ã‚‹
 //        if (yesButtonObject != null)
 //        {
 //            EventSystem.current.SetSelectedGameObject(yesButtonObject);
@@ -76,7 +76,7 @@
 //            confirmPanel.SetActive(false);
 //        }
 
-//        // ƒLƒƒƒ“ƒZƒ‹‚µ‚½‚ÍƒCƒ“ƒxƒ“ƒgƒŠ‚ÌƒXƒƒbƒg‚É‘I‘ğ‚ğ–ß‚·
+//        // ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ãŸæ™‚ã¯ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã®ã‚¹ãƒ­ãƒƒãƒˆã«é¸æŠã‚’æˆ»ã™
 //        if (UIInventory.Instance != null)
 //        {
 //            UIInventory.Instance.SelectFirstSlot();
@@ -115,7 +115,7 @@
 
 //                if (UIManager.Instance != null)
 //                {
-//                    UIManager.Instance.ShowItemMessage(item.itemName, "‚ğg—p‚µ‚½");
+//                    UIManager.Instance.ShowItemMessage(item.itemName, "ã‚’ä½¿ç”¨ã—ãŸ");
 //                }
 
 //                usedSuccess = true;
@@ -132,7 +132,7 @@
 //            ResetCursor();
 //            if (UIManager.Instance != null)
 //            {
-//                UIManager.Instance.ShowItemMessage(item.itemName, "‚±‚±‚Å‚Íg‚¦‚È‚¢");
+//                UIManager.Instance.ShowItemMessage(item.itemName, "ã“ã“ã§ã¯ä½¿ãˆãªã„");
 //            }
 //        }
 //    }
@@ -147,10 +147,10 @@ public class ItemUseHandler : MonoBehaviour
     public static ItemUseHandler Instance;
     public Transform player;
 
-    [Header("Šm”F—pUIƒpƒlƒ‹")]
+    [Header("ç¢ºèªç”¨UIãƒ‘ãƒãƒ«")]
     public GameObject confirmPanel;
 
-    [Header("ƒQ[ƒ€ƒpƒbƒh‚ÅÅ‰‚É‘I‘ğ‚³‚¹‚éYesƒ{ƒ^ƒ“‚ÌGameObject")]
+    [Header("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã§æœ€åˆã«é¸æŠã•ã›ã‚‹Yesãƒœã‚¿ãƒ³ã®GameObject")]
     public GameObject yesButtonObject;
 
     private ItemData pendingItem;
@@ -163,7 +163,7 @@ public class ItemUseHandler : MonoBehaviour
 
     void Update()
     {
-        // šŠm”Fƒpƒlƒ‹‚ª•\¦‚³‚ê‚Ä‚¢‚éAƒQ[ƒ€ƒpƒbƒh‚ÌBƒ{ƒ^ƒ“ibuttonEastj‚ÅƒLƒƒƒ“ƒZƒ‹iNoj‚É‚·‚é
+        // â˜…ç¢ºèªãƒ‘ãƒãƒ«ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹æ™‚ã€ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®Bãƒœã‚¿ãƒ³ï¼ˆbuttonEastï¼‰ã§ã‚­ãƒ£ãƒ³ã‚»ãƒ«ï¼ˆNoï¼‰ã«ã™ã‚‹
         if (confirmPanel != null && confirmPanel.activeSelf)
         {
             if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
@@ -183,7 +183,7 @@ public class ItemUseHandler : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // šŠm”Fƒpƒlƒ‹‚ªŠJ‚¢‚½uŠÔAuYesvƒ{ƒ^ƒ“‚É©“®‚ÅƒtƒH[ƒJƒX‚ğ‡‚í‚¹‚éi\šƒL[‚ÅNo‚ÉˆÚ“®‰Â”\j
+        // â˜…ç¢ºèªãƒ‘ãƒãƒ«ãŒé–‹ã„ãŸç¬é–“ã€ã€ŒYesã€ãƒœã‚¿ãƒ³ã«è‡ªå‹•ã§ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’åˆã‚ã›ã‚‹ï¼ˆåå­—ã‚­ãƒ¼ã§Noã«ç§»å‹•å¯èƒ½ï¼‰
         if (yesButtonObject != null)
         {
             EventSystem.current.SetSelectedGameObject(yesButtonObject);
@@ -215,7 +215,7 @@ public class ItemUseHandler : MonoBehaviour
             confirmPanel.SetActive(false);
         }
 
-        // šƒLƒƒƒ“ƒZƒ‹‚µ‚ÄŠm”FƒEƒBƒ“ƒhƒE‚ğ•Â‚¶‚½‚çAƒCƒ“ƒxƒ“ƒgƒŠ‚ÌÅ‰‚ÌƒXƒƒbƒg‚ÉƒtƒH[ƒJƒX‚ğ–ß‚·
+        // â˜…ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦ç¢ºèªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ãŸã‚‰ã€ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã®æœ€åˆã®ã‚¹ãƒ­ãƒƒãƒˆã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’æˆ»ã™
         if (UIInventory.Instance != null)
         {
             UIInventory.Instance.SelectFirstSlot();
@@ -254,7 +254,7 @@ public class ItemUseHandler : MonoBehaviour
 
                 if (UIManager.Instance != null)
                 {
-                    UIManager.Instance.ShowItemMessage(item.itemName, "‚ğg—p‚µ‚½");
+                    UIManager.Instance.ShowItemMessage(item.itemName, "ã‚’ä½¿ç”¨ã—ãŸ");
                 }
 
                 usedSuccess = true;
@@ -271,7 +271,7 @@ public class ItemUseHandler : MonoBehaviour
             ResetCursor();
             if (UIManager.Instance != null)
             {
-                UIManager.Instance.ShowItemMessage(item.itemName, "‚±‚±‚Å‚Íg‚¦‚È‚¢");
+                UIManager.Instance.ShowItemMessage(item.itemName, "ã“ã“ã§ã¯ä½¿ãˆãªã„");
             }
         }
     }

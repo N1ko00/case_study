@@ -85,9 +85,9 @@ public class LockerDoor : MonoBehaviour
                 if (!c.CompareTag("Player")) return;
                 _playerInInteract = true;
 
-                //「Press E」表示
+                //「Press R2」表示
                 if (InteractPromptUI.Instance != null)
-                    InteractPromptUI.Instance.Show(this, "Press E");
+                    InteractPromptUI.Instance.Show(this, "Press R2");
             };
             interactZone.OnExit = c =>
             {
@@ -120,10 +120,13 @@ public class LockerDoor : MonoBehaviour
 
     private void Update()
     {
-        // ?띿붝댪볙 + E 궳둎빧
-        if (_playerInInteract
-            && Keyboard.current != null
-            && Keyboard.current[interactKey].wasPressedThisFrame)
+        // ?띿붝댪볙 + E (キーボード) または R2 (ゲームパッド右トリガー) で開閉
+        bool keyboardPressed = Keyboard.current != null
+            && Keyboard.current[interactKey].wasPressedThisFrame;
+        bool gamepadPressed = Gamepad.current != null
+            && Gamepad.current.rightTrigger.wasPressedThisFrame;
+
+        if (_playerInInteract && (keyboardPressed || gamepadPressed))
         {
             Toggle();
         }

@@ -1,43 +1,50 @@
-using System.Collections;
+ï»¿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-///  GameOverScene‚Ì‘S‘Ì‚ğŠÇ—‚µ‚Ü‚·B
+/// GameOverSceneã®å…¨ä½“ã‚’ç®¡ç†ã—ã¾ã™ã€‚
 /// </summary>
 public class GameOverSceneManager : MonoBehaviour
 {
-    [Header("SceneLoaderQÆ")]
+    [Header("SceneLoaderå‚ç…§")]
     [SerializeField] private SceneLoader sceneLoader;
 
-    [Header("??ƒ“QÆ")]
+    [Header("ãƒœã‚¿ãƒ³å‚ç…§")]
     [SerializeField] private Button retryButton;
     [SerializeField] private Button titleButton;
 
-    [Header("‘JˆÚæƒV?ƒ“")]
+    [Header("é·ç§»å…ˆã‚·ãƒ¼ãƒ³")]
     [SerializeField] private SceneLoader.SceneName retryScene = SceneLoader.SceneName.MainScene;
     [SerializeField] private SceneLoader.SceneName titleScene = SceneLoader.SceneName.TitleScene;
 
-    [Header("“oêƒtƒF?ƒhƒCƒ“")]
-    [Tooltip("CRT_Root ‚Ì CanvasGroup ‚ğƒAƒTƒCƒ“")]
+    [Header("ç™»å ´ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³")]
+    [Tooltip("CRT_Root ã® CanvasGroup ã‚’ã‚¢ã‚µã‚¤ãƒ³")]
     [SerializeField] private CanvasGroup crtRootGroup;
-    [SerializeField] private float appearDelay = 0.3f;   // “üê’¼Œã‚Ì•‰æ–ÊƒL?ƒv
-    [SerializeField] private float fadeInDuration = 1.2f;   // ƒtƒF?ƒhƒCƒ“ŠÔ
+    [SerializeField] private float appearDelay = 0.3f;   // å…¥å ´ç›´å¾Œã®ãƒ‡ã‚£ãƒ¬ã‚¤
+    [SerializeField] private float fadeInDuration = 1.2f;   // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³æ™‚é–“
+
+    [Header("ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼å¯¾å¿œ")]
+    [Tooltip("ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³å®Œäº†æ™‚ã«æœ€åˆã«é¸æŠã•ã‚Œã‚‹ãƒœã‚¿ãƒ³ (é€šå¸¸ã¯Retry)")]
+    [SerializeField] private Button firstSelectedButton;
+    [Tooltip("ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ãªã©ã§é¸æŠãŒå¤–ã‚ŒãŸæ™‚ã«è‡ªå‹•ã§å†é¸æŠã™ã‚‹")]
+    [SerializeField] private bool keepSelectionAlive = true;
 
 
     private void Awake()
     {
-        // timeScale ‚ª‚O‚Ì‚Ü‚Ü‘JˆÚ‚µ‚Ä—ˆ‚½ê‡‚É”õ‚¦‚ÄƒŠƒZƒbƒg
+        // timeScale ãŒï¼ã®ã¾ã¾é·ç§»ã—ã¦ããŸå ´åˆã«å‚™ãˆã¦ãƒªã‚»ãƒƒãƒˆ
         Time.timeScale = 1f;
-        // SceneLoader ‚ª–¢İ’è‚È‚ç©“®ŒŸõ 
+        // SceneLoader ãŒæœªè¨­å®šãªã‚‰è‡ªå‹•æ¤œç´¢
         if (sceneLoader == null)
             sceneLoader = FindAnyObjectByType<SceneLoader>(FindObjectsInactive.Include);
     }
 
     private void Start()
     {
-        // “oê‘O‚ÍUI”ñ?¦E”ñƒCƒ“?ƒ‰ƒNƒeƒBƒu
+        // ç™»å ´å‰ã¯UIéè¡¨ç¤ºãƒ»éã‚¤ãƒ³ã‚¿ãƒ©ã‚¯ãƒ†ã‚£ãƒ–
         if (crtRootGroup != null)
         {
             crtRootGroup.alpha = 0f;
@@ -53,9 +60,24 @@ public class GameOverSceneManager : MonoBehaviour
         StartCoroutine(AppearRoutine());
     }
 
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
-    // “oê‰‰o
-    // „Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ„Ÿ
+    private void Update()
+    {
+        if (!keepSelectionAlive) return;
+        if (EventSystem.current == null) return;
+
+        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³å®Œäº†å¾Œã«ãƒœã‚¿ãƒ³ãŒã‚¤ãƒ³ã‚¿ãƒ©ã‚¯ãƒ†ã‚£ãƒ–ã«ãªã£ã¦ã„ã‚‹å ´åˆã®ã¿å†é¸æŠ
+        if (crtRootGroup != null && !crtRootGroup.interactable) return;
+
+        // ãƒã‚¦ã‚¹ã‚¯ãƒªãƒƒã‚¯ãªã©ã§é¸æŠãŒè§£é™¤ã•ã‚ŒãŸå ´åˆã«å‚™ãˆã¦è‡ªå‹•ã§å†é¸æŠ
+        if (EventSystem.current.currentSelectedGameObject == null)
+        {
+            SelectFirstButton();
+        }
+    }
+
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ç™»å ´æ¼”å‡º
+    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
     private IEnumerator AppearRoutine()
     {
         yield return new WaitForSeconds(appearDelay);
@@ -72,6 +94,24 @@ public class GameOverSceneManager : MonoBehaviour
             crtRootGroup.alpha = 1f;
             crtRootGroup.interactable = true;
         }
+
+        // ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¤ãƒ³å®Œäº†å¾Œã«ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ©ãƒ¼ç”¨ã®é¸æŠã‚’è¡Œã†
+        SelectFirstButton();
+    }
+
+    /// <summary>
+    /// firstSelectedButtonã‚’EventSystemã®é¸æŠå¯¾è±¡ã«è¨­å®šã™ã‚‹ã€‚
+    /// æœªè¨­å®šãªã‚‰Retryãƒœã‚¿ãƒ³ã‚’ãƒ•ã‚©ãƒ¼ãƒ«ãƒãƒƒã‚¯ã«ä½¿ã†ã€‚
+    /// </summary>
+    private void SelectFirstButton()
+    {
+        if (EventSystem.current == null) return;
+
+        Button target = firstSelectedButton != null ? firstSelectedButton : retryButton;
+        if (target == null) return;
+
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(target.gameObject);
     }
 
 
@@ -83,13 +123,13 @@ public class GameOverSceneManager : MonoBehaviour
 
     private void OnTitleClicked()
     {
-        Debug.Log("[GameOverScene] Title ‚Ö–ß‚é");
+        Debug.Log("[GameOverScene] Title ã¸æˆ»ã™");
         LoadWithNoise(titleScene);
     }
 
     private void LoadWithNoise(SceneLoader.SceneName target)
     {
-        // ??ƒ“‚ğ–³Œø‰»‚µ‚Ä“ñd‰Ÿ‚µ–h?
+        // ãƒœã‚¿ãƒ³ã‚’ç„¡åŠ¹åŒ–ã—ã¦äºŒé‡æŠ¼ã—ã‚’é˜²ã
         if (retryButton != null) retryButton.interactable = false;
         if (titleButton != null) titleButton.interactable = false;
 
@@ -99,8 +139,8 @@ public class GameOverSceneManager : MonoBehaviour
         }
         else
         {
-            // SceneLoader ‚ª‚È‚¯‚ê‚Î’¼Ú‘JˆÚ
-            Debug.LogWarning("[GameOverScene] SceneLoader –¢ŒŸo ¨ ’¼Ú‘JˆÚ");
+            // SceneLoader ãŒãªã‘ã‚Œã°ç›´æ¥é·ç§»
+            Debug.LogWarning("[GameOverScene] SceneLoader æœªæ¤œå‡º â†’ ç›´æ¥é·ç§»");
             SceneManager.LoadScene(target.ToString());
         }
     }
