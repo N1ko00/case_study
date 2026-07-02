@@ -1,4 +1,5 @@
-﻿//using System.Collections;
+﻿
+//using System.Collections;
 //using UnityEngine;
 //using UnityEngine.InputSystem;
 
@@ -33,7 +34,6 @@
 //    private bool canClickTablet = false;
 //    private bool isZoomingNow = false;
 //    private GUIStyle guiStyle;
-//    private GUIStyle messageStyle;
 
 //    private Renderer tabletRenderer;
 //    private Color originalColor = Color.white;
@@ -122,6 +122,7 @@
 //    {
 //        if (playerController == null || playerCameraTransform == null) return;
 
+//        // タブレットの方向を向かせる
 //        Vector3 directionToTablet = (transform.position - playerCameraTransform.position).normalized;
 
 //        Vector3 forwardOnXZ = new Vector3(directionToTablet.x, 0f, directionToTablet.z).normalized;
@@ -146,9 +147,8 @@
 //    {
 //        if (playerCameraComponent == null || playerController == null) yield break;
 
-//        // --- Freeze completely at the start of the effect ---
 //        playerController.SetLookEnabled(false);
-//        playerController.SetMoveEnabled(false); // Stop player movement
+//        playerController.SetMoveEnabled(false);
 //        isZoomingNow = true;
 
 //        if (tabletRenderer != null)
@@ -156,7 +156,7 @@
 //            tabletRenderer.material.color = tabletHighlightColor;
 //        }
 
-//        // --- 1. Zoom In ---
+//        // ズームイン開始
 //        float elapsed = 0f;
 //        while (elapsed < zoomDuration)
 //        {
@@ -166,10 +166,17 @@
 //        }
 //        playerCameraComponent.fieldOfView = zoomInFOV;
 
-//        // --- 2. Hold (Still frozen here) ---
+//        // ★ ズームが完了したタイミングで messagewindow を使って表示
+//        // アイテム名は空（""）にして、下の広い枠にメッセージを出します。
+//        if (UIManager.Instance != null)
+//        {
+//            UIManager.Instance.ShowItemMessage("", "「……何だあれ？」");
+//        }
+
+//        // メッセージを読ませるために一定時間キープ
 //        yield return new WaitForSeconds(holdDuration);
 
-//        // --- 3. Zoom Out ---
+//        // ズームアウト開始
 //        elapsed = 0f;
 //        while (elapsed < zoomDuration)
 //        {
@@ -186,30 +193,18 @@
 
 //        isZoomingNow = false;
 
-//        // --- Release completely after zooming out finishes ---
 //        playerController.SetLookEnabled(true);
-//        playerController.SetMoveEnabled(true); // Re-enable player movement
+//        playerController.SetMoveEnabled(true);
 //    }
 
 //    private void OnGUI()
 //    {
-//        float posX = Screen.width / 2f;
-//        float posY = Screen.height / 2f;
-
-//        if (isZoomingNow)
-//        {
-//            if (messageStyle == null)
-//            {
-//                messageStyle = new GUIStyle();
-//                messageStyle.alignment = TextAnchor.MiddleCenter;
-//                messageStyle.fontSize = 22;
-//                messageStyle.fontStyle = FontStyle.Italic;
-//                messageStyle.normal.textColor = Color.white;
-//            }
-//            GUI.Label(new Rect(posX - 200, posY + 80, 400, 30), "「……何だあれ？」", messageStyle);
-//        }
+//        // 旧システムでの「……何だあれ？」の表示処理は削除しました（messagewindowに統合したため）
 
 //        if (isZoomingNow || !canClickTablet) return;
+
+//        float posX = Screen.width / 2f;
+//        float posY = Screen.height / 2f;
 
 //        if (guiStyle == null)
 //        {
@@ -228,6 +223,12 @@
 //        if (playerController != null)
 //        {
 //            playerController.UnlockSpaceKey();
+//        }
+
+//        // タブレット取得時のUI表示
+//        if (UIManager.Instance != null)
+//        {
+//            UIManager.Instance.ShowItemMessage("タブレット", "を見つけた");
 //        }
 
 //        if (cameraSwitcher != null) cameraSwitcher.enabled = true;
@@ -376,7 +377,11 @@ public class CameraUnlockTablet : MonoBehaviour
             isLookingAtTablet = true;
             canClickTablet = true;
 
-            if (Mouse.current.leftButton.wasPressedThisFrame)
+            // マウスの左クリック、またはコントローラーのAボタン（buttonSouth）を検知
+            bool mouseInteract = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+            bool gamepadInteract = Gamepad.current != null && Gamepad.current.buttonSouth.wasPressedThisFrame;
+
+            if (mouseInteract || gamepadInteract)
             {
                 UnlockTabletFeatures();
             }
@@ -437,7 +442,6 @@ public class CameraUnlockTablet : MonoBehaviour
         playerCameraComponent.fieldOfView = zoomInFOV;
 
         // ★ ズームが完了したタイミングで messagewindow を使って表示
-        // アイテム名は空（""）にして、下の広い枠にメッセージを出します。
         if (UIManager.Instance != null)
         {
             UIManager.Instance.ShowItemMessage("", "「……何だあれ？」");
@@ -469,8 +473,6 @@ public class CameraUnlockTablet : MonoBehaviour
 
     private void OnGUI()
     {
-        // 旧システムでの「……何だあれ？」の表示処理は削除しました（messagewindowに統合したため）
-
         if (isZoomingNow || !canClickTablet) return;
 
         float posX = Screen.width / 2f;
@@ -485,7 +487,8 @@ public class CameraUnlockTablet : MonoBehaviour
         }
 
         guiStyle.normal.textColor = Color.green;
-        GUI.Label(new Rect(posX - 150, posY + 20, 300, 30), "左クリックでTABLETを拾う", guiStyle);
+        // テキストを「Aボタン」に修正
+        GUI.Label(new Rect(posX - 250, posY + 20, 500, 30), "左クリック または AボタンでTABLETを拾う", guiStyle);
     }
 
     private void UnlockTabletFeatures()

@@ -591,6 +591,17 @@ public partial class @InputSystem_Actions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
+                    ""id"": ""1d2e6784-0066-435e-8f54-f4eb6f3beb90"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Gamepad"",
+                    ""action"": ""Run"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
                     ""id"": ""6f8f3ccc-1e3d-4415-aa05-76b122531b96"",
                     ""path"": ""<Keyboard>/tab"",
                     ""interactions"": """",

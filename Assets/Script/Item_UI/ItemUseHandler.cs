@@ -1,12 +1,18 @@
+
 //using UnityEngine;
+//using UnityEngine.InputSystem; // â˜…è¿½åŠ 
+//using UnityEngine.EventSystems; // â˜…è¿½åŠ 
 
 //public class ItemUseHandler : MonoBehaviour
 //{
 //    public static ItemUseHandler Instance;
 //    public Transform player;
 
-//    [Header("Šm”F—pUIƒpƒlƒ‹")]
+//    [Header("ç¢ºèªç”¨UIãƒ‘ãƒãƒ«")]
 //    public GameObject confirmPanel;
+
+//    [Header("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã§æœ€åˆã«é¸æŠã•ã›ã‚‹Yesãƒœã‚¿ãƒ³ã®GameObject")]
+//    public GameObject yesButtonObject;
 
 //    private ItemData pendingItem;
 
@@ -14,6 +20,18 @@
 //    {
 //        Instance = this;
 //        if (confirmPanel != null) confirmPanel.SetActive(false);
+//    }
+
+//    void Update()
+//    {
+//        // â˜… ç¢ºèªãƒ‘ãƒãƒ«ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹æ™‚ã€ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®Bãƒœã‚¿ãƒ³ï¼ˆbuttonEastï¼‰ã§ã‚­ãƒ£ãƒ³ã‚»ãƒ«ï¼ˆNoï¼‰ã«ã™ã‚‹
+//        if (confirmPanel != null && confirmPanel.activeSelf)
+//        {
+//            if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
+//            {
+//                OnClickNo();
+//            }
+//        }
 //    }
 
 //    public void UseItem(ItemData item)
@@ -25,25 +43,27 @@
 
 //        Cursor.lockState = CursorLockMode.None;
 //        Cursor.visible = true;
+
+//        // â˜… ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ç”¨ã«ç¢ºèªãƒ‘ãƒãƒ«ã®ã€ŒYesã€ãƒœã‚¿ãƒ³ã‚’è‡ªå‹•é¸æŠã™ã‚‹
+//        if (yesButtonObject != null)
+//        {
+//            EventSystem.current.SetSelectedGameObject(yesButtonObject);
+//        }
 //    }
 
 //    public void OnClickYes()
 //    {
-//        Debug.Log("Yes??ƒ“‚ª‰Ÿ‚³‚ê‚Ü‚µ‚½");
-
 //        if (confirmPanel != null)
 //        {
 //            confirmPanel.SetActive(false);
 //        }
 
-//        // ƒAƒCƒe?ˆ—
 //        if (pendingItem != null)
 //        {
 //            ExecuteUseLogic(pendingItem);
 //            pendingItem = null;
 //        }
 
-//        // ƒCƒ“ƒxƒ“ƒgƒŠ?‘Ì‚Æ”wŒi‚ğ“¯‚É•Â‚¶‚Ä‹?‚ğ–ß‚·
 //        ResetCursor();
 //    }
 
@@ -51,18 +71,27 @@
 //    {
 //        pendingItem = null;
 
-//        // u‚¢‚¢‚¦v‚Ì‚àƒCƒ“ƒxƒ“ƒgƒŠ‚ğ•Â‚¶‚Ä‹?‚ğ–ß‚·
-//        ResetCursor();
+//        if (confirmPanel != null)
+//        {
+//            confirmPanel.SetActive(false);
+//        }
+
+//        // ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ãŸæ™‚ã¯ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã®ã‚¹ãƒ­ãƒƒãƒˆã«é¸æŠã‚’æˆ»ã™
+//        if (UIInventory.Instance != null)
+//        {
+//            UIInventory.Instance.SelectFirstSlot();
+//        }
 //    }
 
 //    private void ResetCursor()
 //    {
-//        if (confirmPanel != null) confirmPanel.SetActive(false);
-
-//        // šd—vFV‚µ‚­ì‚Á‚½ InventoryToggle ‚Ì•Â‚¶ˆ—‚ğŒÄ‚Ô‚±‚Æ‚ÅA”wŒi‚àŠmÀ‚Éˆê‚ÉÁ‚µ‚Ü‚·
 //        if (InventoryToggle.Instance != null)
 //        {
 //            InventoryToggle.Instance.CloseInventory();
+//        }
+//        else if (UIInventory.Instance != null)
+//        {
+//            UIInventory.Instance.CloseInventory();
 //        }
 //    }
 
@@ -86,7 +115,7 @@
 
 //                if (UIManager.Instance != null)
 //                {
-//                    UIManager.Instance.ShowItemMessage(item.itemName, "‚ğg—p‚µ‚½");
+//                    UIManager.Instance.ShowItemMessage(item.itemName, "ã‚’ä½¿ç”¨ã—ãŸ");
 //                }
 
 //                usedSuccess = true;
@@ -94,27 +123,35 @@
 //            }
 //        }
 
-//        if (!usedSuccess && UIManager.Instance != null)
+//        if (usedSuccess)
 //        {
-//            UIManager.Instance.ShowItemMessage(item.itemName, "‚±‚±‚Å‚Íg‚¦‚È‚¢‚æ‚¤‚¢‚¾");
+//            ResetCursor();
 //        }
-
-//        if (UIInventory.Instance != null)
+//        else
 //        {
-//            UIInventory.Instance.Refresh();
+//            ResetCursor();
+//            if (UIManager.Instance != null)
+//            {
+//                UIManager.Instance.ShowItemMessage(item.itemName, "ã“ã“ã§ã¯ä½¿ãˆãªã„");
+//            }
 //        }
 //    }
 //}
 
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class ItemUseHandler : MonoBehaviour
 {
     public static ItemUseHandler Instance;
     public Transform player;
 
-    [Header("Šm”F—pUIƒpƒlƒ‹")]
+    [Header("ç¢ºèªç”¨UIãƒ‘ãƒãƒ«")]
     public GameObject confirmPanel;
+
+    [Header("ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã§æœ€åˆã«é¸æŠã•ã›ã‚‹Yesãƒœã‚¿ãƒ³ã®GameObject")]
+    public GameObject yesButtonObject;
 
     private ItemData pendingItem;
 
@@ -122,6 +159,18 @@ public class ItemUseHandler : MonoBehaviour
     {
         Instance = this;
         if (confirmPanel != null) confirmPanel.SetActive(false);
+    }
+
+    void Update()
+    {
+        // â˜…ç¢ºèªãƒ‘ãƒãƒ«ãŒè¡¨ç¤ºã•ã‚Œã¦ã„ã‚‹æ™‚ã€ã‚²ãƒ¼ãƒ ãƒ‘ãƒƒãƒ‰ã®Bãƒœã‚¿ãƒ³ï¼ˆbuttonEastï¼‰ã§ã‚­ãƒ£ãƒ³ã‚»ãƒ«ï¼ˆNoï¼‰ã«ã™ã‚‹
+        if (confirmPanel != null && confirmPanel.activeSelf)
+        {
+            if (Gamepad.current != null && Gamepad.current.buttonEast.wasPressedThisFrame)
+            {
+                OnClickNo();
+            }
+        }
     }
 
     public void UseItem(ItemData item)
@@ -133,41 +182,55 @@ public class ItemUseHandler : MonoBehaviour
 
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
+
+        // â˜…ç¢ºèªãƒ‘ãƒãƒ«ãŒé–‹ã„ãŸç¬é–“ã€ã€ŒYesã€ãƒœã‚¿ãƒ³ã«è‡ªå‹•ã§ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’åˆã‚ã›ã‚‹ï¼ˆåå­—ã‚­ãƒ¼ã§Noã«ç§»å‹•å¯èƒ½ï¼‰
+        if (yesButtonObject != null)
+        {
+            EventSystem.current.SetSelectedGameObject(yesButtonObject);
+        }
     }
 
     public void OnClickYes()
     {
-        Debug.Log("Yes??ƒ“‚ª‰Ÿ‚³‚ê‚Ü‚µ‚½");
-
         if (confirmPanel != null)
         {
             confirmPanel.SetActive(false);
         }
 
-        // ƒAƒCƒe?ˆ—
         if (pendingItem != null)
         {
             ExecuteUseLogic(pendingItem);
             pendingItem = null;
         }
+
+        ResetCursor();
     }
 
     public void OnClickNo()
     {
         pendingItem = null;
 
-        // u‚¢‚¢‚¦v‚Ì‚àƒCƒ“ƒxƒ“ƒgƒŠ‚ğ•Â‚¶‚Ä‹?‚ğ–ß‚·
-        ResetCursor();
+        if (confirmPanel != null)
+        {
+            confirmPanel.SetActive(false);
+        }
+
+        // â˜…ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã—ã¦ç¢ºèªã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã‚’é–‰ã˜ãŸã‚‰ã€ã‚¤ãƒ³ãƒ™ãƒ³ãƒˆãƒªã®æœ€åˆã®ã‚¹ãƒ­ãƒƒãƒˆã«ãƒ•ã‚©ãƒ¼ã‚«ã‚¹ã‚’æˆ»ã™
+        if (UIInventory.Instance != null)
+        {
+            UIInventory.Instance.SelectFirstSlot();
+        }
     }
 
     private void ResetCursor()
     {
-        if (confirmPanel != null) confirmPanel.SetActive(false);
-
-        // InventoryToggle ‚Ì•Â‚¶ˆ—‚ğŒÄ‚Ô‚±‚Æ‚ÅA”wŒi‚àŠmÀ‚Éˆê‚ÉÁ‚µ‚Ü‚·
         if (InventoryToggle.Instance != null)
         {
             InventoryToggle.Instance.CloseInventory();
+        }
+        else if (UIInventory.Instance != null)
+        {
+            UIInventory.Instance.CloseInventory();
         }
     }
 
@@ -189,10 +252,9 @@ public class ItemUseHandler : MonoBehaviour
                     InventoryManager.Instance.RemoveItem(item);
                 }
 
-                // ? g—p‚É¬Œ÷‚µ‚½ê‡‚ÌƒƒbƒZ?ƒW?¦
                 if (UIManager.Instance != null)
                 {
-                    UIManager.Instance.ShowItemMessage(item.itemName, "‚ğg—p‚µ‚½");
+                    UIManager.Instance.ShowItemMessage(item.itemName, "ã‚’ä½¿ç”¨ã—ãŸ");
                 }
 
                 usedSuccess = true;
@@ -202,25 +264,15 @@ public class ItemUseHandler : MonoBehaviour
 
         if (usedSuccess)
         {
-            // g—p¬Œ÷FƒCƒ“ƒxƒ“ƒgƒŠ‚Æ”wŒi‚ğ•Â‚¶A‹?‚ğƒƒbƒN‚·‚é
             ResetCursor();
         }
         else
         {
-            // šy‚±‚±‚ğC³zƒCƒ“ƒxƒ“ƒgƒŠ‚ğ•Â‚¶‚éiResetCursorj‚ğuæv‚ÉÀs‚µ‚Ü‚·I
-            // ‚±‚ê‚É‚æ‚èAƒCƒ“ƒxƒ“ƒgƒŠ— ‚ÌUIƒŠƒZƒbƒg‚É×–‚‚³‚ê‚é‚±‚Æ‚È‚­ƒƒbƒZ?ƒW‚ªã‘‚«?¦‚³‚ê‚Ü‚·B
             ResetCursor();
-
-            // ‡A g—p‚É¸”s‚µ‚½ê‡i‚±‚±‚Å‚Íg‚¦‚È‚¢ê‡j‚ÌƒƒbƒZ?ƒW?¦‚ğuŒãv‚©‚çŒÄ‚Ô
             if (UIManager.Instance != null)
             {
-                UIManager.Instance.ShowItemMessage(item.itemName, "‚Í‚±‚±‚Å‚Íg‚¦‚È‚¢‚æ‚¤‚¾");
+                UIManager.Instance.ShowItemMessage(item.itemName, "ã“ã“ã§ã¯ä½¿ãˆãªã„");
             }
-        }
-
-        if (UIInventory.Instance != null)
-        {
-            UIInventory.Instance.Refresh();
         }
     }
 }
