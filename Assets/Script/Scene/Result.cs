@@ -13,6 +13,13 @@ public class Result : MonoBehaviour
     [Header("É{É^ÉìéQè∆")]
     [SerializeField] private Button ReturnTitle;
 
+
+    void Awake()
+    {
+        inputAction = new InputSystem_Actions();
+        inputAction.Scene.Move.performed += OnquitClicked;
+    }
+
     void Start()
     {
         Cursor.visible = true;
@@ -20,6 +27,7 @@ public class Result : MonoBehaviour
     }
     void OnEnable()
     {
+        inputAction.Enable();
         if (ReturnTitle != null)
         {
             ReturnTitle.onClick.AddListener(OnReturnTitleClicked);
@@ -28,13 +36,14 @@ public class Result : MonoBehaviour
     
     void OnDisable()
     {
+        inputAction.Disable();
         if (ReturnTitle != null)
         {
             ReturnTitle.onClick.RemoveListener(OnReturnTitleClicked);
         }
     }
 
-    private void OnquitClicked()
+    private void OnquitClicked(InputAction.CallbackContext ctx)
     {
         sceneLoader.LoadScene(SceneLoader.SceneName.TitleScene);
     }
