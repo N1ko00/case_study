@@ -42,10 +42,15 @@ public class KeyPadController : MonoBehaviour
     void OnDisable()
     {
         Debug.Log("KeyPadController OnDisable called");
+
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
-        InputManager.Instance.inputActions.UI.Disable();
-        InputManager.Instance.inputActions.Player.Enable();
+        if(InputManager.Instance?.inputActions != null)
+        {
+            InputManager.Instance.inputActions.UI.Disable();
+            InputManager.Instance.inputActions.Player.Enable();
+            InputManager.Instance.inputActions.Password.Submit.performed -= OnSubmit;
+        }
     }
 
     void Update()
