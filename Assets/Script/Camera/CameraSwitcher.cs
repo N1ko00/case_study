@@ -10,6 +10,10 @@ using System.Collections;
 
 public class CameraSwitcher : MonoBehaviour
 {
+
+    // どこからでもカメラの状態を確認できるようにいたしますわ
+    public static CameraSwitcher Instance;
+
     [Header("Cameras")]
     [Tooltip("0番目は必ずメインカメラにしてください")]
     public List<Camera> cameras = new List<Camera>();
@@ -61,6 +65,10 @@ public class CameraSwitcher : MonoBehaviour
     [Header("キーパッド参照")]
     public GameObject keypadUI; // ← KeyPadTriggerと同じGameObjectを割り当て
 
+    void Awake()
+    {
+        Instance = this;
+    }
 
     void Start()
     {
@@ -183,6 +191,18 @@ public class CameraSwitcher : MonoBehaviour
 
         // 0番目以外はすべて「サブカメラ（監視カメラ）」扱いとします
         bool isSubCamera = (CurrentCameraIndex != 0);
+
+        //サブカメラに切り替わった場合、UIManagerに指示を出してテキストウィンドウを閉じます
+        if (isSubCamera && UIManager.Instance != null)
+        {
+            UIManager.Instance.ForceCloseMessage();
+        }
+
+        // （メインカメラに戻った時は、!isSubCamera が true になるので自動的に再表示されます）
+        if (InteractPromptUI.Instance != null)
+        {
+            InteractPromptUI.Instance.gameObject.SetActive(!isSubCamera);
+        }
 
         if (cameraCanvas != null) cameraCanvas.SetActive(isSubCamera);
 
