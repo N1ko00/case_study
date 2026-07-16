@@ -28,7 +28,7 @@ Transform:
   m_GameObject: {fileID: 4273895398925916822}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.448, z: -0.027}
+  m_LocalPosition: {x: 0, y: 0.61, z: -0.027}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -297,6 +297,7 @@ MonoBehaviour:
   gravity: -9.81
   itemPickupDistance: 3
   mouseSensitivity: 0.1
+  gamepadSensitivity: 150
   minLookAngle: -75
   maxLookAngle: 75
   voiceDetectionRadius: 5
