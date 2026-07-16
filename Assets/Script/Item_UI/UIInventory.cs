@@ -142,8 +142,8 @@ public class UIInventory : MonoBehaviour
         Refresh();
 
         // マウスは完全に隠してロック
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
 
         SelectFirstSlot();
     }
@@ -181,11 +181,20 @@ public class UIInventory : MonoBehaviour
             GameObject slot = Instantiate(slotPrefabs[index], parent);
             slot.GetComponent<InventorySlot>().SetItem(item);
 
-            // ★標準のナビゲーションはすべて無効化（干渉を防ぐ）
+            //// ★標準のナビゲーションはすべて無効化（干渉を防ぐ）
+            //Selectable sel = slot.GetComponent<Selectable>();
+            //if (sel != null)
+            //{
+            //    Navigation nav = new Navigation { mode = Navigation.Mode.None };
+            //    sel.navigation = nav;
+            //}
+
+            // ★ナビゲーションを None ではなく、Explicit（手動指定）の空状態にする
+            // これにより、コントローラーの自動移動を防ぎつつ、マウスのクリックやホバーを有効化できます
             Selectable sel = slot.GetComponent<Selectable>();
             if (sel != null)
             {
-                Navigation nav = new Navigation { mode = Navigation.Mode.None };
+                Navigation nav = new Navigation { mode = Navigation.Mode.Explicit };
                 sel.navigation = nav;
             }
 
