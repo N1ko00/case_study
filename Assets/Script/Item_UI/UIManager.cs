@@ -189,6 +189,16 @@ private IEnumerator ShowMessagesSequence(string itemName, string[] contents)
         if (sequenceCoroutine != null) StopCoroutine(sequenceCoroutine);
     }
 
+    // 強制的にメッセージウィンドウを閉じるための関数
+    public void ForceCloseMessage()
+    {
+        StopAllMessageCoroutines(); // 実行中の表示コルーチンを停止
+
+        if (itemNameText != null) itemNameText.text = "";
+        if (messageContentText != null) messageContentText.text = "";
+        if (messageWindow != null) messageWindow.SetActive(false);
+    }
+
     IEnumerator HideTextAfterDelay()
     {
         yield return new WaitForSeconds(displayDuration);

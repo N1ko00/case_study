@@ -120,6 +120,12 @@ public class LockerDoor : MonoBehaviour
 
     private void Update()
     {
+
+        if (CameraSwitcher.Instance != null && CameraSwitcher.Instance.CurrentCameraIndex != 0)
+        {
+            return;
+        }
+
         // ?띿붝댪볙 + E (キーボード) または R2 (ゲームパッド右トリガー) で開閉
         bool keyboardPressed = Keyboard.current != null
             && Keyboard.current[interactKey].wasPressedThisFrame;
