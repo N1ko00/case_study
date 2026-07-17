@@ -11855,6 +11855,7 @@ GameObject:
   - component: {fileID: 863671113}
   - component: {fileID: 863671115}
   - component: {fileID: 863671116}
+  - component: {fileID: 863671117}
   m_Layer: 0
   m_Name: CameraSwitcher
   m_TagString: Untagged
@@ -11957,6 +11958,18 @@ MonoBehaviour:
   noiseSE: {fileID: 8300000, guid: 297427cd8d965a74eaa392e7f4a23a39, type: 3}
   audioSource: {fileID: 0}
   seVolume: 0.8
+--- !u!114 &863671117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 863671112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c9a3708c23a54e4e9293c4f107c61fa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GetTime
 --- !u!1001 &864174455
 PrefabInstance:
   m_ObjectHideFlags: 0
