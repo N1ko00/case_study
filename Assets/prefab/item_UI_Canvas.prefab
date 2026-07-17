@@ -1217,12 +1217,32 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_BestFit
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_MaxSize
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_MinSize
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
       propertyPath: m_FontData.m_FontSize
       value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
       propertyPath: m_FontData.m_Alignment
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_VerticalOverflow
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_HorizontalOverflow
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -1349,6 +1369,14 @@ PrefabInstance:
     - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
       propertyPath: m_FontData.m_Alignment
       value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_VerticalOverflow
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8659791501908015748, guid: 627f553a02e02e04ea45bcb2d0bbbbef, type: 3}
+      propertyPath: m_FontData.m_HorizontalOverflow
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
