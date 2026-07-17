@@ -29,8 +29,8 @@ Transform:
   m_GameObject: {fileID: 3017404316675957568}
   serializedVersion: 2
   m_LocalRotation: {x: 0.030134074, y: 0.99755794, z: -0.006844174, w: -0.06263633}
-  m_LocalPosition: {x: -0.21, y: 0.185, z: -0.72}
-  m_LocalScale: {x: 1, y: 0.23565067, z: 0.98857534}
+  m_LocalPosition: {x: -0.21, y: 0.185, z: -0.717}
+  m_LocalScale: {x: 1.9919378, y: 0.35430962, z: 1.0892262}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1987142357915824248}
@@ -43,7 +43,7 @@ Camera:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3017404316675957568}
-  m_Enabled: 0
+  m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
@@ -174,19 +174,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalScale.x
-      value: 1.0028721
+      value: 1.4346534
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4.1952953
+      value: 6.0015574
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalScale.z
-      value: 1.0114003
+      value: 1.4468534
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.103
+      value: -0.102
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalPosition.y
@@ -194,36 +194,44 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.383
+      value: -0.394
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.9975959
+      value: -0.99794734
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.008595958
+      value: -0.0051608323
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.06256298
+      value: -0.06296307
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.028538981
+      value: 0.01049023
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: 1.187
+      value: 0.666
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: 7.144
+      value: 7.214
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -3.203
+      value: -1.163
       objectReference: {fileID: 0}
+    - target: {fileID: -7511558181221131132, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5cdc1be0643b5ed48b7dc55c6703695e, type: 2}
+    - target: {fileID: -5844600877643535704, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 5cdc1be0643b5ed48b7dc55c6703695e, type: 2}
     - target: {fileID: 919132149155446097, guid: 2be43c7114a359a46a5d6280a1265f32, type: 3}
       propertyPath: m_Name
       value: Surveillance Camera

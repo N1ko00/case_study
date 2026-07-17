@@ -186,7 +186,10 @@ public class CameraSwitcher : MonoBehaviour
         for (int i = 0; i < cameras.Count; i++)
         {
             if (cameras[i] != null)
-                cameras[i].gameObject.SetActive(i == CurrentCameraIndex);
+            {
+                // gameObject.SetActive ではなく、Cameraコンポーネントの enabled を切り替えます
+                cameras[i].enabled = (i == CurrentCameraIndex);
+            }
         }
 
         // 0番目以外はすべて「サブカメラ（監視カメラ）」扱いとします
