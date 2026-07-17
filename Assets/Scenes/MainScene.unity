@@ -11894,12 +11894,12 @@ MonoBehaviour:
   cameraCanvas: {fileID: 1106181953}
   cameraButtons:
   - {fileID: 1360955349}
-  - {fileID: 1463246853}
   - {fileID: 1389164176}
   - {fileID: 337726407}
-  - {fileID: 1161323254}
+  - {fileID: 1463246853}
   - {fileID: 1533792952}
   - {fileID: 684575965}
+  - {fileID: 1161323254}
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
   player_Main: {fileID: 2019746526}
