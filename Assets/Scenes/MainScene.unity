@@ -11916,7 +11916,7 @@ MonoBehaviour:
   normalColor: {r: 1, g: 1, b: 1, a: 1}
   selectedColor: {r: 0, g: 1, b: 0, a: 1}
   player_Main: {fileID: 2019746526}
-  firstReturnMessage: "\u5165\u3063\u305F\u6642\u306F\u8AB0\u3082\u304A\u3089\u3093\u304B\u3063\u305F\u3051\u3069\u306A"
+  firstReturnMessage: "\u3068\u308A\u3042\u3048\u305A\u5165\u3063\u3066\u304D\u305F\u65B9\u898B\u3066\u304F\u308B\u304B"
   IsToggled: 1
   keypadUI: {fileID: 0}
 --- !u!4 &863671114
@@ -17289,6 +17289,38 @@ PrefabInstance:
     - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
       propertyPath: itemPickupDistance
       value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: customItemMessages.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: customItemMessages.Array.data[0].itemName
+      value: "\u30AB\u30FC\u30C9\u30AD\u30FCLv1"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: customItemMessages.Array.data[1].itemName
+      value: "\u30AB\u30FC\u30C9\u30AD\u30FCLv2"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: customItemMessages.Array.data[2].itemName
+      value: "\u30AB\u30FC\u30C9\u30AD\u30FCLv3"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: customItemMessages.Array.data[0].messages.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: 'customItemMessages.Array.data[0].messages.Array.data[1]'
+      value: "\u30EC\u30D9\u30EB1\u3063\u3066\u3053\u3068\u306F2\u304C\u3042\u3093\u306E\u304B"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: 'customItemMessages.Array.data[1].messages.Array.data[1]'
+      value: "\u3055\u3063\u304D\u9752\u3044\u30E9\u30A4\u30C8\u306E\u3064\u3044\u305F\u30C9\u30A2\u3042\u3063\u305F\u3088\u306A"
+      objectReference: {fileID: 0}
+    - target: {fileID: 2938827529396148112, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
+      propertyPath: 'customItemMessages.Array.data[2].messages.Array.data[1]'
+      value: "\u8D64\u8272\u3063\u3066\u3053\u3068\u306F\u3053\u308C\u3067\u3067\u308C\u308B\u3093\u304B"
       objectReference: {fileID: 0}
     - target: {fileID: 3583989672168850079, guid: ea65f8730dfb85546b24cb9c92fe0971, type: 3}
       propertyPath: m_Enabled
